@@ -1,13 +1,16 @@
-Samples from each experiment were sequenced on different sequencing runs.
+Data Sets and Analyses:
+- ch_and_pp (Caldwell House and Passion Puddle)
+- PM_Year1 (Princeton Meadows Year 1)
+- PM_Year2 (Princeton Meadows Year 2)
+- core_microbiomes (include data from sets above plus Huang et al, 2020 datasets)
+- evolution_analysis (includes data from rice and Arabidopsis studies)
+- other_figures (code to create NJ map figure)
+- plastid_ratio_analysis (code used to analyze DAB t0 reads)
+- data-* (figures and files used in manuscript)
+- q2_analysis_using_R.R (R functions used to analyze data)
 
-
-For each experiment qiime2 was used to generate feature table, taxonomy files, and diversity files.
-q2 output was then exported and imported into R for data visualization. R was also used for differential abundance testing with the ALDEx2 package.
-
-For qiime 2 the general workflow was as follows:
-1) import sequences
-2) create table using dada2
-3) create taxonomy using ggBLAST # found ggBLAST and vsearch classifiers worked the best
-4) filter table using taxonomy # filter out unclassified, mitochondria, chloroplast; sampples > 2
-5) create rarefaction plot using filtered table
-6) create rarefied table and core metric artifacts
+Workflow:
+- upload fastq files
+- process using q2 to generate feature tables, diversity metrics, taxa barplots
+- analyze q2 output and create visualizations using R
+- perform differential abundance analysis using ALDEx2 
