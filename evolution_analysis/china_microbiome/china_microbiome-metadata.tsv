@@ -1,0 +1,58 @@
+sample_id	sample_type	type	type_id	host_species	treatment	location	paired_type
+AS1	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s1.china.guizhou_province.leishan_county	plant
+AS2	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s1.china.guizhou_province.leishan_county	plant
+AS3	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s1.china.guizhou_province.leishan_county	plant
+AS4	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+AS5	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+AS6	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+AS7	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s3.china.guizhou_province.liping_county	plant
+AS8	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s3.china.guizhou_province.liping_county	plant
+AS9	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	SD_treated	s3.china.guizhou_province.liping_county	plant
+AW1	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s1.china.guizhou_province.leishan_county	plant
+AW2	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s1.china.guizhou_province.leishan_county	plant
+AW3	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s1.china.guizhou_province.leishan_county	plant
+AW4	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s2.china.guizhou_province.congjiang_county	plant
+AW5	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s2.china.guizhou_province.congjiang_county	plant
+AW6	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s2.china.guizhou_province.congjiang_county	plant
+AW7	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s3.china.guizhou_province.liping_county	plant
+AW8	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s3.china.guizhou_province.liping_county	plant
+AW9	rice_aerial_tissue	treated_tissue	RA	Oryza_sativa	water_treated	s3.china.guizhou_province.liping_county	plant
+RS1	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s1.china.guizhou_province.leishan_county	plant
+RS2	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s1.china.guizhou_province.leishan_county	plant
+RS3	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s1.china.guizhou_province.leishan_county	plant
+RS4	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+RS5	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+RS6	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+RS7	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s3.china.guizhou_province.liping_county	plant
+RS8	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s3.china.guizhou_province.liping_county	plant
+RS9	rice_root	treated_tissue	RR	Oryza_sativa	SD_treated	s3.china.guizhou_province.liping_county	plant
+RW1	rice_root	treated_tissue	RR	Oryza_sativa	water_treated	s1.china.guizhou_province.leishan_county	plant
+RW3	rice_root	treated_tissue	RR	Oryza_sativa	water_treated	s1.china.guizhou_province.leishan_county	plant
+RW4	rice_root	treated_tissue	RR	Oryza_sativa	water_treated	s2.china.guizhou_province.congjiang_county	plant
+RW7	rice_root	treated_tissue	RR	Oryza_sativa	water_treated	s3.china.guizhou_province.liping_county	plant
+RW9	rice_root	treated_tissue	RR	Oryza_sativa	water_treated	s3.china.guizhou_province.liping_county	plant
+DS1	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s1.china.guizhou_province.leishan_county	plant
+DS2	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s1.china.guizhou_province.leishan_county	plant
+DS3	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s1.china.guizhou_province.leishan_county	plant
+DS4	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+DS5	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+DS6	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s2.china.guizhou_province.congjiang_county	plant
+DS7	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s3.china.guizhou_province.liping_county	plant
+DS8	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s3.china.guizhou_province.liping_county	plant
+DS9	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	SD_treated	s3.china.guizhou_province.liping_county	plant
+DW1	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s1.china.guizhou_province.leishan_county	plant
+DW2	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s1.china.guizhou_province.leishan_county	plant
+DW3	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s1.china.guizhou_province.leishan_county	plant
+DW4	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s2.china.guizhou_province.congjiang_county	plant
+DW5	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s2.china.guizhou_province.congjiang_county	plant
+DW6	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s2.china.guizhou_province.congjiang_county	plant
+DW7	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s3.china.guizhou_province.liping_county	plant
+DW8	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s3.china.guizhou_province.liping_county	plant
+DW9	duckweeed	treated_tissue	DW	Lemna_aequinoctialis	water_treated	s3.china.guizhou_province.liping_county	plant
+SL1	Soil	soil	SL	none	none	s1.china.guizhou_province.leishan_county	environment
+SL2	Soil		SL	none	none	s1.china.guizhou_province.leishan_county	environment
+SL3	Soil		SL	none	none	s1.china.guizhou_province.leishan_county	environment
+SL4	Soil		SL	none	none	s2.china.guizhou_province.congjiang_county	environment
+SL5	Soil		SL	none	none	s2.china.guizhou_province.congjiang_county	environment
+SL6	Soil		SL	none	none	s2.china.guizhou_province.congjiang_county	environment
+SL7	Soil		SL	none	none	s3.china.guizhou_province.liping_county	environment

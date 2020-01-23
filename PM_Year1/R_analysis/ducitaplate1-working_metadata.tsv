@@ -1,0 +1,32 @@
+sample_id	tissue	bacteria	type	treatment	time	plate	library	notes
+5A_C_432_9509_DAM_2	S_polyrhiza432_9509	none	ambient_water	none	5	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 05 days; 3 replicates pooled
+T5_432_DAM_W_D_F_2	S_polyrhiza432_9509	none	ambient_water	none	5	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 05 days; 3 replicates pooled
+T5_432_DAM_W_G_I_2	S_polyrhiza432_9509	none	ambient_water	none	5	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 05 days; 3 replicates pooled
+T5_432_DAM_W_J_L_2	S_polyrhiza432_9509	none	ambient_water	none	5	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 05 days; 3 replicates pooled
+T10_432_DAM_W_A_C_2	S_polyrhiza432_9509	none	ambient_water	none	10	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 10 days; 3 replicates pooled
+T10_432_DAM_W_D_F_2	S_polyrhiza432_9509	none	ambient_water	none	10	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 10 days; 3 replicates pooled
+T10_432_DAM_W_G_I_2	S_polyrhiza432_9509	none	ambient_water	none	10	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 10 days; 3 replicates pooled
+T10_432_DAM_W_J_L_2	S_polyrhiza432_9509	none	ambient_water	none	10	ducitaplate1	NA	filter; wastewater + Duckweed 432-9509; 10 days; 3 replicates pooled
+T0_W_D_E_2	wastewater	none	wastewater	none	0	ducitaplate1	NA	filter; wastewater only; 00 days; 2 replicates pooled
+T0_W_A_C_2	wastewater	none	wastewater	none	0	ducitaplate1	NA	filter; wastewater only; 00 days; 3 replicates pooled
+T5_W_D_E_2	wastewater	none	wastewater	none	5	ducitaplate1	NA	filter; wastewater only; 05 days; 2 replicates pooled
+T5_W_A_C_2	wastewater	none	wastewater	none	5	ducitaplate1	NA	filter; wastewater only; 05 days; 3 replicates pooled
+T10_W_D_E_2	wastewater	none	wastewater	none	10	ducitaplate1	NA	filter; wastewater only; 10 days; 2 replicates pooled
+T10_W_A_C_2	wastewater	none	wastewater	none	10	ducitaplate1	NA	filter; wastewater only; 10 days; 3 replicates pooled
+T0_432_B_3_2	S_polyrhiza432_9509	none	treated_tissue	none	0	ducitaplate1	NA	tissue; Duckweed 432-9509; 0 days
+T5_432_DAM_B_H_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	5	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 05 days
+T5_432_DAM_B_I_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	5	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 05 days
+T5_432_DAM_B_J_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	5	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 05 days
+T5_432_DAM_B_L_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	5	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 05 days
+T10_432_DAM_B_A_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_B_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_C_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_D_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_E_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_F_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_G_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_H_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_I_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_BJ_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_K_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days
+T10_432_DAM_B_L_2	S_polyrhiza432_9509	none	treated_tissue	SD_treated	10	ducitaplate1	NA	tissue; wastewater + Duckweed 432-9509; 10 days

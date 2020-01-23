@@ -1,0 +1,75 @@
+library(plyr) 
+library(dplyr)
+library(ggplot2)
+library(plyr)
+library(RColorBrewer)
+library(gplots)
+library(reshape2)
+library(ggtree)
+library(ggpubr)
+library(gridExtra)
+setwd("~/Downloads/duckweed_microbiome/evolution_analysis/edwards_et_al_2015")
+source("~/Downloads/duckweed_microbiome/q2_analysis_using_R.R")
+
+###############################################################################
+#			feature table de-compartmentalized
+###############################################################################
+
+# load tables
+COUNT.TABLE <- read_my_table("edwards_et_al-working_table.tsv")
+COUNT.MELT <- melt(
+                   COUNT.TABLE,
+                   variable.name = "sample_id",
+                   value.name = "reads"
+                   )
+META.TABLE <- read_my_table("edwards_et_al-metadata.tsv")
+TAX.TABLE <- read_my_table("edwards_et_al-ggBLAST_taxonomy.tsv")
+TAX.SEP <- separate(
+                    TAX.TABLE,
+                    Taxon,
+		    c(
+                      "Kingdom",
+		      "Phylum",
+		      "Class",
+                      "Order",
+		      "Family",
+		      "Genus",
+		      "Species"
+		      ),
+     		    sep="; [k,p,c,o,f,g,s]__",
+                    remove=TRUE
+                    )
+
+# merge tables
+COUNT.META <- merge(
+                    COUNT.MELT,
+                    META.TABLE,
+                    by = "sample_id"
+                    )
+COUNT.INFO <- merge(
+                    COUNT.META,
+                    TAX.SEP,
+                    by = "feature_id"
+                    )
+
+# create genus table
+COUNT.CLASS <- remove_unknown_genus(COUNT.INFO)
+GENUS.TABLE <- ddply(
+                     COUNT.CLASS,
+                     ~Genus+paired_id,
+                     summarise,
+                     total_reads = sum(reads)
+                     )
+GENUS.CAST <- dcast(
+                    GENUS.TABLE,
+                    Genus~paired_id
+                    )
+
+# imported table into q2; see edwards_et_al-q2_workflow.txt
+write.table(
+            GENUS.CAST,
+            "edwards_et_al-bacteria_genus_table.tsv",
+            sep = "\t",
+            row.names = FALSE,
+            quote  = FALSE
+            )

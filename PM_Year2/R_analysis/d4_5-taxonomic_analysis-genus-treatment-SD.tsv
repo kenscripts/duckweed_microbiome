@@ -1,0 +1,22 @@
+"Genus"	"Phylum"	"Family"	"Mean_RA"	"Median_RA"	"Sample_Percent"	"OTU_Count"	"Mean_RA_Rank"
+"Aerococcus"	"Firmicutes"	"Aerococcaceae"	0.00277454081349537	0.00277454081349537	12.5	1	117
+"Anaeromyxobacter"	"Proteobacteria"	"Myxococcaceae"	0.00961089817798189	0.00652197906946409	25	3	89
+"Caedibacter"	"Proteobacteria"	"Francisellaceae"	0.964190723078385	0.200528333781756	37.5	4	12
+"Candidatus Protochlamydia"	"Chlamydiae"	"Parachlamydiaceae"	0.00245802915222575	0.00245802915222575	12.5	1	119
+"Capnocytophaga"	"Bacteroidetes"	"Flavobacteriaceae"	0.00110981632539815	0.00110981632539815	12.5	1	124
+"Enhydrobacter"	"Proteobacteria"	"Moraxellaceae"	0.00594615246998132	0.00499417346429166	25	3	102
+"Enterobacter"	"Proteobacteria"	"Enterobacteriaceae"	0.0025386106818391	0.0025386106818391	12.5	1	118
+"Fimbriimonas"	"Armatimonadetes"	"[Fimbriimonadaceae]"	0.0360161352285824	0.0360161352285824	12.5	1	65
+"Lactobacillus"	"Firmicutes"	"Lactobacillaceae"	0.00482624808203177	0.00482624808203177	25	2	106
+"Legionella"	"Proteobacteria"	"Legionellaceae"	0.0106514596596449	0.00532572982982245	12.5	2	86
+"Methylophaga"	"Proteobacteria"	"Piscirickettsiaceae"	0.00610398978968981	0.0030519948948449	12.5	2	100
+"Modestobacter"	"Actinobacteria"	"Geodermatophilaceae"	0.0493868264802175	0.0246934132401088	12.5	2	62
+"Pedosphaera"	"Verrucomicrobia"	"[Pedosphaeraceae]"	1.21578915895481	0.580504551450647	25	3	10
+"Phycicoccus"	"Actinobacteria"	"Intrasporangiaceae"	0.0155675179640964	0.00778375898204819	12.5	2	81
+"Pontibacter"	"Bacteroidetes"	"Cytophagaceae"	0.000819343050741915	0.000819343050741915	12.5	1	125
+"Rhodococcus"	"Actinobacteria"	"Nocardiaceae"	0.0140622403279485	0.00703112016397424	12.5	2	83
+"SC3-56"	"Bacteroidetes"	"[Amoebophilaceae]"	0.00772205938920125	0.00772205938920125	25	2	96
+"SGSH944"	"SAR406"	"A714017"	0.00610398978968981	0.00610398978968981	12.5	1	99
+"Spirochaeta"	"Spirochaetes"	"Spirochaetaceae"	0.00360161352285824	0.00180080676142912	12.5	2	111
+"Sulfuritalea"	"Proteobacteria"	"Rhodocyclaceae"	0.00409671525370958	0.00409671525370958	12.5	1	107
+"Terracoccus"	"Actinobacteria"	"Intrasporangiaceae"	0.00943343876588425	0.00943343876588425	12.5	1	90

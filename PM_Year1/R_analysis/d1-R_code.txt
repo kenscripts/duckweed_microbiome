@@ -1,0 +1,2852 @@
+library(dunn.test)
+library(rcompanion)
+library(reshape)
+library(vegan)
+library(ape)
+library(GUniFrac)
+library(gridExtra)
+library(cowplot)
+library(RColorBrewer)
+library(wesanderson)
+library(VennDiagram)
+library(dplyr)
+library(plyr)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+setwd("~/data/duckweed_microbiome/PM_Year1/R_analysis/")
+source("~/data/duckweed_microbiome/q2_analysis_using_R.R")
+
+###############################################################################
+# Initial Tissue Analysis
+###############################################################################
+
+# generate table
+COUNT.TABLE <- read_my_table("ducitaplate1-working_table.tsv")
+COUNT.META <- addtax_addmeta(
+                             COUNT.TABLE,
+                             "ducitaplate1-ggBLAST_taxonomy.tsv",
+                             "ducitaplate1-metadata.tsv",
+                             value = "reads",
+                             sep = TRUE
+                             )
+COUNT.META <- filter(
+                     COUNT.META,
+                     reads > 0
+                     )
+
+# find asvs
+DAB_t0.TABLE <- filter(
+                       COUNT.META,
+                       type == "treated_tissue" & time == 0
+                       )
+DAB_t0.ASV <- unique(DAB_t0.TABLE$feature_id)
+
+WW_t0.TABLE <- filter(
+                      COUNT.META,
+                      type == "wastewater" & time == 0
+                      )
+WW_t0.ASV <- unique(WW_t0.TABLE$feature_id)
+
+WWDAB.TABLE <- filter(
+                      COUNT.META,
+                      type == "treated_tissue" & time != 0
+                      )
+WWDAB.ASV <- unique(WWDAB.TABLE$feature_id)
+
+DAB_t0.DF <- select(
+                    DAB_t0.TABLE,
+                    feature_id,
+                    reads,
+                    Phylum,
+                    Genus
+                    )
+#write.table(
+#            INITIAL.DK.DF,
+#            "d1-initial_tissue-reads.tsv",
+#            sep = "\t",
+#            row.names = FALSE
+#            )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# d1-initial_tissue-venn_diagram_1
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# S5A Figure plot code
+venn.diagram(
+             x = list(
+                      DAB_t0.ASV,
+                      WW_t0.ASV,
+                      WWDAB.ASV
+                      ),
+             filename = "d1-initial_tissue-venn_diagram.tiff",
+             category = c(
+                          "DAB_t0",
+                          "WW_t0",
+                          "WWDAB"
+                          ),
+             fill = c(
+                      "purple",
+                      "dodgerblue",
+                      "forestgreen"
+                      ),
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             cat.cex = 1.5,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.05,0.05,0.05),
+             cat.pos = c(-20,20,180)
+             )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# d1-initial_tissue-venn_diagram-AWW_WWDAB
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+AWW.TABLE <- filter(
+                    COUNT.META,
+                    type == "ambient_water"
+                    )
+AWW.ASV <- unique(AWW.TABLE$feature_id)
+
+venn.diagram(
+             x = list(
+                      WW_t0.ASV,
+                      AWW.ASV,
+                      WWDAB.ASV
+                      ),
+             filename = "d1-initial_tissue-venn_diagram-AWW_WWDAB.tiff",
+             category = c(
+                          "WW_t0",
+                          "AWW",
+                          "WWDAB"
+                          ),
+             fill = c(
+                      "dodgerblue",
+                      "orange3",
+                      "forestgreen"
+                      ),
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             cat.cex = 1.5,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.05,0.05,0.05),
+             cat.pos = c(-20,20,180)
+             )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# d1-initial_tissue-stable_asv
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# find stable asv
+STABLE.ASV <- intersect(
+                        DAB_t0.ASV,
+                        WWDAB.ASV
+                        )
+STABLE.ASV <- setdiff(
+                      STABLE.ASV,
+                      WW_t0.ASV
+                      )
+
+# generate clr table
+COUNT.TABLE <- read_my_table("ducitaplate1-working_table.tsv")
+COUNT.MATRIX <- COUNT.TABLE[,-1]
+CLR.TABLE <- clr_transform_counttable(
+                                      COUNT.MATRIX,
+                                      PRIOR = 0.001
+                                      )
+CLR.TABLE$feature_id <- COUNT.TABLE$feature_id
+CLR.INFO <- addtax_addmeta(
+                           CLR.TABLE,
+                           "ducitaplate1-ggBLAST_taxonomy.tsv",
+                           "ducitaplate1-metadata.tsv",
+                           value = "clr",
+                           sep = TRUE
+                           )
+CLR.INFO$time <- as.factor(CLR.INFO$time)
+
+
+# generate stable asv tissue table
+STABLE.ASV.TABLE <- filter(
+                           CLR.INFO,
+                           feature_id %in% STABLE.ASV
+                           )
+STABLE.ASV.TABLE.TT <- filter(
+                              STABLE.ASV.TABLE,
+                              type == "treated_tissue"
+                              )
+STABLE.ASV.TABLE.TT <- select(
+                              STABLE.ASV.TABLE.TT,
+                              feature_id,
+                              clr,
+                              sample_id,
+                              Phylum,
+                              Genus,
+                              bacteria,
+                              treatment,
+                              time
+                              )
+
+# find stable asvs with higher than average abundance
+# S4B File info
+STABLE.ASV.SUM <- ddply(
+                        STABLE.ASV.TABLE.TT,
+                        ~feature_id+time+Phylum+Genus,
+                        summarise,
+                        median_clr = median(clr)
+                        )
+STABLE.ASV.CAST <- dcast(
+                         STABLE.ASV.SUM,
+                         feature_id+Phylum+Genus~time
+                         )
+write.table(
+            STABLE.ASV.CAST,
+            "d1-initial_tissue-stable_asv.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# WWDAB specific ASV analysis
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# create RA table
+TABLE.RA <- calculateRA_4_q2table("ducitaplate1-working_table.tsv")
+TABLE.META <- addtax_addmeta(
+                             TABLE.RA,
+                             "ducitaplate1-ggBLAST_taxonomy.tsv",
+                             "ducitaplate1-metadata.tsv",
+                             value = "RA",
+                             sep = TRUE
+                             )
+TABLE.META <- filter(
+                     TABLE.META,
+                     RA > 0
+                     )
+
+# DAB t0
+DAB_t0.TABLE <- filter(
+                       TABLE.META,
+                       type == "treated_tissue" & time == 0
+                       )
+DAB_t0.ASV <- unique(DAB_t0.TABLE$feature_id)
+
+# WW t0
+WW_t0.TABLE <- filter(
+                      TABLE.META,
+                      type == "wastewater" & time == 0
+                      )
+WW_t0.ASV <- unique(WW_t0.TABLE$feature_id)
+
+# WWDAB
+WWDAB.TABLE <- filter(
+                      TABLE.META,
+                      type == "treated_tissue" & time != 0
+                      )
+WWDAB.ASV <- unique(WWDAB.TABLE$feature_id)
+
+# find asv type
+WWDAB_only.ASV <- setdiff(
+                          as.character(WWDAB.ASV),
+                          unique(
+                                 c(
+                                   as.character(DAB_t0.ASV),
+                                   as.character(WW_t0.ASV)
+                                   )
+                                 )
+                          )
+WWDAB.WW_t0.ASV <- setdiff(
+                           intersect(
+                                     as.character(WWDAB.ASV),
+                                     as.character(WW_t0.ASV)
+                                     ),
+                            as.character(DAB_t0.ASV)
+                           )
+WWDAB.DAB_t0.ASV <- setdiff(
+                            intersect(
+                                      as.character(WWDAB.ASV),
+                                      as.character(DAB_t0.ASV)
+                                      ),
+                            as.character(WW_t0.ASV)
+                            )
+WWDAB.WW_t0.DAB_t0.ASV <- intersect(
+                                    as.character(WWDAB.ASV),
+                                    intersect(
+                                              as.character(DAB_t0.ASV),
+                                              as.character(WW_t0.ASV)
+                                              )
+                                    )
+
+WWDAB.TABLE$asv_type <- sapply(
+                               WWDAB.TABLE$feature_id,
+                               function(x) if (x %in% WWDAB_only.ASV){
+                                           "WWDAB"
+                                           } else if (x %in% WWDAB.WW_t0.ASV) {
+                                           "WWDAB-WW_t0"
+                                           } else if (x %in% WWDAB.DAB_t0.ASV) {
+                                           "WWDAB-DAB_t0"
+                                           } else if (x %in% WWDAB.WW_t0.DAB_t0.ASV) {
+                                           "WWDAB-WW_t0-DAB_t0"
+                                           }
+                               )
+
+# find asv prevalence
+NO_SAMPLES <- length(unique(WWDAB.TABLE$sample_id))
+WWDAB.TABLE$asv_prevalence <- sapply(
+                                     WWDAB.TABLE$feature_id,
+                                     function(x) if (nrow(WWDAB.TABLE[WWDAB.TABLE$feature_id == x,]) == 1){
+                                                 "one_sample"
+                                                 } else if (nrow(WWDAB.TABLE[WWDAB.TABLE$feature_id == x,]) < (NO_SAMPLES * 0.25)){
+                                                 "less_25_percent"
+                                                 } else if (nrow(WWDAB.TABLE[WWDAB.TABLE$feature_id == x,]) <(NO_SAMPLES * 0.50)){
+                                                 "less_50_percent"
+                                                 } else if (nrow(WWDAB.TABLE[WWDAB.TABLE$feature_id == x,]) < (NO_SAMPLES * 0.75)){
+                                                 "less_75_percent"
+                                                 } else if (nrow(WWDAB.TABLE[WWDAB.TABLE$feature_id == x,]) < (NO_SAMPLES * 1)){
+                                                 "less_100_percent"
+                                                 } else if (nrow(WWDAB.TABLE[WWDAB.TABLE$feature_id == x,]) == NO_SAMPLES){
+                                                 "conserved"
+                                                 }
+                                     )
+
+WWDAB.SELECT <- select(
+                       WWDAB.TABLE,
+                       feature_id,
+                       Phylum,
+                       Family,
+                       Genus,
+                       Species,
+                       asv_type,
+                       asv_prevalence
+                       )
+WWDAB.SUM <- distinct(WWDAB.SELECT)
+WWDAB.SUM$asv_prevalence <- as.factor(WWDAB.SUM$asv_prevalence)
+WWDAB.SUM$asv_prevalence <- factor(
+                                   WWDAB.SUM$asv_prevalence,
+                                   levels = c(
+                                              "one_sample",
+                                              "less_25_percent",
+                                              "less_50_percent",
+                                              "less_75_percent",
+                                              "less_100_percent",
+                                              "conserved"
+                                              )
+                                   )
+WWDAB.SUM$asv_type <- factor(
+                             WWDAB.SUM$asv_type,
+                             levels = c(
+                                        "WWDAB",
+                                        "WWDAB-DAB_t0",
+                                        "WWDAB-WW_t0",
+                                        "WWDAB-WW_t0-DAB_t0"
+                                        )
+                             )
+
+COUNT.TABLE <- read_my_table("ducitaplate1-working_table.tsv")
+COUNT.MATRIX <- COUNT.TABLE[,-1]
+CLR.TABLE <- clr_transform_counttable(
+                                      COUNT.MATRIX,
+                                      PRIOR = 0.001
+                                      )
+CLR.TABLE$feature_id <- COUNT.TABLE$feature_id
+CLR.MELT <- melt(
+                 CLR.TABLE,
+                 variable.name = "sample_id",
+                 value.name = "clr"
+                 )
+CLR.SUM <- ddply(
+                 CLR.MELT,
+                 ~feature_id,
+                 summarise,
+                 median_clr = median(clr)
+                 )
+CLR.INFO <- merge(
+                  CLR.SUM,
+                  WWDAB.SUM,
+                  by = "feature_id"
+                  )
+write.table(
+            CLR.INFO,
+            "d1-initial_tissue-WWDAB_ASVs.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+TYPES <- unique(CLR.INFO$asv_type)
+PREVALENCE <- unique(CLR.INFO$asv_prevalence)
+asv_type = c()
+asv_prevalence = c()
+no_asvs = c()
+INDEX <- 1
+for (TYPE in TYPES){
+   CLR.TYPE <- filter(
+                      CLR.INFO,
+                      asv_type == TYPE
+                      )
+   for (PREV in PREVALENCE){
+      CLR.PREV <- filter( 
+                         CLR.TYPE,
+                         asv_prevalence == PREV
+                         )
+      NO_ASVS <- length(unique(CLR.PREV$feature_id))
+      asv_type[[INDEX]] <- c(TYPE)
+      asv_prevalence[[INDEX]] <- c(PREV)
+      no_asvs[[INDEX]] <- c(NO_ASVS)
+      INDEX <- INDEX + 1
+   } 
+} 
+TYPE.INFO <- data.frame(
+                        asv_type,
+                        asv_prevalence,
+                        no_asvs
+                        )
+TYPE.INFO$y <- rep(
+                   24,
+                   nrow(TYPE.INFO)
+                   )
+   
+                 
+FILL.1 <- wes_palette(
+                      "Darjeeling1",
+                      5,
+                      type = "discrete"
+                      )
+FILL.2 <- wes_palette(
+                      "Darjeeling2",
+                      5,
+                      type = "discrete"
+                      )
+FILL.3 <- wes_palette(
+                      "Chevalier1",
+                      4,
+                      type = "discrete"
+                      )
+FILL.4 <- wes_palette(
+                      "GrandBudapest2",
+                      4,
+                      type = "discrete"
+                      )
+FILL.5 <- wes_palette(
+                      "BottleRocket2",
+                      4,
+                      type = "discrete"
+                      )
+FILL <- c(
+          FILL.1,
+          FILL.2,
+          FILL.3,
+          FILL.4,
+          FILL.5
+          )
+
+WWDAB.ASV.PLOT <- ggplot(
+                         CLR.INFO,
+                         aes(
+                             asv_prevalence,
+                             median_clr,
+                             fill = Phylum
+                             )
+                         )
+WWDAB.ASV.FIG <- WWDAB.ASV.PLOT +
+                 geom_jitter(
+                             shape = 21,
+                             width = 0.2,
+                             color = "black",
+                             size = 3
+                             ) + 
+                 facet_grid(asv_type~.) +
+                 theme(
+                       axis.text.x = element_text(
+                                                  color = "black",
+                                                  size = 14,
+                                                  angle = 45,
+                                                  hjust = 1,
+                                                  vjust = 1
+                                                  ),
+                       axis.text.y = element_text(
+                                                  color = "black",
+                                                  size = 14
+                                                  ),
+                       axis.title = element_text(
+                                                 face = "bold",
+                                                 size = 20
+                                                 ),
+                       axis.line = element_line(
+                                                color = "black",
+                                                size = 2
+                                                ),
+                       legend.title = element_text(
+                                                   face = "bold",
+                                                   size = 20
+                                                   ),
+                       legend.text = element_text(
+                                                  face = "bold",
+                                                  size = 14
+                                                  ),
+                       legend.key = element_rect(fill = "transparent"),
+                       panel.spacing = unit(
+                                            0.75,
+                                            "lines"
+                                            ),
+                       panel.grid.minor = element_blank(),
+                       panel.grid.major = element_blank(),
+                       strip.background = element_rect(
+                                                       fill = NA,
+                                                       colour = "white",
+                                                       size = 0.5,
+                                                       ),
+                       strip.text = element_text(
+                                                 face = "bold",
+                                                 color = "black",
+                                                 size = 14
+                                                 )
+                       ) +
+                 labs(
+                      x = "ASV Prevalence Category",
+                      y = "Median CLR"
+                      ) +
+                 scale_x_discrete(
+                                  labels = c(
+                                             "1 sample",
+                                             "< 25 %",
+                                             "< 50 %",
+                                             "< 75 %",
+                                             "< 100 %",
+                                             "16 samples"
+                                             )
+                                  ) +
+                 guides(
+                        fill = guide_legend(
+                                            ncol = 1,
+                                            override.aes = list(size = 3)
+                                            )
+                        ) +
+                 scale_fill_manual(
+                                   values = FILL
+                                   ) +
+                 geom_text(
+                           data = TYPE.INFO,
+                           aes(
+                               x = asv_prevalence,
+                               y = y,
+                               label = no_asvs,
+                               group = asv_type
+                               ),
+                           fontface = "bold",
+                           inherit.aes = FALSE,
+                           size = 4
+                           )
+WWDAB.ASV.FIG
+ggsave(
+       "d1-initial_tissue-WWDAB_ASV_plot.pdf",
+       WWDAB.ASV.FIG,
+       device = "pdf",
+       dpi = 300
+       )
+
+>>> left off here; WWDAB vs AWW
+             
+###############################################################################
+# Alpha Rarefaction Code
+###############################################################################
+
+# url: https://rdrr.io/rforge/vegan/man/rarefy.html
+# url: https://www.fromthebottomoftheheap.net/2015/04/16/drawing-rarefaction-curves-with-custom-colours/
+
+# generate rarefied table
+COUNT.TABLE <- read_my_table("ducitaplate1-working_table.tsv")
+RAREMAX <- 112500
+
+RAREFY.OUT <- get_rarefy_out(
+                             COUNT.TABLE,
+                             subsampling = 5000
+                             )
+
+RAREFY.DF <- generate_rarefy_df(
+                                RAREFY.OUT,
+                                COUNT.TABLE
+                                )
+
+META.TABLE <- read_my_table("ducitaplate1-metadata.tsv")
+META.TABLE$time <- as.factor(META.TABLE$time)
+META.TABLE$type <- factor(
+                          META.TABLE$type,
+                          levels = c(
+                                     "wastewater",
+                                     "ambient_water",
+                                     "treated_tissue"
+                                     )
+                          )
+RAREFY.META <- merge(
+                     META.TABLE,
+                     RAREFY.DF,
+                     by = "sample_id"
+                     )
+
+
+# d1-rarefaction_plot code
+options(scipen = 999)
+COLOR <- c(
+           "treated_tissue" = "forestgreen",
+           "ambient_water" = "orange3",
+           "wastewater" = "dodgerblue"
+           )
+SHAPES <- c(
+            "0" = 15,
+            "5" = 16,
+            "10" = 17
+            )
+RAREFY.PLOT <- ggplot(
+                      RAREFY.META,
+                      aes(
+                          x = sample_size,
+                          y = no_species,
+                          color = type,
+                          shape = time,
+                          group = sample_id,
+                          )
+                      )
+RAREFY.FIG <- RAREFY.PLOT +
+              geom_line(
+                        size = 1
+                        ) +
+              scale_color_manual(
+                                 name = "Type",
+                                 labels = c(
+                                            "Wastewater",
+                                            "Ambient Wastewater",
+                                            "Sp9509"
+                                            ),
+                                 values = COLOR
+                                 ) +
+              scale_shape_manual(
+                                 name = "Time",
+                                 labels = c(
+                                            "0",
+                                            "5",
+                                            "10"
+                                            ),
+                                 values = SHAPES
+                                 ) +
+              scale_y_continuous(
+                                 expand = c(0,0),
+                                 limits = c(0,2000)
+                                 ) +
+              theme(
+                    axis.line = element_line(
+                                             color = "black",
+                                             size = 1
+                                             ),
+                    axis.title.y = element_text(
+                                                size = 24,
+                                                face = "bold"
+                                                ),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 20
+                                               ),
+                    axis.title.x = element_text(
+                                                size = 24,
+                                                face = "bold"
+                                                ),
+                    axis.text.x = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 20,
+                                               angle = 45,
+                                               hjust = 1,
+                                               vjust = 1
+                                               ),
+                    strip.background = element_blank(),
+                    legend.key = element_blank(),
+                    legend.title = element_text(
+                                                face = "bold",
+                                                size = 24
+                                                ),
+                    legend.text = element_text(
+                                               face = "bold",
+                                               size = 20
+                                               ),
+                    panel.background = element_blank()
+                    ) +
+              xlab("Sample Size") +
+              ylab("# of ASVs") +
+              geom_vline(xintercept = RAREMAX) +
+              guides(
+                     color = guide_legend(
+                                          override.aes = list(size = 3)
+                                          ),
+                     shape = guide_legend(
+                                          override.aes = list(size = 3)
+                                          )
+                     )
+RAREFY.FIG
+ggsave(
+       "d1-rarefaction_plot.pdf",
+       RAREFY.FIG,
+       device = "pdf",
+       dpi = 300
+       )
+  
+
+###############################################################################
+# Alpha Diversity Using q2 Vectors
+###############################################################################
+
+VECTORS <- c(
+             "d1-alpha_diversity-shannon_vector.tsv",
+             "d1-alpha_diversity-evenness_vector.tsv",
+             "d1-alpha_diversity-observed_otus_vector.tsv",
+             "d1-alpha_diversity-faith_pd_vector.tsv"
+             )
+
+for (VECTOR in VECTORS){
+   # format vector and metadata
+   VECTOR.PATH <- paste0(
+                         "../q2_analysis/",
+                         VECTOR
+                         )
+   VECTOR.DATA <- addmeta_2_q2vector(
+                                     VECTOR.PATH,
+                                     "ducitaplate1-metadata.tsv"
+                                     )
+   VECTOR.DATA$time <- as.factor(VECTOR.DATA$time)
+   VECTOR.DATA$type <- factor(
+                              VECTOR.DATA$type,
+                              levels = c(
+                                         "wastewater",
+                                         "ambient_water",
+                                         "treated_tissue"
+                                         )
+                              )
+
+   # test for normality
+   TYPES <- unique(VECTOR.DATA$type)
+   for (TYPE in TYPES){
+      print(VECTOR)
+      print(TYPE)
+      print(with(
+                 VECTOR.DATA,
+                 shapiro.test(
+                              VECTOR.DATA[,2][type == TYPE]
+                              )
+                 )
+            )
+   }
+
+   # plot code
+   FILL <- c(
+             "0" = "lightblue",
+             "5" = "dodgerblue",
+             "10" = "navy"
+             )
+
+   MY_COMPARISONS <- list(
+                          c("wastewater","ambient_water"),
+                          c("wastewater","treated_tissue"),
+                          c("ambient_water","treated_tissue")
+                          )
+   YLAB <- colnames(VECTOR.DATA)[2]
+   YLAB.SEPARATE <- strsplit(
+                             YLAB,
+                             "_"
+                             )
+   YLAB.CAP <- sapply(YLAB.SEPARATE,
+                      function(WORD)paste(toupper(
+                                                  substring(
+                                                            WORD,
+                                                            1,
+                                                            1
+                                                            )
+                                                  ),
+                                          substring(
+                                                    WORD,
+                                                    2
+                                                    ),
+                                          sep = "",
+                                          collapse = " "
+                                          )
+   
+                      )
+   YLAB.MAX <- max(VECTOR.DATA[,2])
+   YLAB.LIMIT <- YLAB.MAX + YLAB.MAX/4
+   VECTOR.PLOT <- ggplot(
+                         VECTOR.DATA,
+                         aes(
+                             type,
+                             VECTOR.DATA[,2],
+                             fill = time
+                             )
+                         )
+    NAME.INDEX <- gregexpr(
+                           pattern = "vector.tsv",
+                           VECTOR
+                           )[[1]][[1]]
+    NAME <- substr(
+                   VECTOR,
+                   0,
+                   NAME.INDEX-2
+                   )
+    OUTPUT <- sprintf(
+                      "%s-plot.pdf",
+                      NAME
+                      )
+    pdf(OUTPUT)
+    print(
+          VECTOR.PLOT +
+          geom_jitter(
+                      width = 0.1,
+                      size = 3,
+                      shape = 21,
+                      stroke = 1,
+                      aes(fill = time)
+                      ) +
+          theme(axis.line = element_line(
+                                         color = "black",
+                                         size = 1
+                                         ),
+                axis.title.y = element_text(
+                                            size = 20,
+                                            face = "bold"
+                                            ),
+                axis.text.y = element_text(
+                                           face = "bold",
+                                           color = "black",
+                                           size = 16
+                                           ),
+                axis.title.x = element_blank(),
+                axis.text.x = element_text(
+                                           face = "bold",
+                                           color = "black",
+                                           size = 16,
+                                           angle = 45,
+                                           hjust = 1,
+                                           vjust = 1
+                                           ),
+                strip.background = element_blank(),
+                legend.key = element_blank(),
+                legend.title = element_text(
+                                            face = "bold",
+                                            size = 20
+                                            ),
+                legend.text = element_text(
+                                           face = "bold",
+                                           size = 16
+                                           ),
+                panel.background = element_blank()
+                ) +
+          ylab(YLAB.CAP) +
+          scale_y_continuous(
+                             expand = c(0,0),
+                             limits = c(0,YLAB.LIMIT)
+                             ) +
+          scale_fill_manual(
+                            name = "Time",
+                            values = FILL
+                            ) +
+          scale_x_discrete(
+                           labels = c(
+                                      "Wastewater",
+                                      "Ambient Wastewater",
+                                      "WWDAB"
+                                      )
+                           ) +
+          guides(fill = guide_legend(override.aes = list(
+                                                         shape = 21,
+                                                         color = "black",
+                                                         fill = c(
+                                                                  "lightblue",
+                                                                  "dodgerblue",
+                                                                  "navy"
+                                                                  )
+                                                         )
+                                     )
+                 ) +
+          stat_compare_means(
+                             comparisons = MY_COMPARISONS,
+                             size = 5,
+                             label = "p.signif",
+                             label.y = c(
+                                         YLAB.MAX + (YLAB.MAX/10),
+                                         YLAB.MAX + (YLAB.MAX/5),
+                                         YLAB.MAX - (YLAB.MAX/10)
+                                         ),
+                             ), 
+          )
+   dev.off()
+}
+             
+###############################################################################
+# Beta Diversity Using q2 Distance Matrix
+###############################################################################
+
+# create generalized unifrac
+RAREFY.TABLE <- read_my_table(
+                              "d1-working_rarefied_table.tsv",
+                              rows = 1
+                              )
+RAREFY.TREE <- read.tree(
+                         "ducitaplate1-working_tree_rooted.nwk"
+                         )
+UNIFRACS <- GUniFrac(
+                     t(RAREFY.TABLE),
+                     RAREFY.TREE,
+                     alpha = 0.5
+                     )$unifracs
+GUNIFRAC <- UNIFRACS[,,"d_0.5"]
+write.table(
+            data.frame(GUNIFRAC),
+            "d1-generalized_unifrac_distance_matrix.tsv",
+            sep = "\t",
+            quote = FALSE
+            )
+
+DISTANCES <- c(
+               "d1-beta_diversity-bray_curtis_distance_matrix.tsv",
+               "d1-beta_diversity-jaccard_distance_matrix.tsv",
+               "d1-beta_diversity-unweighted_unifrac_distance_matrix.tsv",
+               "d1-beta_diversity-weighted_unifrac_distance_matrix.tsv",
+               "d1-beta_diversity-generalized_unifrac_distance_matrix.tsv"
+               )
+for (DISTANCE in DISTANCES){
+   IS.GEN.UNIFRAC <- grepl(
+                           "generalized",
+                           paste(DISTANCE)
+                           )
+
+   if(IS.GEN.UNIFRAC){
+      DIS.PATH <- DISTANCE
+   } else {
+      DIS.PATH <- paste0(
+                         "../q2_analysis/",
+                         DISTANCE
+                         )
+   }
+   # prep PCOA data
+   PCOA.OBJECT <- q2distance_2_pcoa(
+                                    DIS.PATH,
+                                    "ducitaplate1-metadata.tsv"
+                                    )
+   PCOA.META <- PCOA.OBJECT$points
+   PCOA.VARIANCE <- PCOA.OBJECT$variance
+   PCOA.META$time <- as.factor(
+                               PCOA.META$time
+                               )
+   PCOA.META$type <- factor(
+                            PCOA.META$type,
+                            levels = c(
+                                       "wastewater",
+                                       "ambient_water",
+                                       "treated_tissue"
+                                       )
+                            )
+   PCOA.META$bacteria <- gsub(
+                              "wastewater",
+                              "none",
+                              PCOA.META$bacteria
+                              )
+
+   # plot code
+   SHAPES <- c(
+               "wastewater" = 21,
+               "ambient_water" = 24,
+               "treated_tissue" = 22
+               )
+   FILL <- c(
+             "0" = "lightblue",
+             "5" = "dodgerblue",
+             "10" = "navy"
+             )
+   PLOT <- ggplot(
+                  PCOA.META,
+                  aes(x,
+                      y,
+                      fill = time,
+                      shape = type
+                      )
+                  )
+   NAME <- strsplit(
+                    DISTANCE,
+                    "-"
+                    )[[1]]            
+   SUBNAME <- strsplit(
+                       NAME[3],
+                       "_"
+                       )[[1]]
+   print(SUBNAME)
+   OUTPUT <- paste0(
+                    "d1-beta_diversity-",
+                    SUBNAME[1],
+                    "_",
+                    SUBNAME[2],
+                    "_pcoa.pdf"
+                    ) 
+   PCOA <- PLOT +
+           geom_point(
+                      size = 5,
+                      stroke = 1
+                      ) +
+           scale_shape_manual(
+                              name = "Type",
+                              labels = c(
+                                         "Wastewater",
+                                         "Ambient Wastewater",
+                                         "WWDAB"
+                                         ),
+                              values  = SHAPES
+                              ) +
+           scale_fill_manual(
+                             name = "Time",
+                             values = FILL
+                             ) + 
+           theme(
+                 axis.line = element_line(
+                                          color = "black",
+                                          size = 2
+                                          ),
+                 axis.title = element_text(
+                                           size = 20,
+                                           face = "bold"
+                                           ),
+                 axis.text = element_text(
+                                          face = "bold",
+                                          color = "black",
+                                          size = 16
+                                          ),
+                 legend.key = element_blank(),
+                 legend.title = element_text(
+                                             face = "bold",
+                                             size = 20
+                                             ),
+                 legend.text = element_text(
+                                            face = "bold",
+                                            size = 16
+                                            ),
+                 panel.background = element_blank()
+           ) +
+           xlab(
+                paste("PCoA 1 (",PCOA.VARIANCE[1],"%)")
+                ) +
+           ylab(
+                paste("PCoA 2 (",PCOA.VARIANCE[2],"%)")
+                ) +
+           guides(
+                  shape = guide_legend(
+                                       order = 1,
+                                       override.aes = list(size = 3),
+                                       ),
+                  fill = guide_legend(
+                                      order = 2,
+                                      override.aes = list(
+                                                          size = 3,
+                                                          color = c(
+                                                                    "lightblue",
+                                                                    "dodgerblue",
+                                                                    "navy"
+                                                                    )
+                                                          )
+                                      ),
+                  color = guide_legend(
+                                       order = 3,
+                                       override.aes = list(
+                                                           size = 3,
+                                                           shape = 22
+                                                           )
+                                       )
+                  )
+   ggsave(
+          sprintf(
+                  "%s",
+                  OUTPUT
+                  ),
+          PCOA,
+          units = "in",
+          width = 8,
+          height = 5
+          )
+}
+
+# statistics
+META <- read_my_table("ducitaplate1-metadata.tsv")
+META <- filter(
+               META,
+               bacteria != "MicrobacteriumRU1A"
+               )
+META <- filter(
+               META,
+               sample_id != "T0_432_B_3_2"
+               )
+
+UUNIFRAC.DIS <- convert_q2distance("../q2_analysis/d1-beta_diversity-unweighted_unifrac_distance_matrix.tsv")
+GUNIFRAC.DIS <- convert_q2distance("d1-beta_diversity-generalized_unifrac_distance_matrix.tsv")
+
+adonis2(
+        UUNIFRAC.DIS~type+time,
+        data = META
+        )
+adonis2(
+        GUNIFRAC.DIS~type+time,
+        data = META
+        )
+ 
+
+###############################################################################
+# Taxonomic Analysis: Phylum
+###############################################################################
+
+# create RA table
+PHYLUM.FILE <- read.csv(
+                        "d1-taxonomic_analysis-phylum.csv",
+                        sep=",",
+                        header = T
+                        )
+PHYLUM.MATRIX <- PHYLUM.FILE[,4:34] # archea removed
+PHYLUM.RA <- apply(
+                   PHYLUM.MATRIX,
+                   1,
+                   (function(x) x / sum(x)*100)
+                   )
+PHYLUM.RA <- t(PHYLUM.RA)
+
+# add meta data
+# melt data
+PHYLUM.META <- cbind(
+                     PHYLUM.FILE[,35:40], # [,35:40] for rarefied
+                     PHYLUM.RA
+                     )
+sample_id <- PHYLUM.FILE[,1]
+PHYLUM.DATA <- cbind(
+                     sample_id,
+                     PHYLUM.META
+                     )
+PHYLUM.DATA$time <- as.factor(PHYLUM.DATA$time)
+PHYLUM.MELT <- melt(
+                    PHYLUM.DATA,
+                    value.name ="RA",
+                    variable.name = "tax"
+                    )
+
+# format factors and levels
+PHYLUM.MELT$tax <- gsub(
+                        "k__Bacteria.p__",
+                        "",
+                        paste(PHYLUM.MELT$tax)
+                        )
+LEVELS <- c(
+            unique(PHYLUM.MELT$tax),
+            "low abundance (< 1% RA)"
+            )
+LOW_ABUNDANCE <- PHYLUM.MELT$RA < 1 
+PHYLUM.MELT$tax[LOW_ABUNDANCE] <- "low abundance (< 1% RA)"
+
+
+PHYLUM.MELT$type <- factor(
+                           PHYLUM.MELT$type,
+                           levels = c(
+                                      "wastewater",
+                                      "ambient_water",
+                                      "treated_tissue"
+                                      )
+                           )
+
+SAMPLE_ORDER = c(
+                 "T0_W_D_E_2",
+		 "T0_W_A_C_2",
+		 "T5_W_D_E_2",
+		 "T5_W_A_C_2",
+		 "T10_W_D_E_2",
+		 "T10_W_A_C_2",
+		 "5A_C_432_9509_DAM_2",
+		 "T5_432_DAM_W_D_F_2",
+		 "T5_432_DAM_W_G_I_2",
+		 "T5_432_DAM_W_J_L_2",
+		 "T5_432_DAM370_1_W_A_C_2",
+		 "T5_432_DAM370_1_W_D_F_2",
+		 "T5_432_DAM370_1_W_G_I_2",
+		 "T5_432_DAM370_1_W_J_L_2",
+		 "T10_432_DAM_W_A_C_2",
+		 "T10_432_DAM_W_D_F_2",
+		 "T10_432_DAM_W_G_I_2",
+		 "T10_432_DAM_W_J_L_2",
+		 "T10_432_DAM370_1_W_A_C_2",
+		 "T10_432_DAM370_1_W_D_F_2",
+		 "T10_432_DAM370_1_W_G_I_2",
+		 "T10_432_DAM370_1_W_J_L_2",
+                 "T0_432_B_3_2",
+		 "T5_432_DAM_B_H_2",
+		 "T5_432_DAM_B_I_2",
+		 "T5_432_DAM_B_J_2",
+		 "T5_432_DAM_B_L_2",
+		 "T5_432_DAM370_1_B_H_2",
+		 "T5_432_DAM370_1_B_I_2",
+		 "T5_432_DAM370_1_B_J_2",
+		 "T5_432_DAM370_1_B_K_2",
+		 "T5_432_DAM370_1_B_K_2a",
+		 "T5_432_DAM370_1_B_L_2",
+		 "T10_432_DAM_B_A_2",
+		 "T10_432_DAM_B_B_2",
+		 "T10_432_DAM_B_C_2",
+		 "T10_432_DAM_B_D_2",
+		 "T10_432_DAM_B_E_2",
+		 "T10_432_DAM_B_F_2",
+		 "T10_432_DAM_B_G_2",
+		 "T10_432_DAM_B_H_2",
+		 "T10_432_DAM_B_I_2",
+		 "T10_432_DAM_BJ_2",
+		 "T10_432_DAM_B_K_2",
+		 "T10_432_DAM_B_L_2",
+		 "T10_432_DAM370_1_B_A_2",
+		 "T10_432_DAM370_1_B_B_2",
+		 "T10_432_DAM370_1_B_C_2",
+		 "T10_432_DAM370_1_B_D_2",
+		 "T10_432_DAM370_1_B_E_2",
+		 "T10_432_DAM370_1_B_F_2",
+		 "T10_432_DAM370_1_B_G_2",
+		 "T10_432_DAM370_1_B_H_2",
+		 "T10_432_DAM370_1_B_I_2",
+		 "T10_432_DAM370_1_B_J_2",
+		 "T10_432_DAM370_1_B_K_2",
+		 "T10_432_DAM370_1_B_L_2"
+		 )
+PHYLUM.MELT$sample_id <- factor(
+                                PHYLUM.MELT$sample_id,
+                                levels = SAMPLE_ORDER
+                                )
+
+PHYLUM.MELT <- ddply(
+                     PHYLUM.MELT,
+                     ~sample_id+tissue+bacteria+type+treatment+time+tax,
+                     summarise,
+                     RA = sum(RA)
+                     )
+PHYLUM.MELT$tax <- factor(
+                          PHYLUM.MELT$tax,
+                          levels = LEVELS
+                          )
+write.table(
+            PHYLUM.MELT,
+            "d1-taxonomic_analysis-phylum_ra.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+# d1-taxonomic_analysis-phylum plot code
+TYPE.LABELS <- c(
+                 "wastewater" = "Wastewater",
+                 "ambient_water" = "Ambient Wastewater",
+                 "treated_tissue" = "DAB"
+                 )      
+FILL <- c(
+          "Proteobacteria" = "darkolivegreen1",
+          "Actinobacteria" = "khaki1",
+          "Bacteroidetes" = "steelblue1",
+          "Firmicutes" = "firebrick1",
+          "Acidobacteria" = "orchid",
+          "Chlamydiae" = "lightcoral",
+          "Chloroflexi" = "darkorange",
+          "Cyanobacteria" = "limegreen",
+          "low abundance (< 1% RA)" = "black",
+          "Nitrospirae" = "lightblue",
+          "Planctomycetes" = "sandybrown",
+          "TM6" = "lightgoldenrod",
+          "Verrucomicrobia" = "plum"
+          )
+PHYLUM.PLOT <- ggplot(
+                      PHYLUM.MELT,
+	              aes(
+                          sample_id,
+                          RA,
+                          fill=tax
+                          )
+                      )
+PHYLUM.FIG <- PHYLUM.PLOT + 
+              geom_bar(
+                       stat = "identity",
+                       color = "black",
+                       width = 1
+                       ) +
+              theme(
+                    axis.title = element_text(
+                                              size = 20,
+                                              face = "bold"
+                                              ),
+                    axis.text.x = element_blank(),
+                    axis.line.x = element_blank(),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               size = 16,
+                                               color = "black"
+                                               ),
+                    legend.position = "none",
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    color = "black"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 20
+                                              ),
+                    panel.background = element_blank()) +
+              scale_y_continuous(
+                                 name = "Relative Abundance",
+                                 expand=c(0,0)
+                                 ) +
+              scale_fill_manual(
+                                name = "Phylum",
+                                values = FILL
+                                ) +
+              facet_grid(
+                         .~type,
+                         labeller = labeller(type = TYPE.LABELS),
+                         space = "free_x",
+                         scale = "free_x"
+                         ) +
+              xlab(label = "\n\nSample") +
+              coord_cartesian(clip = "off") +
+              geom_text(
+                        aes(label = time),
+                        angle = 90,
+                        fontface = "bold",
+                        color = "black",
+                        size = 5,
+                        y = -3
+                        ) 
+ggsave(
+       "d1-taxonomic_analysis-phylum_plot.pdf",
+       PHYLUM.FIG,
+       device = "pdf",
+       dpi = 300
+       )
+              
+# create legend for figure
+LEG.PLOT <- PHYLUM.PLOT +
+            geom_point() +
+            theme(
+                  legend.key = element_blank(),
+                  legend.title = element_text(
+                                              face = "bold",
+                                              size = 20
+                                              ),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 16
+                                             ),
+                  ) +
+            scale_fill_manual(
+                              name = "Phylum",
+                              values = FILL
+                              ) + 
+            guides(
+                   fill = guide_legend(
+                                       ncol = 1,
+                                       override.aes = list(
+                                                           shape = 22,
+                                                           color = "black",
+                                                           size = 5
+                                                           )
+                                       )
+                   ) 
+PHYLUM.LEG <- get_legend(LEG.PLOT) 
+grid.draw(PHYLUM.LEG)
+ggsave(
+       "d1-taxonomic_analysis-phylum_legend.pdf",
+       PHYLUM.LEG,
+       device = "pdf",
+       dpi = 300
+       )
+
+# statistics
+PHYLUM.MEAN <- ddply(
+                     PHYLUM.MELT,
+                     ~type+tax,
+                     summarise,
+                     mean_RA = mean(RA)
+                     )
+PHYLUM.MEAN[order(-PHYLUM.MEAN$mean_RA),]
+
+###############################################################################
+# Taxonomic Analysis: Family
+###############################################################################
+
+# load count file
+# format table into matrix 
+# calculate RA
+FAMILY.COUNT <- read.csv(
+                         "d1-taxonomic_analysis-family.csv", 
+                         sep=",",
+			 header = T
+                         )
+FAMILY.MATRIX <- FAMILY.COUNT[,5:297] # removes archea			
+FAMILY.RA <- apply(
+                   FAMILY.MATRIX,
+                   1,
+                   (function(x) x / sum(x)*100)
+                   )
+FAMILY.RA <- t(FAMILY.RA)
+
+# add sample ids 
+# add metadata 
+# melt table
+# split tax
+sample_id <- FAMILY.COUNT[,1]
+FAMILY.META <- cbind(
+                     FAMILY.COUNT[,298:305],
+                     FAMILY.RA
+                     )
+FAMILY.META <- cbind(
+                     sample_id,
+                     FAMILY.META
+                     )
+FAMILY.META$time <- as.factor(FAMILY.META$time)
+FAMILY.MELT <- melt(
+                    FAMILY.META,
+                    value.name ="RA",
+                    variable.name = "tax"
+                    )
+FAMILY.MELT <- separate(
+                        FAMILY.MELT,
+                        tax,
+		        c("Kingdom",
+		          "Phylum",
+		          "Class",
+                          "Order",
+			  "Family",
+			  "Genus",
+			  "Species"),
+     		        sep=".[k,p,c,o,f,g,s]__",
+                        remove=TRUE
+                        )
+FAMILY.MELT$Family <- as.factor(FAMILY.MELT$Family)
+
+# format table for graphing
+# create low abundance category
+# group low abundance families into low abundance category
+levels(FAMILY.MELT$Family) <- c(
+                                levels(FAMILY.MELT$Family),
+		             	"low abundance (< 1% RA)",
+                                "unclassified"
+                                )
+MASK1 <- FAMILY.MELT$RA < 1 
+MASK2 <- is.na(FAMILY.MELT$Family)
+MASK3 <- FAMILY.MELT$Family == ""
+FAMILY.MELT$Family[MASK1] <- "low abundance (< 1% RA)"
+FAMILY.MELT$Family[MASK2] <- "unclassified"
+FAMILY.MELT$Family[MASK3] <- "unclassified"
+
+FAMILY.MELT$type <- factor(
+                           FAMILY.MELT$type,
+                           levels = c(
+                                      "wastewater",
+                                      "ambient_water",
+                                      "treated_tissue"
+                                      )
+                          )
+SAMPLE_ORDER = c(
+                 "T0_W_D_E_2",
+		 "T0_W_A_C_2",
+		 "T5_W_D_E_2",
+		 "T5_W_A_C_2",
+		 "T10_W_D_E_2",
+		 "T10_W_A_C_2",
+		 "5A_C_432_9509_DAM_2",
+		 "T5_432_DAM_W_D_F_2",
+		 "T5_432_DAM_W_G_I_2",
+		 "T5_432_DAM_W_J_L_2",
+		 "T5_432_DAM370_1_W_A_C_2",
+		 "T5_432_DAM370_1_W_D_F_2",
+		 "T5_432_DAM370_1_W_G_I_2",
+		 "T5_432_DAM370_1_W_J_L_2",
+		 "T10_432_DAM_W_A_C_2",
+		 "T10_432_DAM_W_D_F_2",
+		 "T10_432_DAM_W_G_I_2",
+		 "T10_432_DAM_W_J_L_2",
+		 "T10_432_DAM370_1_W_A_C_2",
+		 "T10_432_DAM370_1_W_D_F_2",
+		 "T10_432_DAM370_1_W_G_I_2",
+		 "T10_432_DAM370_1_W_J_L_2",
+                 "T0_432_B_3_2",
+		 "T5_432_DAM_B_H_2",
+		 "T5_432_DAM_B_I_2",
+		 "T5_432_DAM_B_J_2",
+		 "T5_432_DAM_B_L_2",
+		 "T5_432_DAM370_1_B_H_2",
+		 "T5_432_DAM370_1_B_I_2",
+		 "T5_432_DAM370_1_B_J_2",
+		 "T5_432_DAM370_1_B_K_2",
+		 "T5_432_DAM370_1_B_K_2a",
+		 "T5_432_DAM370_1_B_L_2",
+		 "T10_432_DAM_B_A_2",
+		 "T10_432_DAM_B_B_2",
+		 "T10_432_DAM_B_C_2",
+		 "T10_432_DAM_B_D_2",
+		 "T10_432_DAM_B_E_2",
+		 "T10_432_DAM_B_F_2",
+		 "T10_432_DAM_B_G_2",
+		 "T10_432_DAM_B_H_2",
+		 "T10_432_DAM_B_I_2",
+		 "T10_432_DAM_BJ_2",
+		 "T10_432_DAM_B_K_2",
+		 "T10_432_DAM_B_L_2",
+		 "T10_432_DAM370_1_B_A_2",
+		 "T10_432_DAM370_1_B_B_2",
+		 "T10_432_DAM370_1_B_C_2",
+		 "T10_432_DAM370_1_B_D_2",
+		 "T10_432_DAM370_1_B_E_2",
+		 "T10_432_DAM370_1_B_F_2",
+		 "T10_432_DAM370_1_B_G_2",
+		 "T10_432_DAM370_1_B_H_2",
+		 "T10_432_DAM370_1_B_I_2",
+		 "T10_432_DAM370_1_B_J_2",
+		 "T10_432_DAM370_1_B_K_2",
+		 "T10_432_DAM370_1_B_L_2"
+		 )
+FAMILY.MELT$sample_id <- factor(
+                                FAMILY.MELT$sample_id,
+	    	                levels = SAMPLE_ORDER
+                                )
+FAMILY.MELT <- ddply(
+                     FAMILY.MELT,
+                     ~sample_id+tissue+type+treatment+time+Family,
+                     summarise,
+                     RA = sum(RA)
+                     )
+write.table(
+            FAMILY.MELT,
+            "d1-taxonomic_analysis-family_ra.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+# plot
+COLSET1 <- brewer.pal(
+                      9,
+                      "Pastel1"
+                      )
+COLSET2 <- brewer.pal(
+                      9,
+                      "Set1"
+                      )
+COLSET3 <- brewer.pal(
+                      12,
+                      "Set3"
+                      )
+COLSET4 <- brewer.pal(
+                      8,
+                      "Dark2"
+                      )
+COLSET5 <- brewer.pal(
+                      3,
+                      "Set2"
+                      )
+COLSET6 <- wes_palette(
+                       "Moonrise2",
+                       4,
+                       type = "discrete"
+                       )
+COLSET7 <- wes_palette(
+                       "Cavalcanti1",
+                       2,
+                       type = "discrete"
+                       )
+                  
+COLORS <- c(
+            COLSET1,
+            COLSET2,
+            COLSET3,
+            COLSET4,
+            COLSET5,
+            COLSET6,
+            COLSET7
+            )
+TYPE.LABELS <- c(
+                 "wastewater" = "Wastewater",
+                 "ambient_water" = "Ambient Wastewater",
+                 "treated_tissue" = "WWDAB"
+                 )      
+
+FAMILY.PLOT <- ggplot(
+                      FAMILY.MELT,
+                      aes(
+                          sample_id,
+		          RA,
+                          fill = Family
+                          )
+                      )
+FAMILY.FIG <- FAMILY.PLOT + 
+              geom_bar(
+                       stat = "identity",
+                       color = "black",
+                       width = 1
+                       ) +
+              theme(
+                    axis.title = element_text(
+                                              size = 20,
+                                              face = "bold"
+                                              ),
+                    axis.text.x = element_blank(),
+                    axis.line.x = element_blank(),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               size = 16,
+                                               color = "black"
+                                               ),
+                    legend.position = "none",
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    color = "black"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 20
+                                              ),
+                    panel.background = element_blank()
+                    ) +
+              scale_y_continuous(
+                                 name = "Relative Abundance",
+                                 expand=c(0,0)
+                                 ) +
+              scale_fill_manual(
+                                name = "Family",
+                                values = COLORS
+                                ) +
+              facet_grid(
+                         .~type,
+                         labeller = labeller(type = TYPE.LABELS),
+                         space = "free_x",
+                         scale = "free_x"
+                         ) +
+              xlab(label = "\n\nSample") +
+              coord_cartesian(clip = "off") +
+              geom_text(
+                        aes(label = time),
+                        angle = 90,
+                        fontface = "bold",
+                        color = "black",
+                        size = 5,
+                        y = -3
+                        ) 
+ggsave(
+       "d1-taxonomic_analysis-family_plot.pdf",
+       FAMILY.FIG,
+       device = "pdf",
+       dpi = 300
+       )
+# create legend for figure
+LEG.PLOT <- FAMILY.PLOT +
+            geom_point() +
+            theme(
+                  legend.key = element_blank(),
+                  legend.title = element_text(
+                                              face = "bold",
+                                              size = 20
+                                              ),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 16
+                                             ),
+                  ) +
+            scale_fill_manual(
+                              name = "Family",
+                              values = COLORS
+            ) +
+            guides(
+                   fill = guide_legend(
+                                       nrow = 25,
+                                       override.aes = list(
+                                                           shape = 22,
+                                                           size = 5,
+                                                           color = "black"
+                                                           )
+                                       )
+                   )
+FAMILY.LEG <- get_legend(LEG.PLOT)
+grid.draw(FAMILY.LEG)
+ggsave(
+       "d1-taxonomic_analysis-family_legend.pdf",
+       FAMILY.LEG,
+       device = "pdf",
+       dpi = 300
+       )
+
+# statistics
+FAMILY.MEAN <- ddply(
+                     FAMILY.MELT,
+                     ~type+Family,
+                     summarise,
+                     mean_RA = mean(RA)
+                     )
+FAMILY.MEAN <- FAMILY.MEAN[order(-FAMILY.MEAN$mean_RA),]
+
+###############################################################################
+# Taxonomic Analysis: Genus 
+###############################################################################
+
+# get relative abundance table with metadata and taxonomy
+TABLE.RA <- calculateRA_4_q2table("ducitaplate1-working_table.tsv")
+TABLE.META <- addtax_addmeta(
+                             TABLE.RA,
+                             "ducitaplate1-ggBLAST_taxonomy.tsv",
+                             "ducitaplate1-metadata.tsv",
+                             value = "RA",
+                             sep = TRUE
+                             )
+TABLE.META$time <- as.factor(TABLE.META$time)
+
+# filter table
+TABLE.FILTERED <- filter(
+                         TABLE.META,
+                         RA > 0
+                         )
+TABLE.FILTERED <- remove_unknown_genus(TABLE.FILTERED)
+# get taxonomy
+TAX <- distinct(
+                select(
+                       TABLE.FILTERED,
+                       Phylum,
+                       Family,
+                       Genus
+                       )
+                )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# create type venn diagram
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+TYPES <- c(
+           "wastewater",
+           "ambient_water",
+           "treated_tissue"
+           )
+GENERA <- list()
+INDEX <- 1
+for (TYPE in TYPES){
+   print(TYPE)
+   TYPE.TABLE <- filter(
+                        TABLE.FILTERED,
+                        type == TYPE
+                        )
+   TYPE.GENERA <- unique(TYPE.TABLE$Genus)
+   GENERA[[INDEX]] <- c(TYPE.GENERA)
+   INDEX <- INDEX + 1
+}
+venn.diagram(
+             x = list(
+                      unlist(GENERA[1]),
+                      unlist(GENERA[2]),
+                      unlist(GENERA[3])
+                      ),
+             filename = "d1-taxonomic_analysis-genus-type.tiff",
+             category = c(
+                          "WW",
+                          "AWW",
+                          "WWDAB"
+                          ),
+             fill = c(
+                      "dodgerblue",
+                      "orange",
+                      "forestgreen"
+                      ),
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             main = "Type",
+             main.cex = 4,
+             main.fontface = "bold",
+             main.fontfamily = "sans",
+             main.pos = c(0.5,1.25),
+             cat.cex = 1.5,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.05,0.05,0.05),
+             cat.pos = c(-20,20,180)
+             )
+
+# type specific otus
+WW.TABLE <- filter(
+                   TABLE.FILTERED,
+                   type == "wastewater"
+                   )
+AWW.TABLE <- filter(
+                    TABLE.FILTERED,
+                    type == "ambient_water"
+                    )
+SP.TABLE <- filter(
+                   TABLE.FILTERED,
+                   type == "treated_tissue"
+                   )
+WW.GENERA <- unique(WW.TABLE$Genus)
+AWW.GENERA <- unique(AWW.TABLE$Genus)
+SP.GENERA <- unique(SP.TABLE$Genus)
+
+AWW.GENERA.SPECIFIC <- setdiff(
+                               AWW.GENERA,
+                               c(
+                                 WW.GENERA,
+                                 SP.GENERA
+                                 )
+                               )
+AWW.GENERA.TABLE <- get_genus_info.v2(AWW.TABLE)
+AWW.GENERA.SPECIFIC.INFO <- filter(
+                                   AWW.GENERA.TABLE,
+                                   Genus %in% AWW.GENERA.SPECIFIC
+                                   )
+AWW.GENERA.SPECIFIC.TAX <- merge(
+                                 TAX,
+                                 AWW.GENERA.SPECIFIC.INFO,
+                                 by = "Genus"
+                                 )
+write.table(
+            AWW.GENERA.SPECIFIC.TAX,
+            "d1-taxonomic_analysis-genus-aww_specific.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+SP.GENERA.SPECIFIC <- setdiff(
+                              SP.GENERA,
+                              c(
+                                WW.GENERA,
+                                AWW.GENERA
+                                )
+                              )
+SP.GENERA.TABLE <- get_genus_info.v2(SP.TABLE)
+SP.GENERA.SPECIFIC.INFO <- filter(
+                                  SP.GENERA.TABLE,
+                                  Genus %in% SP.GENERA.SPECIFIC
+                                  )
+SP.GENERA.SPECIFIC.TAX <- merge(
+                                TAX,
+                                SP.GENERA.SPECIFIC.INFO,
+                                by = "Genus"
+                                )
+write.table(
+            SP.GENERA.SPECIFIC.TAX,
+            "d1-taxonomic_analysis-genus-wwdab_specific.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# create time specific venn diagram
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+TYPES <- c(
+           "ambient_water",
+           "treated_tissue"
+           )
+TIMES <- c(
+           5,
+           10
+           )
+GENERA <- list()
+INDEX <- 1
+for (TYPE in TYPES){
+   print(TYPE)
+   TYPE.TABLE <- filter(
+                        TABLE.FILTERED,
+                        type == TYPE
+                        )
+   for (TIME in TIMES){
+      print(TIME)
+      TYPE.TIME.TABLE <- filter(
+                                TYPE.TABLE,
+                                time == TIME
+                                )
+      TYPE.TIME.GENERA <- unique(TYPE.TIME.TABLE$Genus)
+      GENERA[[INDEX]] <- c(TYPE.TIME.GENERA)
+      INDEX <- INDEX + 1
+      }
+}
+venn.diagram(
+             x = list(
+                      unlist(GENERA[1]),
+                      unlist(GENERA[2]),
+                      unlist(GENERA[3]),
+                      unlist(GENERA[4])
+                      ),
+             filename = "d1-taxonomic_analysis-genus-time.tiff",
+             category = c(
+                          "AWW 5 days",
+                          "AWW 10 days",
+                          "WWDAB 5 days",
+                          "WWDAB 10 days"
+                          ),
+             fill = c(
+                      "orange",
+                      "orange4",
+                      "seagreen3",
+                      "seagreen4"
+                      ),
+             margin = 0.75,
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             main = "Time",
+             main.cex = 4,
+             main.fontface = "bold",
+             main.fontfamily = "sans",
+             main.pos = c(0.5,0.80),
+             cat.cex = 1.25,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.22,0.22,0.1,0.1),
+             cat.pos = c(340,20,-20,20)
+             )
+
+# time specific otus
+TT.TABLE <- filter(
+                   TABLE.FILTERED,
+                   type == "treated_tissue"
+                   )
+TT.TABLE.T5 <- filter(
+                      TT.TABLE,
+                      time == 5
+                      )
+TT.TABLE.T10 <- filter(
+                       TT.TABLE,
+                       time == 10
+                       )
+TT.GENERA.T5 <- unique(TT.TABLE.T5$Genus)
+TT.GENERA.T10 <- unique(TT.TABLE.T10$Genus)
+
+TT.GENERA.T5.SPECIFIC <- setdiff(
+                                 TT.GENERA.T5,
+                                 TT.GENERA.T10
+                                 )
+T5.GENERA.INFO <- get_genus_info.v2(TT.TABLE.T5)
+T5.SPECIFIC.INFO <- filter(
+                           T5.GENERA.INFO,
+                           Genus %in% TT.GENERA.T5.SPECIFIC
+                           )
+T5.SPECIFIC.TAX <- merge(
+                         TAX,
+                         T5.SPECIFIC.INFO,
+                         by = "Genus"
+                         )
+write.table(
+            T5.SPECIFIC.TAX,
+            "d1-taxonomic_analysis-genus-wwdabt5_specific_genera.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+TT.GENERA.T10.SPECIFIC <- setdiff(
+                                  TT.GENERA.T10,
+                                  TT.GENERA.T5
+                                  )
+T10.GENERA.INFO <- get_genus_info.v2(TT.TABLE.T10)
+T10.SPECIFIC.INFO <- filter(
+                            T10.GENERA.INFO,
+                            Genus %in% TT.GENERA.T10.SPECIFIC
+                            )
+T10.SPECIFIC.TAX <- merge(
+                          TAX,
+                          T10.SPECIFIC.INFO,
+                          by = "Genus"
+                          )
+write.table(
+            T10.SPECIFIC.TAX,
+            "d1-taxonomic_analysis-genus-wwdabt10_specific_genera.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+
+###############################################################################
+### Differential Abundance Testing
+###############################################################################
+
+# read tables and filter
+library(ALDEx2)
+COUNT.TABLE <- read_my_table("ducitaplate1-working_table.tsv")
+META.TABLE <- read_my_table("ducitaplate1-working_metadata.tsv")
+META.TABLE$time <- as.factor(META.TABLE$time)
+META.FILTERED <- filter(
+                        META.TABLE,
+                        time != "0",
+                        )
+
+TAX <- read_my_table("ducitaplate1-ggBLAST_taxonomy.tsv")
+TAX <- separate(
+                TAX,
+                Taxon,
+                c("Kingdom",
+                  "Phylum",
+      	          "Class",
+                  "Order",
+                  "Family",
+                  "Genus",
+	          "Species"),
+                  sep=".[k,p,c,o,f,g,s]__",
+                  remove=TRUE
+                  ) 
+TAX$Phylum <- gsub(
+                   ";",
+                   "",
+                   TAX$Phylum
+                   )
+TAX$Family <- gsub(
+                   ";",
+                   "",
+                   TAX$Family
+                   )
+TAX$Genus <- gsub(
+                  ";",
+                  "",
+                  TAX$Genus
+                  )
+TAX <- distinct(
+                select(
+                       TAX,
+                       Phylum,
+                       Family,
+                       Genus
+                       )
+                 )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# type differential analysis - kw
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+GROUP.TYPE <- as.factor(
+                        META.FILTERED$type
+                        )
+SORTED.TABLE <- sort_table_samples(
+                                   META.FILTERED,
+                                   COUNT.TABLE
+                                   )
+GENUS.TABLE <- create_genus_count_table(
+                                        SORTED.TABLE,
+                                        "ducitaplate1-ggBLAST_taxonomy.tsv",
+                                        )
+TYPE.CLR <- aldex.clr(
+                      GENUS.TABLE,
+                      GROUP.TYPE,
+                      mc.samples = 128,
+                      denom = "all",
+                      verbose = T,
+                      )
+TYPE.KW <- aldex.kw(
+                    TYPE.CLR
+                    )
+                     
+TYPE.KW.TAX <- merge(
+                     TAX,
+                     TYPE.KW,
+                     by = "Genus"
+                     )
+write.table(
+            TYPE.KW,
+            "d1-aldex-type_kw.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+TYPE.SIG <- TYPE.TEST[TYPE.TEST$kw.eBH < 0.05 & TYPE.TEST$glm.eBH < 0.05,]
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# type differential analysis - pairwise
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+TYPES <- unique(META.FILTERED$type)
+for (TYPE in TYPES){
+   META.PAIRWISE <- filter(
+                           META.FILTERED,
+                           type != TYPE
+                           )
+   GROUP.TYPE <- as.vector(
+                           META.PAIRWISE$type
+                           )
+   SORTED.TABLE <- sort_table_samples(
+                                      META.PAIRWISE,
+                                      COUNT.TABLE
+                                      )
+   GENUS.TABLE <- create_genus_count_table(
+                                           SORTED.TABLE,
+                                           "ducitaplate1-ggBLAST_taxonomy.tsv",
+                                           )
+   TYPE.CLR <- aldex.clr(
+                         GENUS.TABLE,
+                         GROUP.TYPE,
+                         mc.samples = 128,
+                         denom = "all",
+                         verbose = T,
+                         )
+   TYPE.TEST <- aldex.ttest(
+                            TYPE.CLR,
+                            verbose = T
+                            )
+   TYPE.EFFECT <- aldex.effect(
+                               TYPE.CLR,
+                               GROUP.TYPE,
+                               verbose = T 
+                               )
+   TYPE.OUT <- combine_aldex_output(
+                                    TYPE.TEST,
+                                    TYPE.EFFECT
+                                    )
+   TYPE.OUT.TAX <- merge(
+                         TAX,
+                         TYPE.OUT,
+                         by = "Genus"
+                         )
+   write.table(
+               TYPE.OUT.TAX,
+               sprintf(
+                       "d1-aldex-type-no_%s.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+
+   # get mc instances
+   INSTANCES <- getMonteCarloInstances(TYPE.CLR)
+   INSTANCE.DF <- as.data.frame(INSTANCES)
+   INSTANCE.DF$Genus <- rownames(INSTANCE.DF)
+   INSTANCE.MELT <- melt(
+                         INSTANCE.DF,
+                         variable.name = "sample_id",
+                         value.name = "clr"
+                         )
+   INSTANCE.SEPARATE <- separate(
+                                 INSTANCE.MELT,
+                                 sample_id,
+                                 into = c(
+                                          "sample_id",
+                                          "instance"
+                                          ),
+                                 sep ="\\."
+                                 )
+   print(colnames(INSTANCE.SEPARATE))
+   INSTANCE.INFO <- merge(
+                          META.FILTERED,
+                          INSTANCE.SEPARATE,
+                          by = "sample_id"
+                          )
+   print(colnames(INSTANCE.INFO))
+   write.table(
+               INSTANCE.INFO,
+               sprintf(
+                       "d1-aldex-type-no_%s_mc_instances.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+}
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# d1-aldex-type-no_treated_tissue_mc_instances plot
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+TEST.WW_AW <- read_my_table("d1-aldex-type-no_treated_tissue.tsv")
+TEST.WW_AW.EC <- TEST.WW_AW[TEST.WW_AW$we.eBH < 0.05 & TEST.WW_AW$effect < -1.25,]
+INSTANCES.WW_AW <- read_my_table("d1-aldex-type-no_treated_tissue_mc_instances.tsv")
+INSTANCES.WW_AW.EC <- filter(
+                             INSTANCES.WW_AW,
+                             Genus %in% TEST.WW_AW.EC$Genus
+                             )
+INSTANCES.TEST.WW_AW.EC <- merge(
+                                 INSTANCES.WW_AW.EC,
+                                 TEST.WW_AW.EC,
+                                 by = "Genus"
+                                 )
+INSTANCES.TEST.WW_AW.EC$type <- factor(
+                                       INSTANCES.TEST.WW_AW.EC$type,
+                                       levels = c(
+						  "wastewater",
+                                                  "ambient_water"
+                                                  )
+                                       )
+INSTANCES.TEST.WW_AW.EC$effect <- round(
+                                        INSTANCES.TEST.WW_AW.EC$effect,
+                                        digits = 3
+                                        )
+INSTANCES.TEST.WW_AW.TAX <- merge(
+                                  INSTANCES.TEST.WW_AW.EC,
+                                  TAX,
+                                  by = "Genus"
+                                  )
+
+FILL <- c(
+          "wastewater" = "dodgerblue",
+          "ambient_water" = "orange3"
+          )
+CLR.PLOT <- ggplot(
+                   INSTANCES.TEST.WW_AW.TAX,
+                   aes(
+                       Genus,
+                       clr,
+                       fill = type,
+                       label = effect
+                       )
+                   )
+CLR.PLOT + 
+geom_violin() +
+theme(
+      axis.text.x = element_text(
+                                 face = "italic",
+                                 color = "black",
+                                 size = 8,
+                                 angle = 45,
+                                 hjust = 1,
+                                 vjust = 1
+                                 ),
+      axis.title.y = element_text(
+                                  face = "bold",
+                                  size = 16
+                                  ),
+      axis.title.x = element_blank(),
+      axis.line = element_line(
+                               color = "black",
+                               size = 5
+                               ),
+      axis.ticks.y = element_blank(),
+      axis.line.y = element_line(color = "black"),
+      legend.title = element_text(face = "bold",
+                                  size = 10),
+      legend.key = element_rect(fill = "transparent"),
+      panel.grid.minor = element_blank(),
+      panel.grid.major.y = element_blank(),
+      strip.background = element_rect(
+                                      fill = NA,
+                                      colour = "black",
+                                      size = 0.5,
+                                      linetype = "solid"
+                                      ),
+      strip.text = element_text(
+                                face = "bold",
+                                color = "black",
+                                size = 12
+                                )
+      ) +
+scale_y_continuous(
+                   name = "CLR",
+                   expand = c(0,0),
+                   limits = c(-25,20)
+                   ) +
+scale_fill_manual(
+                  name = "Type",
+                  labels = c(
+                             "Wastewater",
+                             "Ambient Wastewater"
+                             ),
+                  values = FILL
+                  ) +
+geom_text(
+          aes(
+              y = 18,
+              label = effect
+              ),
+          check_overlap = TRUE,
+          vjust = 0.5,
+          hjust = 0.5,
+          fontface = "bold",
+          size = 3.5,
+          ) + 
+facet_grid(
+           scales = "free_x",
+           space = "free_x",
+           .~Phylum
+           ) 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# d1-aldex-type-no_ambient_water_mc_instances plot
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+TEST.WW_SP <- read_my_table("d1-aldex-type-no_ambient_water.tsv")
+TEST.WW_SP.EC <- TEST.WW_SP[TEST.WW_SP$we.eBH < 0.05 & TEST.WW_SP$effect < -1.25,]
+INSTANCES.WW_SP <- read_my_table("d1-aldex-type-no_ambient_water_mc_instances.tsv")
+INSTANCES.WW_SP.EC <- filter(
+                             INSTANCES.WW_SP,
+                             Genus %in% TEST.WW_SP.EC$Genus
+                             )
+INSTANCES.TEST.WW_SP.EC <- merge(
+                                 INSTANCES.WW_SP.EC,
+                                 TEST.WW_SP.EC,
+                                 by = "Genus"
+                                 )
+INSTANCES.TEST.WW_SP.EC$type <- factor(
+                                       INSTANCES.TEST.WW_SP.EC$type,
+                                       levels = c(
+						  "wastewater",
+                                                  "treated_tissue"
+                                                  )
+                                       )
+INSTANCES.TEST.WW_SP.EC$effect <- round(
+                                        INSTANCES.TEST.WW_SP.EC$effect,
+                                        digits = 3
+                                        )
+INSTANCES.TEST.WW_SP.TAX <- merge(
+                                  INSTANCES.TEST.WW_SP.EC,
+                                  TAX,
+                                  by = "Genus"
+                                  )
+
+FILL <- c(
+          "wastewater" = "dodgerblue",
+          "treated_tissue" = "forestgreen"
+          )
+CLR.PLOT <- ggplot(
+                   INSTANCES.TEST.WW_SP.TAX,
+                   aes(
+                       Genus,
+                       clr,
+                       fill = type,
+                       label = effect
+                       )
+                   )
+CLR.PLOT + 
+geom_violin() +
+theme(
+      axis.text.x = element_text(
+                                 face = "italic",
+                                 color = "black",
+                                 size = 8,
+                                 angle = 45,
+                                 hjust = 1,
+                                 vjust = 1
+                                 ),
+      axis.title.y = element_text(
+                                  face = "bold",
+                                  size = 16
+                                  ),
+      axis.title.x = element_blank(),
+      axis.line = element_line(
+                               color = "black",
+                               size = 5
+                               ),
+      axis.ticks.y = element_blank(),
+      axis.line.y = element_line(color = "black"),
+      legend.title = element_text(face = "bold",
+                                  size = 10),
+      legend.key = element_rect(fill = "transparent"),
+      panel.grid.minor = element_blank(),
+      panel.grid.major.y = element_blank(),
+      strip.background = element_rect(
+                                      fill = NA,
+                                      colour = "black",
+                                      size = 0.5,
+                                      linetype = "solid"
+                                      ),
+      strip.text = element_text(
+                                face = "bold",
+                                color = "black",
+                                size = 8
+                                )
+      ) +
+scale_y_continuous(
+                   name = "CLR",
+                   expand = c(0,0),
+                   limits = c(-25,25)
+                   ) +
+scale_fill_manual(
+                  name = "Type",
+                  labels = c(
+                             "Wastewater",
+                             "S. polyrhiza"
+                             ),
+                  values = FILL
+                  ) +
+geom_text(
+          aes(
+              y = 20,
+              label = effect
+              ),
+          check_overlap = TRUE,
+          vjust = 0.5,
+          hjust = 0.5,
+          fontface = "bold",
+          size = 3.5,
+          angle = 45
+          ) +
+facet_grid(
+           scales = "free_x",
+           space = "free_x",
+           .~Phylum
+           ) 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# d1-aldex-type-no_wastewater_mc_instances plot
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+TEST.SP_AW <- read_my_table("d1-aldex-type-no_wastewater.tsv")
+TEST.SP_AW.EC <- TEST.SP_AW[TEST.SP_AW$we.eBH < 0.05 & TEST.SP_AW$effect > 1.5,]
+INSTANCES.SP_AW <- read_my_table("d1-aldex-type-no_wastewater_mc_instances.tsv")
+INSTANCES.SP_AW.EC <- filter(
+                             INSTANCES.SP_AW,
+                             Genus %in% TEST.SP_AW.EC$Genus
+                             )
+INSTANCES.TEST.SP_AW.EC <- merge(
+                                 INSTANCES.SP_AW.EC,
+                                 TEST.SP_AW.EC,
+                                 by = "Genus"
+                                 )
+INSTANCES.TEST.SP_AW.EC$type <- factor(
+                                       INSTANCES.TEST.SP_AW.EC$type,
+                                       levels = c(
+						  "ambient_water",
+                                                  "treated_tissue"
+                                                  )
+                                       )
+INSTANCES.TEST.SP_AW.EC$effect <- round(
+                                        INSTANCES.TEST.SP_AW.EC$effect,
+                                        digits = 3
+                                        )
+INSTANCES.TEST.SP_AW.TAX <- merge(
+                                  INSTANCES.TEST.SP_AW.EC,
+                                  TAX,
+                                  by = "Genus"
+                                  )
+
+FILL <- c(
+          "ambient_water" = "orange3",
+          "treated_tissue" = "forestgreen"
+          )
+CLR.PLOT <- ggplot(
+                   INSTANCES.TEST.SP_AW.TAX,
+                   aes(
+                       Genus,
+                       clr,
+                       fill = type,
+                       label = effect
+                       )
+                   )
+CLR.PLOT + 
+geom_violin() +
+theme(
+      axis.text.x = element_text(
+                                 face = "italic",
+                                 color = "black",
+                                 size = 8,
+                                 angle = 45,
+                                 hjust = 1,
+                                 vjust = 1
+                                 ),
+      axis.title.y = element_text(
+                                  face = "bold",
+                                  size = 16
+                                  ),
+      axis.title.x = element_blank(),
+      axis.line = element_line(
+                               color = "black",
+                               size = 5
+                               ),
+      axis.ticks.y = element_blank(),
+      axis.line.y = element_line(color = "black"),
+      legend.title = element_text(face = "bold",
+                                  size = 10),
+      legend.key = element_rect(fill = "transparent"),
+      panel.grid.minor = element_blank(),
+      panel.grid.major.y = element_blank(),
+      strip.background = element_rect(
+                                      fill = NA,
+                                      colour = "black",
+                                      size = 0.5,
+                                      linetype = "solid"
+                                      ),
+      strip.text = element_text(
+                                face = "bold",
+                                color = "black",
+                                size = 8
+                                )
+      ) +
+scale_y_continuous(
+                   name = "CLR",
+                   expand = c(0,0),
+                   limits = c(-25,25)
+                   ) +
+scale_fill_manual(
+                  name = "Type",
+                  labels = c(
+                             "Ambient Wastewater",
+                             "S. polyrhiza"
+                             ),
+                  values = FILL
+                  ) +
+geom_text(
+          aes(
+              y = 20,
+              label = effect
+              ),
+          check_overlap = TRUE,
+          vjust = 0.5,
+          hjust = 0.5,
+          fontface = "bold",
+          size = 3.5
+          ) +
+facet_grid(
+           scales = "free_x",
+           space = "free_x",
+           .~Phylum
+           ) 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# d1-aldex-sp_ec_genera plot code
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+TEST.WW_AW <- read_my_table("d1-aldex-type-no_treated_tissue.tsv")
+INSTANCES.WW_AW <- read_my_table("d1-aldex-type-no_treated_tissue_mc_instances.tsv")
+INSTANCES.TEST.WW_AW <- merge(
+                              TEST.WW_AW,
+                              INSTANCES.WW_AW,
+                              by = "Genus"
+                              )
+INSTANCES.TEST.WW_AW$effect <- round(
+                                     INSTANCES.TEST.WW_AW$effect,
+                                     digits = 3
+                                     )
+INSTANCES.TEST.WW_AW <- INSTANCES.TEST.WW_AW[,c(1,13:25)]
+
+TEST.WW_SP <- read_my_table("d1-aldex-type-no_ambient_water.tsv")
+INSTANCES.WW_SP <- read_my_table("d1-aldex-type-no_ambient_water_mc_instances.tsv")
+INSTANCES.TEST.WW_SP <- merge(
+                              TEST.WW_SP,
+                              INSTANCES.WW_SP,
+                              by = "Genus"
+                              )
+INSTANCES.TEST.WW_SP$effect <- round(
+                                     INSTANCES.TEST.WW_SP$effect,
+                                     digits = 3
+                                     )
+INSTANCES.TEST.WW_SP <- INSTANCES.TEST.WW_SP[,c(1,13:25)]
+
+TEST.SP_AW <- read_my_table("d1-aldex-type-no_wastewater.tsv")
+INSTANCES.SP_AW <- read_my_table("d1-aldex-type-no_wastewater_mc_instances.tsv")
+INSTANCES.TEST.SP_AW <- merge(
+                              TEST.SP_AW,
+                              INSTANCES.SP_AW,
+                              by = "Genus"
+                              )
+INSTANCES.TEST.SP_AW$effect <- round(
+                                     INSTANCES.TEST.SP_AW$effect,
+                                     digits = 3
+                                     )
+INSTANCES.TEST.SP_AW <- INSTANCES.TEST.SP_AW[,c(1,13:25)]
+
+ALL.INSTANCES <- do.call(
+                         "rbind",
+                         list(
+                              INSTANCES.TEST.WW_AW,
+                              INSTANCES.TEST.WW_SP,
+                              INSTANCES.TEST.SP_AW
+                              )
+                         )
+EC.GENERA <- c(
+               "Agrobacterium",
+               "Asticcacaulis",
+               "Bacillus",
+               "Bradyrhizobium",
+               "Burkholderia",
+               "Dokdonella",
+               "Paenibacillus",
+               "Pseudomonas",
+               "Rhodanobacter",
+               "Spirosoma",
+               "Streptomyces"
+               )
+EC.GENERA.INSTANCES <- filter(
+                              ALL.INSTANCES,
+                              Genus %in% EC.GENERA
+                              )
+EC.GENERA.INFO <- merge(
+                        EC.GENERA.INSTANCES,
+                        TAX,
+                        by = "Genus"
+                        )
+EC.GENERA.INFO$type <- factor(
+                              EC.GENERA.INFO$type,
+                              levels = c(
+                                         "wastewater",
+                                         "ambient_water",
+                                         "treated_tissue"
+                                         )
+                              )
+type = c()
+genus = c()
+letter = c()
+for (GENUS in unique(EC.GENERA.INFO$Genus)){
+   GENUS.TABLE <- filter(
+                         EC.GENERA.INFO,
+                         Genus == GENUS
+                         )
+   TEST <- dunn.test(
+                     x = GENUS.TABLE$clr,
+                     g = GENUS.TABLE$type,
+                     kw = TRUE
+                     )
+   print(TEST)
+   CMLD <- cldList(
+                   P.adjusted ~ comparisons,
+                   data = TEST,
+                   threshold = 0.05
+                   )
+   print(CMLD)
+   type <- c(
+             type,
+             as.vector(CMLD$Group)
+             )
+   letter <- c(
+               letter,
+               as.vector(CMLD$Letter)
+               )
+   genus <- c(
+              genus,
+              rep(
+                  GENUS,
+                  length(CMLD$Group),
+                  )
+              )
+}
+CMLD <- data.frame(
+                   "Genus" = genus,
+                   "type" = type,
+                   "letter" = letter
+                   )
+                  
+
+#P_VALUES <- read_my_table("d1-aldex-sp_ec_genera_pvalues.tsv")
+#SEGMENTS <- read_my_table("d1-aldex-sp_ec_genera_segments.tsv")
+FILL <- c(
+          "wastewater" = "dodgerblue",
+          "ambient_water" = "orange3",
+          "treated_tissue" = "forestgreen"
+          )
+FACET.LABELS <- c(
+                  "Agrobacterium" = "Agrobacterium",
+                  "Asticcacaulis" = "Asticcacaulis",
+                  "Bacillus" = "Bacillus*",
+                  "Bradyrhizobium" = "Bradyrhizobium",
+                  "Burkholderia" = "Burkholderia*",
+                  "Dokdonella" = "Dokdonella",
+                  "Paenibacillus" = "Paenibacillus*",
+                  "Pseudomonas" = "Pseudomonas*",
+                  "Rhodanobacter" = "Rhodanobacter",
+                  "Spirosoma" = "Spirosoma",
+                  "Streptomyces" = "Streptomyces*"
+                  )
+PLOT <- ggplot(
+               EC.GENERA.INFO,
+               aes(
+                   type,
+                   clr,
+                   fill = type
+                   )
+               )
+CLR.PLOT <- PLOT +
+            geom_violin() + 
+            facet_grid(~Genus,
+                       labeller = labeller(Genus = FACET.LABELS)
+                       ) +
+            theme(
+                  axis.text.x = element_blank(),
+                  axis.title.x = element_blank(),
+                  axis.title.y = element_text(
+                                              face = "bold",
+                                              size = 24
+                                              ),
+                  axis.text.y = element_text(
+                                             color = "black",
+                                             size = 20
+                                             ),
+                  axis.line.x = element_line(
+                                             color = "black",
+                                             size = 1
+                                             ),
+                  axis.ticks = element_blank(),
+                  axis.line.y = element_line(color = "black"),
+                  strip.background = element_rect(
+                                                  fill = NA,
+                                                  colour = "black",
+                                                  size = 0.5,
+                                                  linetype = "solid"
+                                                  ),
+                  strip.text = element_text(
+                                            face = "bold.italic",
+                                            color = "black",
+                                            size = 12
+                                            ),
+                  panel.background = element_blank(),
+                  legend.position = "bottom",
+                  legend.title = element_blank(),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 20
+                                             ),
+                  legend.key = element_blank(),
+                  ) +
+            scale_fill_manual(
+                              name = "Type",
+                              labels = c(
+                                         "Wastewater",
+                                         "Ambient Wastewater",
+                                         "WWDAB"
+                                         ),
+                              values = FILL
+                              ) +
+            labs(
+                 y = "CLR"
+                 ) +
+            geom_text(
+                      data = CMLD,
+                      size = 7,
+                      fontface = "bold",
+                      aes(
+                          type,
+                          20,
+                          group = Genus,
+                          label = letter
+                          )
+                      )
+CLR.PLOT
+ggsave(
+       "d1-aldex-sp_ec_genera_plot.pdf",
+       CLR.PLOT,
+       device = "pdf",
+       dpi = 300
+       )
+                          
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# time differential analysis - pairwise
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+TYPES <- c(
+           "ambient_water",
+           "treated_tissue"
+           )
+for (TYPE in TYPES){
+   print(TYPE)
+   META.TYPE <- filter(
+                       META.FILTERED,
+                       type == TYPE
+                       )
+   TIME <- as.vector(
+                     META.TYPE$time
+                     )
+   SORTED.TABLE <- sort_table_samples(
+                                      META.TYPE,
+                                      COUNT.TABLE
+                                      )
+   GENUS.TABLE <- create_genus_count_table(
+                                           SORTED.TABLE,
+                                           "ducitaplate1-ggBLAST_taxonomy.tsv",
+                                           )
+   CLR <- aldex.clr(
+                    GENUS.TABLE,
+                    TIME,
+                    mc.samples = 128,
+                    denom = "all",
+                    verbose = T,
+                    )
+   STATS <- aldex.ttest(
+                        CLR,
+                        verbose = T
+                        )
+   EFFECT <- aldex.effect(
+                          CLR,
+                          TIME,
+                          verbose = T 
+                          )
+   OUT <- combine_aldex_output(
+                               STATS,
+                               EFFECT
+                               )
+   write.table(
+               OUT,
+               sprintf(
+                       "d1-aldex-time-%s.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+
+   # get mc instances
+   INSTANCES <- getMonteCarloInstances(CLR)
+   INSTANCE.DF <- as.data.frame(INSTANCES)
+   INSTANCE.DF$Genus <- rownames(INSTANCE.DF)
+   INSTANCE.MELT <- melt(
+                         INSTANCE.DF,
+                         variable.name = "sample_id",
+                         value.name = "clr"
+                         )
+   INSTANCE.SEPARATE <- separate(
+                                 INSTANCE.MELT,
+                                 sample_id,
+                                 into = c(
+                                          "sample_id",
+                                          "instance"
+                                          ),
+                                 sep ="\\."
+                                 )
+   print(colnames(INSTANCE.SEPARATE))
+   INSTANCE.INFO <- merge(
+                          META.TYPE,
+                          INSTANCE.SEPARATE,
+                          by = "sample_id"
+                          )
+   print(colnames(INSTANCE.INFO))
+   write.table(
+               INSTANCE.INFO,
+               sprintf(
+                       "d1-aldex-time-%s_mc_instances.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+}
+
+META.TYPE <- filter(
+                    META.FILTERED,
+                    type == "wastewater"
+                    )
+TIME <- as.vector(
+                  META.TYPE$time
+                  )
+SORTED.TABLE <- sort_table_samples(
+                                   META.TYPE,
+                                   COUNT.TABLE
+                                   )
+GENUS.TABLE <- create_genus_count_table(
+                                        SORTED.TABLE,
+                                        "ducitaplate1-ggBLAST_taxonomy.tsv",
+                                        )
+CLR <- aldex.clr(
+                 GENUS.TABLE,
+                 TIME,
+                 mc.samples = 128,
+                 denom = "all",
+                 verbose = T,
+                 )
+STATS <- aldex.ttest(
+                     CLR,
+                     verbose = T
+                     )
+EFFECT <- aldex.effect(
+                       CLR,
+                       TIME,
+                       verbose = T 
+                       )
+OUT <- combine_aldex_output(
+                            STATS,
+                            EFFECT
+                            )
+write.table(
+            OUT,
+            "d1-aldex-time-wastewater.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+

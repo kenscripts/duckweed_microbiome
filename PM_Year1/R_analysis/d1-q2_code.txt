@@ -1,0 +1,39 @@
+###############################################################################
+Alpha Diversity Using q2 Vectors
+###############################################################################
+
+for VECTOR in $(ls *vector.qza);
+do 
+echo $VECTOR;
+NAME=${VECTOR::-4};
+echo $NAME;
+qiime tools export $VECTOR --output-dir exports/;
+mv exports/alpha-diversity.tsv exports/d1-$NAME.tsv;
+ls exports/*vector.tsv;
+done
+
+###############################################################################
+Beta Diversity Using q2 Distances
+###############################################################################
+
+for DISTANCE in $(ls *_distance_matrix.qza);
+do
+echo $DISTANCE;
+NAME=${DISTANCE::-4};
+echo $NAME;
+qiime tools export $DISTANCE --output-dir exports/;
+mv exports/distance-matrix.tsv exports/d1-$NAME.tsv;
+ls exports/*distance_matrix.tsv;
+done
+
+###############################################################################
+Taxonomic Analysis Using q2 taxa barplot
+###############################################################################
+
+qiime taxa barplot \
+--i-table ducitaplate1-dada2-table-filtered.qza \
+--i-taxonomy ducitaplate1-ggBLAST-taxonomy.qza \
+--m-metadata-file ducitaplate1-metadata.txt \
+--o-visualization d1-taxabarplot.qzv
+
+

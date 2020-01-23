@@ -1,0 +1,182 @@
+# required packages and scripts for analysis of data
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(plyr)
+library(reshape)
+library(vegan)
+library(ape)
+library(GUniFrac)
+library(gridExtra)
+library(cowplot)
+library(RColorBrewer)
+library(wesanderson)
+library(VennDiagram)
+setwd("~/Downloads/duckweed_microbiome/PM_study/")
+source("~/Downloads/duckweed_microbiome/q2_analysis_using_R.R")
+
+DISTANCES <- c(
+               #"generalized_unifrac_distance_matrix.tsv",
+               "bray_curtis_distance_matrix.tsv",
+               "unweighted_unifrac_distance_matrix.tsv",
+               "weighted_unifrac_distance_matrix.tsv"
+               )
+for (DISTANCE in DISTANCES){
+   # prep PCOA data
+   PCOA.OBJECT <- q2distance_2_pcoa(
+                                    DISTANCE,
+                                    "ducitaplates1_4_5-metadata.txt"
+                                    )
+   PCOA.META <- PCOA.OBJECT$points
+   PCOA.VARIANCE <- PCOA.OBJECT$variance
+   print(str(PCOA.META))
+   PCOA.META$time <- as.factor(
+                               PCOA.META$time
+                               )
+   PCOA.META$type <- factor(
+                            PCOA.META$type,
+                            levels = c(
+                                       "wastewater",
+                                       "ambient_water",
+                                       "treated_tissue"
+                                       )
+                            )
+   SHAPES <- c(
+               "wastewater" = 21,
+               "ambient_water" = 24,
+               "treated_tissue" = 22
+               )
+   PLOT <- ggplot(
+                  PCOA.META,
+                  aes(x,
+                      y,
+                      fill = plate,
+                      shape = type,
+                      color = time
+                      )
+                  )
+   NAME <- strsplit(
+                    DISTANCE,
+                    "_"
+                    )[[1]]            
+   OUTPUT <- paste0(
+                    NAME[1],
+                    "_",
+                    NAME[2],
+                    "_pcoa.tiff"
+                    )
+   PCOA <- PLOT +
+           geom_point(
+                      size = 5,
+                      stroke = 1
+                      ) +
+           scale_shape_manual(
+                              name = "Type",
+                              labels = c(
+                                         "Wastewater",
+                                         "Ambient Water",
+                                         "Duckweed"
+                                         ),
+                              values  = SHAPES
+                              ) +
+           theme(
+                 axis.line = element_line(
+                                          color = "black",
+                                          size = 5
+                                          ),
+                 axis.title = element_text(
+                                           size = 12,
+                                           face = "bold"
+                                           ),
+                 axis.text = element_text(
+                                          face = "bold",
+                                          color = "black",
+                                          size = 10
+                                          ),
+                 legend.key = element_blank(),
+                 legend.title = element_text(
+                                             face = "bold",
+                                             size = 10
+                                             ),
+                 legend.text = element_text(
+                                            face = "bold",
+                                            size = 8
+                                            ),
+                 panel.background = element_blank()
+           ) +
+           xlab(
+                paste("PCoA 1 (",PCOA.VARIANCE[1],"%)")
+                ) +
+           ylab(
+                paste("PCoA 2 (",PCOA.VARIANCE[2],"%)")
+                ) 
+   ggsave(
+          sprintf(
+                  "%s",
+                  OUTPUT
+                  ),
+          PCOA,
+          units = "in",
+          width = 8,
+          height = 5
+          )
+}
+   #PCOA.META$bacteria <- gsub(
+   #                           "wastewater",
+   #                           "none",
+   #                           PCOA.META$bacteria
+   #                           )
+   #PCOA.META$bacteria <- factor( 
+   #                             PCOA.META$bacteria,
+   #                             levels = c(
+   #                                        "none",
+   #                                        "MicrobacteriumRU1A"
+   #                                        )
+   #                             )
+
+   # plot code
+   #FILL <- c(
+   #          "0" = "lightblue",
+   #          "5" = "dodgerblue",
+   #          "10" = "navy"
+   #          )
+   #COLOR <- c(
+   #           "none" = "black",
+   #           "MicrobacteriumRU1A" = "gold"
+   #           )
+           #scale_fill_manual(
+           #                  name = "Time",
+           #                  values = FILL
+           #                  ) + 
+           #scale_color_manual(
+           #                   name = "Bacteria",
+           #                   labels = c(
+           #                              "None",
+           #                              "Microbacterium sp. RU1A"
+           #                              ),
+           #                   values = COLOR
+           #                   ) +
+           #guides(
+           #       shape = guide_legend(
+           #                            order = 1,
+           #                            override.aes = list(size = 3),
+           #                            ),
+           #       fill = guide_legend(
+           #                           order = 2,
+           #                           override.aes = list(
+           #                                               size = 3,
+           #                                               color = c(
+           #                                                         "lightblue",
+           #                                                         "dodgerblue",
+           #                                                         "navy"
+           #                                                         )
+           #                                               )
+           #                           ),
+           #       color = guide_legend(
+           #                            order = 3,
+           #                            override.aes = list(
+           #                                                size = 3,
+           #                                                shape = 22
+           #                                                )
+           #                            )
+           #       )

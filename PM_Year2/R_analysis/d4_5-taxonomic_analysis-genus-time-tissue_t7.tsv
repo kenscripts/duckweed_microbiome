@@ -1,0 +1,20 @@
+"Genus"	"Phylum"	"Family"	"Mean_RA"	"Median_RA"	"Sample_Percent"	"OTU_Count"	"Mean_RA_Rank"
+"Caedibacter"	"Proteobacteria"	"Francisellaceae"	0.964190723078385	0.200528333781756	50	4	14
+"Candidatus Amoebophilus"	"Bacteroidetes"	"[Amoebophilaceae]"	0.00169576601142268	0.00169576601142268	16.6666666666667	1	102
+"Candidatus Protochlamydia"	"Chlamydiae"	"Parachlamydiaceae"	0.00245802915222575	0.00245802915222575	16.6666666666667	1	96
+"Cryocola"	"Actinobacteria"	"Microbacteriaceae"	0.00520233064412857	0.00520233064412857	16.6666666666667	1	90
+"Fimbriimonas"	"Armatimonadetes"	"[Fimbriimonadaceae]"	0.0360161352285824	0.0360161352285824	16.6666666666667	1	61
+"Hydrogenophilus"	"Proteobacteria"	"Rhodocyclaceae"	0.00169576601142268	0.00169576601142268	16.6666666666667	1	101
+"Inquilinus"	"Proteobacteria"	"Rhodospirillaceae"	0.00860310203279011	0.00430155101639505	16.6666666666667	2	80
+"Leadbetterella"	"Bacteroidetes"	"Cytophagaceae"	0.00902371170650635	0.00400179280317582	66.6666666666667	3	79
+"Legionella"	"Proteobacteria"	"Legionellaceae"	0.0106514596596449	0.00532572982982245	16.6666666666667	2	76
+"Luteolibacter"	"Verrucomicrobia"	"Verrucomicrobiaceae"	0.00501403121516691	0.00454570708473703	66.6666666666667	5	91
+"Pedosphaera"	"Verrucomicrobia"	"[Pedosphaeraceae]"	1.21578915895481	0.580504551450647	33.3333333333333	3	13
+"Phaeospirillum"	"Proteobacteria"	"Rhodospirillaceae"	0.00183009583866594	0.00125138434393047	50	3	98
+"Phycicoccus"	"Actinobacteria"	"Intrasporangiaceae"	0.0155675179640964	0.00778375898204819	16.6666666666667	2	71
+"Pirellula"	"Planctomycetes"	"Pirellulaceae"	0.00740367028621203	0.00400179280317582	50	2	82
+"Pontibacter"	"Bacteroidetes"	"Cytophagaceae"	0.000819343050741915	0.000819343050741915	16.6666666666667	1	105
+"Pseudanabaena"	"Cyanobacteria"	"Pseudanabaenaceae"	0.044755138789705	0.0186018544480163	50	5	57
+"SC3-56"	"Bacteroidetes"	"[Amoebophilaceae]"	0.00772205938920125	0.00772205938920125	33.3333333333333	2	81
+"Spirochaeta"	"Spirochaetes"	"Spirochaetaceae"	0.00360161352285824	0.00180080676142912	16.6666666666667	2	94
+"Sulfuritalea"	"Proteobacteria"	"Rhodocyclaceae"	0.00409671525370958	0.00409671525370958	16.6666666666667	1	93

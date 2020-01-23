@@ -1,0 +1,15 @@
+"sample_id"	"location"	"type"	"species"	"input"	"filtered"	"denoised"	"non-chimeric"	"no_unclassified"	"no_mitochondria_chloroplast"	">2_frequency"
+"CH_DT_A"	"Caldwell_House"	"rinsed_tissue"	"duckweed"	629594	538071	538071	344610	344212	4715	4715
+"CH_DT_B"	"Caldwell_House"	"rinsed_tissue"	"duckweed"	561768	481087	481087	304349	303772	5864	5864
+"CH_DT_C"	"Caldwell_House"	"rinsed_tissue"	"none"	497410	421811	421811	271427	271075	3664	3664
+"CH_RS_B"	"Caldwell_House"	"rinse_solution"	"none"	658488	545371	545371	303356	302111	227512	227512
+"CH_W_A"	"Caldwell_House"	"ambient_water"	"none"	853946	701569	701569	332023	330823	326188	326188
+"CH_W_B"	"Caldwell_House"	"ambient_water"	"none"	873978	710557	710557	342564	341649	336457	336457
+"CH_W_C"	"Caldwell_House"	"ambient_water"	"none"	847312	700825	700825	328760	327863	322347	322347
+"CH_W_D"	"Caldwell_House"	"ambient_water"	"none"	711250	591699	591699	296394	295756	287800	287800
+"PP_CT_D"	"Passion_Puddle"	"rinsed_tissue"	"L_minor/japonica"	620880	526466	526466	355098	355089	8029	8029
+"PP_DT_B"	"Passion_Puddle"	"rinsed_tissue"	"L_minor/japonica"	545338	465608	465608	313931	313871	12505	12505
+"PP_W_A"	"Passion_Puddle"	"ambient_water"	"none"	373602	298330	298330	142395	140008	131305	131305
+"PP_W_B"	"Passion_Puddle"	"ambient_water"	"none"	996188	825594	825594	380782	374709	350924	350924
+"PP_W_C"	"Passion_Puddle"	"ambient_water"	"none"	842932	688270	688270	316190	311477	295948	295948
+"PP_W_D"	"Passion_Puddle"	"ambient_water"	"none"	658678	542047	542047	256343	251261	233284	233284

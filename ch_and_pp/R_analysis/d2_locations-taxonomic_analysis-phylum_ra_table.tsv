@@ -1,0 +1,75 @@
+"sample_id"	"location"	"type"	"species"	"tax"	"RA"
+"CH_W_A"	"Caldwell_House"	"AW"	"none"	"Actinobacteria"	28.5405962205844
+"CH_W_A"	"Caldwell_House"	"AW"	"none"	"Bacteroidetes"	11.9952297448097
+"CH_W_A"	"Caldwell_House"	"AW"	"none"	"Chlorobi"	6.85340969011736
+"CH_W_A"	"Caldwell_House"	"AW"	"none"	"Cyanobacteria"	1.07545341950041
+"CH_W_A"	"Caldwell_House"	"AW"	"none"	"Proteobacteria"	49.5606827964241
+"CH_W_A"	"Caldwell_House"	"AW"	"none"	"low abundance (< 1% RA)"	1.9746281285639
+"CH_W_B"	"Caldwell_House"	"AW"	"none"	"Actinobacteria"	29.3318314078768
+"CH_W_B"	"Caldwell_House"	"AW"	"none"	"Bacteroidetes"	15.0236137158686
+"CH_W_B"	"Caldwell_House"	"AW"	"none"	"Chlorobi"	8.23195831859643
+"CH_W_B"	"Caldwell_House"	"AW"	"none"	"Proteobacteria"	44.1753329548798
+"CH_W_B"	"Caldwell_House"	"AW"	"none"	"low abundance (< 1% RA)"	3.23726360277836
+"CH_W_C"	"Caldwell_House"	"AW"	"none"	"Actinobacteria"	27.9506246374249
+"CH_W_C"	"Caldwell_House"	"AW"	"none"	"Bacteroidetes"	11.5527676696231
+"CH_W_C"	"Caldwell_House"	"AW"	"none"	"Chlorobi"	7.03186317850019
+"CH_W_C"	"Caldwell_House"	"AW"	"none"	"Cyanobacteria"	1.31814473222955
+"CH_W_C"	"Caldwell_House"	"AW"	"none"	"Proteobacteria"	50.0389331993163
+"CH_W_C"	"Caldwell_House"	"AW"	"none"	"low abundance (< 1% RA)"	2.107666582906
+"CH_W_D"	"Caldwell_House"	"AW"	"none"	"Actinobacteria"	28.8467685892981
+"CH_W_D"	"Caldwell_House"	"AW"	"none"	"Bacteroidetes"	16.1772063933287
+"CH_W_D"	"Caldwell_House"	"AW"	"none"	"Chlorobi"	7.83078526754691
+"CH_W_D"	"Caldwell_House"	"AW"	"none"	"Cyanobacteria"	1.34259902710215
+"CH_W_D"	"Caldwell_House"	"AW"	"none"	"Proteobacteria"	43.2738012508687
+"CH_W_D"	"Caldwell_House"	"AW"	"none"	"low abundance (< 1% RA)"	2.52883947185546
+"CH_DT_A"	"Caldwell_House"	"DAB"	"duckweed"	"Actinobacteria"	1.35737009544008
+"CH_DT_A"	"Caldwell_House"	"DAB"	"duckweed"	"Bacteroidetes"	7.78366914103924
+"CH_DT_A"	"Caldwell_House"	"DAB"	"duckweed"	"Planctomycetes"	1.67550371155885
+"CH_DT_A"	"Caldwell_House"	"DAB"	"duckweed"	"Proteobacteria"	88.186638388123
+"CH_DT_A"	"Caldwell_House"	"DAB"	"duckweed"	"low abundance (< 1% RA)"	0.996818663838812
+"CH_DT_B"	"Caldwell_House"	"DAB"	"duckweed"	"Bacteroidetes"	5.76398362892224
+"CH_DT_B"	"Caldwell_House"	"DAB"	"duckweed"	"Planctomycetes"	1.38130968622101
+"CH_DT_B"	"Caldwell_House"	"DAB"	"duckweed"	"Proteobacteria"	90.4672578444748
+"CH_DT_B"	"Caldwell_House"	"DAB"	"duckweed"	"low abundance (< 1% RA)"	2.38744884038199
+"CH_DT_C"	"Caldwell_House"	"DAB"	"none"	"Actinobacteria"	2.01965065502183
+"CH_DT_C"	"Caldwell_House"	"DAB"	"none"	"Firmicutes"	4.61244541484716
+"CH_DT_C"	"Caldwell_House"	"DAB"	"none"	"Planctomycetes"	24.1812227074236
+"CH_DT_C"	"Caldwell_House"	"DAB"	"none"	"Proteobacteria"	67.5218340611354
+"CH_DT_C"	"Caldwell_House"	"DAB"	"none"	"low abundance (< 1% RA)"	1.66484716157205
+"PP_W_A"	"Passion_Puddle"	"AW"	"none"	"Actinobacteria"	24.7865656296409
+"PP_W_A"	"Passion_Puddle"	"AW"	"none"	"Bacteroidetes"	21.0715509691177
+"PP_W_A"	"Passion_Puddle"	"AW"	"none"	"Cyanobacteria"	1.67168043867332
+"PP_W_A"	"Passion_Puddle"	"AW"	"none"	"Firmicutes"	1.3739004607593
+"PP_W_A"	"Passion_Puddle"	"AW"	"none"	"Proteobacteria"	45.272457256007
+"PP_W_A"	"Passion_Puddle"	"AW"	"none"	"Verrucomicrobia"	2.88488633334603
+"PP_W_A"	"Passion_Puddle"	"AW"	"none"	"low abundance (< 1% RA)"	2.93895891245573
+"PP_W_B"	"Passion_Puddle"	"AW"	"none"	"Actinobacteria"	26.5929375021372
+"PP_W_B"	"Passion_Puddle"	"AW"	"none"	"Bacteroidetes"	19.4036315555505
+"PP_W_B"	"Passion_Puddle"	"AW"	"none"	"Cyanobacteria"	1.38747991017998
+"PP_W_B"	"Passion_Puddle"	"AW"	"none"	"Firmicutes"	1.60034651377506
+"PP_W_B"	"Passion_Puddle"	"AW"	"none"	"Proteobacteria"	45.7429528900845
+"PP_W_B"	"Passion_Puddle"	"AW"	"none"	"Verrucomicrobia"	1.88701827176255
+"PP_W_B"	"Passion_Puddle"	"AW"	"none"	"low abundance (< 1% RA)"	3.38563335651024
+"PP_W_C"	"Passion_Puddle"	"AW"	"none"	"Actinobacteria"	25.2652493005528
+"PP_W_C"	"Passion_Puddle"	"AW"	"none"	"Bacteroidetes"	20.7114087609986
+"PP_W_C"	"Passion_Puddle"	"AW"	"none"	"Cyanobacteria"	1.37321421330774
+"PP_W_C"	"Passion_Puddle"	"AW"	"none"	"Firmicutes"	1.49282982145512
+"PP_W_C"	"Passion_Puddle"	"AW"	"none"	"Proteobacteria"	45.5725330125563
+"PP_W_C"	"Passion_Puddle"	"AW"	"none"	"Verrucomicrobia"	2.15172935786016
+"PP_W_C"	"Passion_Puddle"	"AW"	"none"	"low abundance (< 1% RA)"	3.43303553326936
+"PP_W_D"	"Passion_Puddle"	"AW"	"none"	"Actinobacteria"	23.5562661819928
+"PP_W_D"	"Passion_Puddle"	"AW"	"none"	"Bacteroidetes"	17.5760017832342
+"PP_W_D"	"Passion_Puddle"	"AW"	"none"	"Cyanobacteria"	1.57404708424067
+"PP_W_D"	"Passion_Puddle"	"AW"	"none"	"Firmicutes"	2.14931156873167
+"PP_W_D"	"Passion_Puddle"	"AW"	"none"	"Proteobacteria"	49.583340477701
+"PP_W_D"	"Passion_Puddle"	"AW"	"none"	"Verrucomicrobia"	2.04771866051679
+"PP_W_D"	"Passion_Puddle"	"AW"	"none"	"low abundance (< 1% RA)"	3.51331424358293
+"PP_DT_B"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"Bacteroidetes"	5.06997201119552
+"PP_DT_B"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"Firmicutes"	4.50219912035186
+"PP_DT_B"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"Proteobacteria"	88.5405837664934
+"PP_DT_B"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"low abundance (< 1% RA)"	1.88724510195922
+"PP_CT_D"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"Actinobacteria"	1.05866234898493
+"PP_CT_D"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"Bacteroidetes"	2.47851538174119
+"PP_CT_D"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"Firmicutes"	3.56208743305517
+"PP_CT_D"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"Proteobacteria"	92.4274504919666
+"PP_CT_D"	"Passion_Puddle"	"DAB"	"L_minor/japonica"	"low abundance (< 1% RA)"	0.473284344252086

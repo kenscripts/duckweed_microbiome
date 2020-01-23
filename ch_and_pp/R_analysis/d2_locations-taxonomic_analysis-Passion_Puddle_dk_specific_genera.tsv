@@ -1,0 +1,10 @@
+"Genus"	"Phylum"	"Family"	"Mean_RA"	"Median_RA"	"Sample_Percent"	"OTU_Count"	"Mean_RA_Rank"
+"Bacillus"	"Firmicutes"	"Bacillaceae"	1.05422372089899	0.4359197907585	100	4	17
+"Burkholderia"	"Proteobacteria"	"Burkholderiaceae"	0.0479808076769292	0.0479808076769292	50	1	49
+"Candidatus Aquiluna"	"Actinobacteria"	"Microbacteriaceae"	0.0799680127948821	0.0799680127948821	50	1	48
+"Hymenobacter"	"Bacteroidetes"	"Cytophagaceae"	0.107106740066459	0.0639744102359056	100	2	44
+"Lewinella"	"Bacteroidetes"	"Saprospiraceae"	0.108026038557052	0.108026038557052	100	2	43
+"Methylotenera"	"Proteobacteria"	"Methylophilaceae"	0.459104438931863	0.286461576784157	100	3	23
+"Pleomorphomonas"	"Proteobacteria"	"Methylocystaceae"	0.3487358326068	0.3487358326068	50	1	26
+"Thauera"	"Proteobacteria"	"Rhodocyclaceae"	0.759696121551379	0.759696121551379	50	1	21
+"Veillonella"	"Firmicutes"	"Veillonellaceae"	0.0799680127948821	0.0799680127948821	50	1	46

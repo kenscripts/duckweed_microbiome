@@ -1,0 +1,142 @@
+###############################################################################
+# downloaded libraries
+###############################################################################
+# https://prophage.blogspot.com/2017/05/a-primer-on-downloading-sequencing-data.html?showComment=1564670161339#c5488767231804838235
+for FILE in $ls(cat agler_et_al-libraries.txt);
+do
+wget "http://api.metagenomics.anl.gov/1/download/$FILE?file=050.1" -O $FILE.fa;
+done 
+
+###############################################################################
+# activated environment
+###############################################################################
+
+source activate qiime2-2018.6
+
+###############################################################################
+# imported fastq files into q2
+###############################################################################
+
+nohup \
+qiime tools import \
+--type 'SampleData[SequencesWithQuality]' \
+--input-path agler_et_al-manifest.csv \
+--source-format SingleEndFastqManifestPhred33 \
+--output-path agler_et_al-joined_demux.qza \
+&
+
+qiime demux summarize \
+--i-data agler_et_al-joined_demux.qza \
+--o-visualization agler_et_al-joined_demux.qzv 
+
+###############################################################################
+#			feature table construction 
+###############################################################################
+
+# constructed table
+nohup \
+qiime dada2 denoise-single \
+--i-demultiplexed-seqs agler_et_al-joined_demux.qza \
+--p-trim-left 5 \
+--p-trunc-len 150 \
+--o-representative-sequences agler_et_al-rep_seqs.qza \
+--o-table agler_et_al-table.qza \
+--o-denoising-stats agler_et_al-stats.qza \
+& 
+
+###############################################################################
+#			created classifier
+###############################################################################
+
+# used artifacts created from ducitaplate2 workflow
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+qiime tools import \
+--type 'FeatureData[Sequence]' \
+--input-path gg-99_otus.fasta \
+--output-path gg-99_otus.qza \
+&
+# created taxnomy artifact 
+qiime tools import \
+--type 'FeatureData[Taxonomy] ' \
+--source-format HeaderlessTSVTaxonomyFormat \
+--input-path gg-99_otu_taxonomy.txt \
+--output-path gg-ref-taxonomy.qza \
+&
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# created reference read artifact
+nohup \
+qiime feature-classifier extract-reads \
+--i-sequences taxonomy_files/gg-99_otus.qza \
+--p-f-primer AACMGGATTAGATACCCKG \
+--p-r-primer ACGTCATCCCCACCTTCC \
+--o-reads agler_et_al-ref_seqs.qza \
+&
+
+# created classifier
+nohup
+qiime feature-classifier classify-consensus-blast \
+--i-query agler_et_al-rep_seqs.qza \
+--i-reference-reads agler_et_al-ref_seqs.qza \
+--i-reference-taxonomy taxonomy_files/gg-ref-taxonomy.qza \
+--o-classification agler_et_al-ggBLAST_classifier.qza \
+&
+
+###############################################################################
+#			feature table filtering
+###############################################################################
+
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime feature-table summarize \
+--i-table agler_et_al-table.qza \
+--o-visualization agler_et_al-table.qzv
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table agler_et_al-table.qza \
+--i-taxonomy agler_et_al-ggBLAST_classifier.qza \
+--p-include p_ \
+--o-filtered-table agler_et_al-classified_table.qza 
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime feature-table summarize \
+--i-table agler_et_al-classified_table.qza \
+--o-visualization agler_et_al-classified_table.qzv
+
+# filtered out chloroplast and mitochondria sequences
+qiime taxa filter-table \
+--i-table agler_et_al-classified_table.qza \
+--i-taxonomy agler_et_al-ggBLAST_classifier.qza \
+--p-exclude mitchondria,chloroplast \
+--o-filtered-table agler_et_al-classified_no_chloroplast_table.qza
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime feature-table summarize \
+--i-table agler_et_al-classified_no_chloroplast_table.qza \
+--o-visualization agler_et_al-classified_no_chloroplast_table.qzv
+
+# filtered out features with a frequency of 1
+qiime feature-table filter-features \
+--i-table agler_et_al-classified_no_chloroplast_table.qza \
+--p-min-frequency 1 \
+--o-filtered-table agler_et_al-filtered_table.qza
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime feature-table summarize \
+--i-table agler_et_al-filtered_table.qza \
+--o-visualization agler_et_al-filtered_table.qzv
+
+# filter out archaea sequences
+qiime taxa filter-table \
+--i-table agler_et_al-filtered_table.qza \
+--i-taxonomy agler_et_al-ggBLAST_classifier.qza \
+--p-include k__Bacteria \
+--o-filtered-table agler_et_al-working_table.qza
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime feature-table summarize \
+--i-table agler_et_al-working_table.qza \
+--o-visualization agler_et_al-working_table.qzv
+
+# created agler_et_al-stats csv file from visualizations

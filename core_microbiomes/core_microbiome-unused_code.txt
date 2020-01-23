@@ -1,0 +1,263 @@
+### testing
+GENERA <- unique(TABLE.TT$Genus)
+GENUS.LIST <- c()
+PVALUES <- c()
+INDEX <- 1
+for (GENUS in GENERA){
+   GENUS.TABLE <- filter(
+                         TABLE.TT,
+                         Genus == GENUS
+                         )
+   if (length(unique(GENUS.TABLE$location)) > 1){
+      KW <- kruskal.test(
+                         clr~location,
+                         data = GENUS.TABLE
+                         )
+      GENUS.LIST[[INDEX]] <- c(GENUS)
+      PVALUES[[INDEX]] <- c(KW$p.value)
+      INDEX <- INDEX + 1
+   }
+}
+KW.DF <- data.frame(GENUS.LIST,PVALUES)
+
+###############################################################################
+# Conserved And Variable Microbiota RA
+###############################################################################
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# generate TT Table
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# calculate RA for each plate
+# remove unknown genus, time 0's
+# select common columns
+# create genus table for each plate
+
+# plate 1
+PLATE1.RA <- calculateRA_4_q2table("ducitaplate1-table.tsv")
+PLATE1.RA.META <- addtax_addmeta(
+                                 PLATE1.RA,
+                                 "ducitaplate1-ggBLAST_taxonomy.tsv",
+                                 "ducitaplate1-metadata.tsv",
+                                 sep = TRUE,
+                                 value = "RA"
+                                 )
+PLATE1.FILTERED <- filter(
+                          PLATE1.RA.META,
+                          time != 0
+                          )
+PLATE1.TABLE <- select(
+                       PLATE1.FILTERED,
+                       sample_id,
+                       Phylum,
+                       Family,
+                       Genus,
+                       tissue,
+                       type,
+                       RA
+                       )
+colnames(PLATE1.TABLE)[5:6] <- c(
+                                 "host_species",
+                                 "sample_type"
+                                 )
+PLATE1.GENUS <- ddply(
+                      PLATE1.TABLE,
+                      ~sample_id+Phylum+Family+Genus+host_species+sample_type,
+                      summarise,
+                      RA = sum(RA)
+                      )
+PLATE1.GENUS$location <- rep(
+                             "PM_year1",
+                             nrow(PLATE1.GENUS)
+                             )
+
+CH_PP.RA <- calculateRA_4_q2table("ch_pp-filtered_table.tsv")
+CH_PP.RA.META <- addtax_addmeta(
+                                CH_PP.RA,
+	                        "ducitaplate2-ggBLAST_taxonomy.tsv",
+	               	        "ducitaplate2-metadata.tsv",
+                                sep = TRUE,
+                                value = "RA"
+                                )
+CH_PP.TABLE <- select(
+                      CH_PP.RA.META,
+                      sample_id,
+                      Phylum,
+                      Family,
+                      Genus,
+                      species,
+                      type,
+                      RA,
+                      location
+                      )
+colnames(CH_PP.TABLE)[5:6] <- c(
+                                "host_species",
+                                "sample_type"
+                                )
+CH_PP.GENUS <- ddply(
+                     CH_PP.TABLE,
+                     ~sample_id+Phylum+Family+Genus+host_species+sample_type+location,
+                     summarise,
+                     RA = sum(RA)
+                     )
+
+PLATES4_5.RA <- calculateRA_4_q2table("ducitaplates4_5-table.tsv")
+PLATES4_5.RA.META <- addtax_addmeta(
+                                    PLATES4_5.RA,
+                                    "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                                    "ducitaplates4_5-metadata.tsv",
+                                    sep = TRUE,
+                                    value = "RA"
+                                    )
+PLATES4_5.FILTERED <- filter(
+                             PLATES4_5.RA.META,
+                             time != 0
+                             )
+PLATES4_5.TABLE <- select(
+                          PLATES4_5.FILTERED,
+                          sample_id,
+                          Phylum,
+                          Family,
+                          Genus,
+                          tissue,
+                          type,
+                          RA
+                          )
+colnames(PLATES4_5.TABLE)[5:6] <- c(
+                                    "host_species",
+                                    "sample_type"
+                                    )
+PLATES4_5.GENUS <- ddply(
+                         PLATES4_5.TABLE,
+                         ~sample_id+Phylum+Family+Genus+host_species+sample_type,
+                         summarise,
+                         RA = sum(RA)
+                         )
+PLATES4_5.GENUS$location <- rep(
+                                "PM_year2",
+                                nrow(PLATES4_5.GENUS)
+                                )
+
+CHINA.RA <- calculateRA_4_q2table("china_microbiome-filtered_table.tsv")
+CHINA.RA.META <- addtax_addmeta(
+                                CHINA.RA,
+                                "china_microbiome-ggBLAST_taxonomy.tsv",
+                                "china_microbiome-duckweed_metadata.tsv",
+                                sep = TRUE,
+                                value = "RA"
+                                )
+CHINA.TABLE <- select(
+                      CHINA.RA.META,
+                      sample_id,
+                      Phylum,
+                      Family,
+                      Genus,
+                      species,
+                      type,
+                      RA,
+                      location
+                      )
+colnames(CHINA.TABLE)[5:6] <- c(
+                                "host_species",
+                                "sample_type"
+                                )
+CHINA.GENUS <- ddply(
+                     CHINA.TABLE,
+                     ~sample_id+Phylum+Family+Genus+host_species+sample_type+location,
+                     summarise,
+                     RA = sum(RA)
+                     )
+
+ALLTABLES<- do.call(
+                    "rbind",
+                    list(
+                         PLATE1.GENUS,
+                         CH_PP.GENUS,
+                         PLATES4_5.GENUS,
+                         CHINA.GENUS
+                         )
+                    )
+# get table for tissue otus
+SAMPLE_TYPES <- c(
+                  "treated_tissue",
+                  "rinsed_tissue",
+                  "ambient_water"
+                  )
+TABLE.TT <- filter(
+                   ALLTABLES,
+                   sample_type %in% SAMPLE_TYPES
+                   )
+
+# get table for tissue otus
+TABLE.TT <- filter(
+                   ALLTABLES,
+                   sample_type == "treated_tissue" | sample_type == "rinsed_tissue"
+                   )
+TABLE.TT <- filter(
+                   TABLE.TT,
+                   RA > 0
+                   )
+TABLE.TT$Genus <- gsub(
+                       "Candidatus Amoebophilus",
+                       "C. Amoebophilus",
+                       paste(TABLE.TT$Genus)
+                       )
+
+TABLE.TT$group <- sapply(
+                         TABLE.TT$Genus,
+                         function(x) if (x %in% CONSERVED.GENERA){
+                                     "conserved"
+                                     } else{
+                                     "variable"
+                                     }
+                         )
+PLOT <- ggplot(
+               TABLE.TT,
+      	       aes(
+                   sample_id,
+		   RA,
+		   fill = group
+                   )
+               )
+PLOT +
+geom_bar(
+         stat="identity",
+         color = "black",
+         width = 1
+         ) +
+theme(axis.title = element_text(
+                                size = 16,
+                                face = "bold"
+                                ),
+      axis.text.x = element_blank(),
+      axis.line.x = element_blank(),
+      axis.text.y = element_text(
+                                 face = "bold",
+                                 size = 10,
+                                 color = "black"
+                                 ),
+      legend.key = element_blank(),
+      legend.title = element_text(
+                                  face = "bold",
+                                  size = 14
+                                  ),
+      legend.text = element_text(
+                                 face = "bold",
+                                 size = 10
+                                 ),
+      strip.background = element_rect(
+                                      fill = NA,
+                                      color = "black"
+                                      ),
+      strip.text = element_text(
+                                face = "bold",
+                                color = "black",
+                                size = 10
+                                ),
+      panel.background = element_blank()
+      ) +
+facet_grid(
+           .~location,
+           space = "free_x",
+           scale = "free_x"
+           )

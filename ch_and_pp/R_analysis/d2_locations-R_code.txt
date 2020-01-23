@@ -1,0 +1,2355 @@
+library(ape)
+library(VennDiagram)
+library(ggplotify)
+library(ggpubr)
+library(cowplot)
+library(vegan)
+library(RColorBrewer)
+library(wesanderson)
+library(ggplot2)
+library(plyr)
+library(reshape2)
+library(dplyr)
+setwd("~/data/duckweed_microbiome/ch_and_pp/R_analysis/")
+source("~/data/duckweed_microbiome/q2_analysis_using_R.R")
+
+###############################################################################
+# Alpha Rarefaction Code
+###############################################################################
+
+# url: https://rdrr.io/rforge/vegan/man/rarefy.html
+# url: https://www.fromthebottomoftheheap.net/2015/04/16/drawing-rarefaction-curves-with-custom-colours/
+
+COUNT.TABLE <- read_my_table("ch_pp-filtered_table.tsv")
+RAREMAX <- min(
+               colSums(
+                       COUNT.TABLE[,-1]
+                       )
+               )
+
+RAREFY.OUT <- get_rarefy_out(
+                             COUNT.TABLE,
+                             subsampling = 1000
+                             )
+
+RAREFY.DF <- generate_rarefy_df(
+                                RAREFY.OUT,
+                                COUNT.TABLE
+                                )
+
+META.TABLE <- read_my_table("ducitaplate2-metadata.tsv")
+
+RAREFY.META <- merge(
+                     META.TABLE,
+                     RAREFY.DF,
+                     by = "sample_id"
+                     )
+RAREFY.META <- filter(
+                      RAREFY.META,
+                      type != "rinse_solution"
+                      )
+
+# d2_locations-rarefaction plot code
+RAREFY.PLOT <- ggplot(
+                      RAREFY.META,
+                      aes(
+                          sample_size,
+                          no_species,
+                          color = type,
+                          group = sample_id,
+                          )
+                      )
+
+options(scipen = 999)
+COLOR <- c(
+           "rinsed_tissue" = "forestgreen",
+           "ambient_water" = "orange3"
+           )
+LINES <- c(
+           "Caldwell_House" = 1,
+           "Passion_Puddle" = 3
+           )
+
+RAREFY.FIG <- RAREFY.PLOT +
+              geom_line(
+                        aes(
+                            linetype = location
+                            ),
+                        lwd = 1
+                        ) +
+              scale_color_manual(
+                                 name = "Type",
+                                 labels = c(
+                                            "Ambient Water",
+                                            "DAB"
+                                            ),
+                                 values = COLOR
+                                 ) +
+              scale_linetype_manual(
+                                    name = "Location",
+                                    labels = c(
+                                               "Caldwell House",
+                                               "Passion Puddle"
+                                               ),
+                                    values = LINES
+                                    ) +
+              scale_y_continuous(
+                                 expand = c(0,0),
+                                 limits = c(0,2200)
+                                 ) +
+              theme(
+                    axis.line = element_line(
+                                             color = "black",
+                                             size = 1
+                                             ),
+                    axis.title.y = element_text(
+                                                size = 24,
+                                                face = "bold"
+                                                ),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 20
+                                               ),
+                    axis.title.x = element_text(
+                                                size = 24,
+                                                face = "bold"
+                                                ),
+                    axis.text.x = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 20,
+                                               angle = 45,
+                                               hjust = 1,
+                                               vjust = 1
+                                               ),
+                    strip.background = element_blank(),
+                    legend.key = element_blank(),
+                    legend.title = element_text(
+                                                face = "bold",
+                                                size = 24
+                                                ),
+                    legend.text = element_text(
+                                               face = "bold",
+                                               size = 20
+                                               ),
+                    panel.background = element_blank()
+                    ) +
+              xlab("Sample Size") +
+              ylab("# of ASVs") +
+              geom_vline(xintercept = RAREMAX)
+ 
+ggsave(
+       "d2_locations-rarefaction_plot.pdf",
+       RAREFY.FIG,
+       device = "pdf"
+       ) 
+             
+###############################################################################
+# Alpha Diversity Using q2 Vectors
+###############################################################################
+
+VECTORS <- c(
+             "d2_locations-alpha_diversity-shannon_vector.tsv",
+             "d2_locations-alpha_diversity-evenness_vector.tsv",
+             "d2_locations-alpha_diversity-observed_otus_vector.tsv",
+             "d2_locations-alpha_diversity-faith_pd_vector.tsv"
+             )
+
+for (VECTOR in VECTORS){
+   VECTOR.PATH <- paste0(
+                         "../q2_analysis/",
+                         VECTOR
+                         )
+   VECTOR.DATA <- addmeta_2_q2vector(
+                                     VECTOR.PATH,
+                                     "ducitaplate2-metadata.tsv"
+                                     )
+   VECTOR.DATA <- filter(
+                         VECTOR.DATA,
+                         type != "rinse_solution"
+                         )
+   VECTOR.DATA$type <- factor(
+                              VECTOR.DATA$type,
+                              levels = c(
+                                         "ambient_water",
+                                         "rinsed_tissue"
+                                         )
+                              )
+   FILL <- c(
+             "Caldwell_House" = "seagreen3",
+             "Passion_Puddle" = "forestgreen"
+             )
+   IS.OTU.VECTOR <- grepl(
+                          "observed_otus",
+                          paste(VECTOR)
+                          )
+   if (IS.OTU.VECTOR){
+      YLAB.CAP <- "Observed ASVs"
+   } else {
+      YLAB <- colnames(VECTOR.DATA)[2]
+      YLAB.SEPARATE <- strsplit(
+                                YLAB,
+                                "_"
+                                )
+      YLAB.CAP <- sapply(
+                         YLAB.SEPARATE,
+                         function(WORD) paste(
+                                              toupper(
+                                                      substring(
+                                                                WORD,
+                                                                1,
+                                                                1
+                                                                )
+                                                      ),
+                                              substring(
+                                                        WORD,
+                                                        2
+                                                        ),
+                                              sep = "",
+                                              collapse = " "
+                                              )
+                         )
+   }
+   YLAB.MAX <- max(VECTOR.DATA[,2])
+   YLAB.LIMIT <- YLAB.MAX + YLAB.MAX/4
+   MY_COMPARISONS <- list(
+                          c("ambient_water","rinsed_tissue")
+                          )
+   VECTOR.PLOT <- ggplot(
+                         VECTOR.DATA,
+                         aes(
+                             type,
+                             VECTOR.DATA[,2],
+                             fill = location
+                             )
+                         )
+   NAME.INDEX <- gregexpr(
+                          pattern = "vector.tsv",
+                          VECTOR
+                          )[[1]][[1]]
+   NAME <- substr(
+                  VECTOR,
+                  0,
+                  NAME.INDEX-2
+                  )
+   OUTPUT <- sprintf(
+                     "%s-plot.pdf",
+                     NAME
+                     )
+   pdf(OUTPUT)
+   PLOT <- VECTOR.PLOT +
+           geom_jitter(
+                       width = 0.1,
+                       size = 3,
+                       shape = 21,
+                       stroke = 1,
+                       aes(fill=location)
+                       ) +
+           theme(
+                 axis.line = element_line(
+                                          color = "black",
+                                          size = 1
+                                          ),
+                 axis.title.y = element_text(
+                                             size = 20,
+                                             face = "bold"
+                                             ),
+                 axis.text.y = element_text(
+                                            face = "bold",
+                                            color = "black",
+                                            size = 16
+                                            ),
+                 axis.title.x = element_blank(),
+                 axis.text.x = element_text(
+                                            face = "bold",
+                                            color = "black",
+                                            size = 16,
+                                            angle = 45,
+                                            hjust = 1,
+                                            vjust = 1
+                                            ),
+                   strip.background = element_blank(),
+                 legend.key = element_blank(),
+                 legend.title = element_text(
+                                             face = "bold",
+                                             size = 20
+                                             ),
+                 legend.text = element_text(
+                                            face = "bold",
+                                            size = 16
+                                            ),
+                 panel.background = element_blank()
+                 ) +
+           ylab(YLAB.CAP) +
+           scale_y_continuous(
+                              expand = c(0,0),
+                              limits = c(0,YLAB.LIMIT)
+                              ) +
+           labs("Location") +
+           scale_fill_manual(
+                             name = "Location",
+                             labels = c(
+                                        "Caldwell House",
+                                        "Passion Puddle"
+                                        ),
+                             values = FILL
+                             ) +
+           scale_x_discrete(
+                            labels = c(
+                                       "Ambient Water",
+                                       "DAB"
+                                       )
+                            ) +
+           guides(fill = guide_legend(override.aes = list(color = c(
+                                                                    "seagreen3",
+                                                                    "forestgreen"
+                                                                    )
+                                                          )
+                                      )
+                  ) +
+           stat_compare_means(
+                              comparisons = MY_COMPARISONS,
+                              method = "t.test",
+                              size = 5,
+                              label = "p.signif",
+                              label.y = c(
+                                          YLAB.MAX + (YLAB.MAX/10),
+                                          YLAB.MAX + (YLAB.MAX/5)
+                                          ),
+                              hide.ns = TRUE 
+                              ) 
+   print(PLOT)
+   dev.off()
+}
+
+
+# statistics 
+ASV.VECTOR <- addmeta_2_q2vector(
+                                 "d2_locations-observed_otus_vector.tsv",
+                                 "ducitaplate2-metadata.tsv"
+                                 )
+ASV.VECTOR <- filter(
+                     ASV.VECTOR,
+                     type != "rinse_solution"
+                     )
+ASV.VECTOR$type <- factor(
+                          ASV.VECTOR$type,
+                          levels = c(
+                                     "ambient_water",
+                                     "rinsed_tissue"
+                                     )
+                          )
+with(
+     ASV.VECTOR,
+     shapiro.test(
+                  observed_otus[type == "ambient_water"]
+                  )
+     )
+with(
+     ASV.VECTOR,
+     shapiro.test(
+                  observed_otus[type == "rinsed_tissue"]
+                  )
+     )
+t.test(
+       observed_otus~type,
+       ASV.VECTOR
+       )
+compare_means(
+              observed_otus~type,
+              ASV.VECTOR,
+              method="t.test"
+              )
+
+
+FAITH.VECTOR <- addmeta_2_q2vector(
+                                   "d2_locations-faith_pd_vector.tsv",
+                                   "ducitaplate2-metadata.tsv"
+                                   )
+FAITH.VECTOR <- filter(
+                       FAITH.VECTOR,
+                       type != "rinse_solution"
+                       )
+FAITH.VECTOR$type <- factor(
+                            FAITH.VECTOR$type,
+                            levels = c(
+                                       "ambient_water",
+                                       "rinsed_tissue"
+                                       )
+                            )
+with(
+     FAITH.VECTOR,
+     shapiro.test(
+                  faith_pd[type == "ambient_water"]
+                  )
+     )
+with(
+     FAITH.VECTOR,
+     shapiro.test(
+                  faith_pd[type == "rinsed_tissue"]
+                  )
+     )
+wilcox.test(
+            faith_pd~type,
+            FAITH.VECTOR
+            )
+compare_means(
+              faith_pd~type,
+              FAITH.VECTOR,
+              method="wilcox.test"
+              )
+             
+###############################################################################
+# Beta Diversity Using Q2 Distance Matrix
+###############################################################################
+
+RAREFY.TABLE <- read_my_table(
+                              "ch_pp-rarefied_table.tsv",
+                              rows = 1
+                              )
+RAREFY.TREE <- read.tree(
+                         "ch_pp-tree_rooted.nwk"
+                         )
+
+UNIFRACS <- GUniFrac(
+                     t(RAREFY.TABLE),
+                     RAREFY.TREE,
+                     alpha = 0.5
+                     )$unifracs
+VAUNIFRAC <- UNIFRACS[,,"d_VAW"]
+VAUNIFRAC <- VAUNIFRAC[-4,-4]
+write.table(
+            data.frame(VAUNIFRAC),
+            "d2_locations-variance_unifrac_distance_matrix-no_rs.tsv",
+            sep = "\t",
+            quote = FALSE
+            )
+AUNIFRAC <- UNIFRACS[,,"d_0.5"]
+AUNIFRAC <- AUNIFRAC[-4,-4]
+write.table(
+            data.frame(AUNIFRAC),
+            "d2_locations-alpha_unifrac_distance_matrix-no_rs.tsv",
+            sep = "\t",
+            quote = FALSE
+            )
+
+DISTANCES <- c(
+               "d2_locations-beta_diversity-bray_curtis_distance_matrix-no_rs.tsv",
+               "d2_locations-beta_diversity-variance_unifrac_distance_matrix-no_rs.tsv",
+               "d2_locations-beta_diversity-alpha_unifrac_distance_matrix-no_rs.tsv",
+               "d2_locations-beta_diversity-unweighted_unifrac_distance_matrix-no_rs.tsv",
+               "d2_locations-beta_diversity-weighted_unifrac_distance_matrix-no_rs.tsv"
+               )
+
+for (DISTANCE in DISTANCES){
+   IS.VAR.UNIFRAC <- grepl(
+                           "variance",
+                           paste(DISTANCE)
+                           )
+   IS.ALPHA.UNIFRAC <- grepl(
+                             "alpha",
+                             paste(DISTANCE)
+                             )
+
+   if(IS.VAR.UNIFRAC | IS.ALPHA.UNIFRAC){
+      DIS.PATH <- DISTANCE
+   } else {
+      DIS.PATH <- paste0(
+                         "../q2_analysis/",
+                         DISTANCE
+                         )
+   }
+                         
+   PCOA.OBJECT <- q2distance_2_pcoa(
+                                    DIS.PATH,
+                                    "ch_pp-no_rs_metadata.tsv"
+                                    )
+   PCOA.META <- PCOA.OBJECT$points
+   PCOA.META$type <- factor(
+                            PCOA.META$type,
+                            levels = c(
+                                       "ambient_water",
+                                       "rinsed_tissue"
+                                       )
+                            )
+   PCOA.META$location <- factor(
+                                PCOA.META$location,
+                                levels = c(
+                                           "Caldwell_House",
+                                           "Passion_Puddle"
+                                           )
+                                )
+   PCOA.VARIANCE <- PCOA.OBJECT$variance
+   SHAPES <- c(
+               "Passion_Puddle" = 24,
+               "Caldwell_House" = 22
+               )
+   FILL <- c(
+             "ambient_water" = "deepskyblue3",
+             "rinsed_tissue" = "forestgreen"
+             )
+   PLOT <- ggplot(
+                  PCOA.META,
+                  aes(x,
+                      y,
+                      fill = type,
+                      shape = location
+                      )
+                  )
+   NAME <- strsplit(
+                    DISTANCE,
+                    "-"
+                    )[[1]]
+   SUBNAME <- strsplit(
+                       NAME[3],
+                       "_"
+                       )[[1]]
+   print(SUBNAME)
+   OUTPUT <- paste0(
+                    "d2_locations-beta_diversity-",
+                    SUBNAME[1],
+                    "_",
+                    SUBNAME[2],
+                    "-no_rs_pcoa.pdf"
+                    ) 
+   pdf(OUTPUT)
+   print(PLOT + 
+         geom_point(
+                    size = 5,
+                    color = "black",
+                    stroke = 1
+                    ) +
+         scale_shape_manual(
+                            name = "Location",
+                            labels = c(
+                                       "Caldwell House",
+                                       "Passion Puddle"
+                                       ), 
+                            values = SHAPES
+                            ) +
+         scale_fill_manual(
+                           name = "Type",
+                           labels = c(
+                                      "Ambient Water",
+                                      "DAB"
+                                      ),
+                           values = FILL
+                           ) +
+         theme(
+               axis.line = element_line(
+                                        color = "black",
+                                        size = 2
+                                        ),
+               axis.title = element_text(
+                                         size = 20,
+                                         face = "bold"
+                                         ),
+               axis.text = element_text(
+                                        face = "bold",
+                                        color = "black",
+                                        size = 16
+                                        ),
+               legend.key = element_blank(),
+               legend.title = element_text(
+                                           face = "bold",
+                                           size = 20
+                                           ),
+               legend.text = element_text(
+                                          face = "bold",
+                                          size = 16
+                                          ),
+               panel.background = element_blank()
+               ) +
+         xlab(paste("PCoA 1 (",PCOA.VARIANCE[1],"%)")) +
+         ylab(paste("PCoA 2 (",PCOA.VARIANCE[2],"%)")) +
+         guides(
+                shape = guide_legend(
+                                     order = 2,
+                                     override.aes = list(fill = "black")
+                                     ),
+                fill = guide_legend(
+                                    order = 1,
+                                    override.aes = list(
+                                                        color = c(
+                                                                  "deepskyblue3",
+                                                                  "forestgreen"
+                                                                  )
+                                                        )
+                                    )
+                )
+         )
+   dev.off()
+}
+
+# Figure Code
+SHAPES <- c(
+            "Passion_Puddle" = 24,
+            "Caldwell_House" = 22
+            )
+FILL <- c(
+          "ambient_water" = "deepskyblue3",
+          "rinsed_tissue" = "forestgreen"
+          )
+
+UUNIFRAC.OBJECT <- q2distance_2_pcoa(
+                                     "../q2_analysis/d2_locations-beta_diversity-unweighted_unifrac_distance_matrix-no_rs.tsv",
+                                     "ch_pp-no_rs_metadata.tsv"
+                                     )
+UUNIFRAC.META <- UUNIFRAC.OBJECT$points
+UUNIFRAC.META$type <- factor(
+                             UUNIFRAC.META$type,
+                             levels = c(
+                                        "ambient_water",
+                                        "rinsed_tissue"
+                                        )
+                             )
+UUNIFRAC.META$location <- factor(
+                                 UUNIFRAC.META$location,
+                                 levels = c(
+                                            "Caldwell_House",
+                                            "Passion_Puddle"
+                                            )
+                                 )
+UUNIFRAC.VARIANCE <- UUNIFRAC.OBJECT$variance
+UUNIFRAC.PLOT <- ggplot(
+                        UUNIFRAC.META,
+                        aes(
+                            x,
+                            y,
+                            fill = type,
+                            shape = location
+                            )
+                        )
+UUNIFRAC.FIG <- UUNIFRAC.PLOT + 
+                geom_point(
+                           size = 15,
+                           color = "black",
+                           stroke = 1
+                           ) +
+                scale_shape_manual(
+                                   name = "Location",
+                                   labels = c(
+                                              "Caldwell House",
+                                              "Passion Puddle"
+                                              ), 
+                                   values = SHAPES
+                                   ) +
+                scale_fill_manual(
+                                  name = "Type",
+                                  labels = c(
+                                             "Ambient Water",
+                                             "DAB"
+                                             ),
+                                  values = FILL
+                                  ) +
+                theme(
+                      axis.line = element_line(
+                                               color = "black",
+                                               size = 2
+                                               ),
+                      axis.title = element_text(
+                                                size = 24,
+                                                face = "bold"
+                                                ),
+                      axis.text = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 20
+                                               ),
+                      legend.key = element_blank(),
+                      legend.title = element_text(
+                                                  face = "bold",
+                                                  size = 24
+                                                  ),
+                      legend.text = element_text(
+                                                 face = "bold",
+                                                 size = 20
+                                                 ),
+                      panel.background = element_blank()
+                      ) +
+               xlab(paste("PCoA 1 (",UUNIFRAC.VARIANCE[1],"%)")) +
+               ylab(paste("PCoA 2 (",UUNIFRAC.VARIANCE[2],"%)")) +
+               guides(
+                      shape = guide_legend(
+                                           order = 2,
+                                           override.aes = list(
+                                                               size = 8,
+                                                               fill = "black"
+                                                               )
+                                           ),
+                      fill = guide_legend(
+                                          order = 1,
+                                          override.aes = list(
+                                                              color = c(
+                                                                        "deepskyblue3",
+                                                                        "forestgreen"
+                                                                        ),
+                                                              size = 8
+                                                              )
+                                          )
+                      ) 
+UUNIFRAC.FIG
+ggsave(
+       "d2_locations-beta_diversity-unweighted_unifrac-no_rs_pcoa.pdf",
+       UUNIFRAC.FIG,
+       device = "pdf",
+       dpi = 300,
+       units = "in",
+       width = 11,
+       height = 9 
+       ) 
+
+AUNIFRAC.OBJECT <- q2distance_2_pcoa(
+                                     "d2_locations-beta_diversity-alpha_unifrac_distance_matrix-no_rs.tsv",
+                                     "ch_pp-no_rs_metadata.tsv"
+                                     )
+AUNIFRAC.META <- AUNIFRAC.OBJECT$points
+AUNIFRAC.META$type <- factor(
+                             AUNIFRAC.META$type,
+                             levels = c(
+                                        "ambient_water",
+                                        "rinsed_tissue"
+                                        )
+                             )
+AUNIFRAC.META$location <- factor(
+                                 AUNIFRAC.META$location,
+                                 levels = c(
+                                            "Caldwell_House",
+                                            "Passion_Puddle"
+                                            )
+                                 )
+AUNIFRAC.VARIANCE <- AUNIFRAC.OBJECT$variance
+AUNIFRAC.PLOT <- ggplot(
+                        AUNIFRAC.META,
+                        aes(
+                            x,
+                            y,
+                            fill = type,
+                            shape = location
+                            )
+                        )
+AUNIFRAC.FIG <- AUNIFRAC.PLOT + 
+                geom_point(
+                           size = 15,
+                           color = "black",
+                           stroke = 1
+                           ) +
+                scale_shape_manual(
+                                   name = "Location",
+                                   labels = c(
+                                              "Caldwell House",
+                                              "Passion Puddle"
+                                              ), 
+                                   values = SHAPES
+                                   ) +
+                scale_fill_manual(
+                                  name = "Type",
+                                  labels = c(
+                                             "Ambient Water",
+                                             "DAB"
+                                             ),
+                                  values = FILL
+                                  ) +
+                theme(axis.line = element_line(
+                                                color = "black",
+                                                size = 2
+                                                ),
+                       axis.title = element_text(
+                                                 size = 24,
+                                                 face = "bold"
+                                                 ),
+                       axis.text = element_text(
+                                                face = "bold",
+                                                color = "black",
+                                                size = 20
+                                                ),
+                       legend.key = element_blank(),
+                       legend.title = element_text(
+                                                   face = "bold",
+                                                   size = 24
+                                                   ),
+                       legend.text = element_text(
+                                                  face = "bold",
+                                                  size = 20
+                                                  ),
+                       panel.background = element_blank(),
+                       ) +
+                xlab(paste("PCoA 1 (",AUNIFRAC.VARIANCE[1],"%)")) +
+                ylab(paste("PCoA 2 (",AUNIFRAC.VARIANCE[2],"%)")) +
+                guides(
+                       shape = guide_legend(
+                                            order = 2,
+                                            override.aes = list(
+                                                                size = 8,
+                                                                fill = "black"
+                                                                )
+                                            ),
+                       fill = guide_legend(
+                                           order = 1,
+                                           override.aes = list(
+                                                               color = c(
+                                                                         "deepskyblue3",
+                                                                         "forestgreen"
+                                                                         ),
+                                                               size = 8
+                                                               )
+                                           )
+                       ) 
+
+ggsave(
+       "d2_locations-beta_diversity-alpha_unifrac-no_rs_pcoa.pdf",
+       AUNIFRAC.FIG,
+       device = "pdf",
+       dpi = 300, 
+       units = "in",
+       width = 11,
+       height = 9 
+       ) 
+
+# statistics
+META <- read_my_table("ch_pp-no_rs_metadata.tsv")
+UUNIFRAC.DIST <- convert_q2distance("../q2_analysis/d2_locations-beta_diversity-unweighted_unifrac_distance_matrix-no_rs.tsv")
+AUNIFRAC.DIST <- convert_q2distance("d2_locations-beta_diversity-alpha_unifrac_distance_matrix-no_rs.tsv")
+
+adonis2(
+        UUNIFRAC.DIST~type+location,
+        data = META
+        )
+
+anova(
+      betadisper(
+                 UUNIFRAC.DIST,
+                 META$type
+                 )
+      )
+
+adonis(
+       AUNIFRAC.DIST~type+location,
+       data = META,
+       )
+
+anova(
+      betadisper(
+                 AUNIFRAC.DIST,
+                 META$type
+                 )
+      )
+
+###############################################################################
+# Taxonomic Analysis: Phylum 
+###############################################################################
+
+# normalize and create melted dataframe with metadata
+PHYLUM.FILE <- read.csv(
+                        "d2_locations-taxonomic_analysis-phylum.csv",
+                        sep=",",
+                        header = T
+                        )
+PHYLUM.MATRIX <- PHYLUM.FILE[,2:41]
+PHYLUM.RA <- apply(
+                   PHYLUM.MATRIX,
+                   1,
+                   (function(x) x / sum(x)*100)
+                   )
+PHYLUM.RA <- t(PHYLUM.RA)
+PHYLUM.META <- cbind(
+                     PHYLUM.FILE[,42:44],
+                     PHYLUM.RA
+                     )
+sample_id <- PHYLUM.FILE[,1]
+PHYLUM.META <- cbind(
+                     sample_id,
+                     PHYLUM.META
+                     )
+PHYLUM.MELT <- melt(
+                    PHYLUM.META,
+                    value.name ="RA",
+                    variable.name = "tax"
+                    )
+PHYLUM.MELT <- filter(
+                      PHYLUM.MELT,
+                      RA > 0
+                      )
+            
+
+# format dataframe
+PHYLUM.MELT$tax <- gsub(
+                        "k__Bacteria.p__",
+                        "",
+                        PHYLUM.MELT$tax
+                        )
+levels(PHYLUM.MELT$tax) <- c(
+                             levels(PHYLUM.MELT$tax),
+                             "low abundance (< 1% RA)"
+                             )
+MASK <- PHYLUM.MELT$RA < 1 
+PHYLUM.MELT$tax[MASK] <- "low abundance (< 1% RA)"
+TAX_ORDER <- c(
+               "Actinobacteria",
+               "Bacteroidetes",
+               "Chlorobi",             
+               "Cyanobacteria",
+               "Firmicutes",
+               "Fusobacteria",
+               "Planctomycetes",        
+               "Proteobacteria",
+               "Verrucomicrobia",
+               "low abundance (< 1% RA)"
+               )
+
+PHYLUM.MELT$tax <- factor(
+                          PHYLUM.MELT$tax,
+                          levels = TAX_ORDER
+                          )
+
+PHYLUM.MELT$type <- gsub(
+                         "ambient_water",
+                         "AW",
+                         PHYLUM.MELT$type
+                         ) 
+PHYLUM.MELT$type <- gsub(
+                         "rinse_solution",
+                         "RS",
+                         PHYLUM.MELT$type
+                         ) 
+PHYLUM.MELT$type <- gsub(
+                        "rinsed_tissue",
+                        "DAB",
+                        PHYLUM.MELT$type
+                        ) 
+PHYLUM.MELT <- filter(
+                      PHYLUM.MELT,
+                      type != "RS"
+                      )
+           
+SAMPLE_ORDER = c(
+                 "CH_W_A",
+                 "CH_W_B",
+                 "CH_W_C",
+                 "CH_W_D",
+                 "CH_RS_B",
+                 "CH_DT_A",
+                 "CH_DT_B",
+                 "CH_DT_C",
+                 "PP_W_A",
+                 "PP_W_B",
+                 "PP_W_C",
+                 "PP_W_D",
+                 "PP_DT_B",
+                 "PP_CT_D"
+                 )
+PHYLUM.MELT$sample_id <- factor(
+                                PHYLUM.MELT$sample_id,
+                                levels = SAMPLE_ORDER
+                                )
+
+PHYLUM.MELT <- ddply(
+                     PHYLUM.MELT,
+                     ~sample_id+location+type+species+tax,
+                     summarise,
+                     RA = sum(RA)
+                     )
+write.table(
+            PHYLUM.MELT,
+            "d2_locations-taxonomic_analysis-phylum_ra_table.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+
+# d2_locations-taxonomic_analysis-phylum plot code
+FILL <- c(
+          "Proteobacteria" = "darkolivegreen1",
+          "Actinobacteria" = "khaki1",
+          "Bacteroidetes" = "steelblue1",
+          "Firmicutes" = "firebrick1",
+          "Acidobacteria" = "orchid",
+          "Chlorobi" = "lightsalmon",
+          "Chloroflexi" = "darkorange",
+          "Cyanobacteria" = "limegreen",
+          "low abundance (< 1% RA)" = "black",
+          "Fusobacteria" = "tomato",
+          "Planctomycetes" = "sandybrown",
+          "GN02" = "gray",
+          "Verrucomicrobia" = "plum"
+          )
+LOCATION.LABELS <- c(
+                     "Caldwell_House" = "Caldwell House",
+                     "Passion_Puddle" = "Passion Puddle"
+                     )
+PHYLUM.PLOT <- ggplot(
+                      PHYLUM.MELT,
+                      aes(
+                          sample_id,
+                          RA,
+                          fill=tax
+                          )
+                      )
+PHYLUM.FIG <- PHYLUM.PLOT +
+              geom_bar(
+                       stat="identity",
+                       color = "black",
+                       width = 1
+                       ) +
+              theme(
+                    axis.title = element_text(
+                                              size = 20,
+                                              face = "bold"
+                                              ),
+                    axis.text.x = element_blank(),
+                    axis.line.x = element_blank(),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               size = 16,
+                                               color = "black"
+                                               ),
+                    legend.position = "none",
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    color = "black"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 20
+                                              ),
+                    panel.background = element_blank()
+                    ) +
+              xlab(label = "\n\nSample") +
+              scale_y_continuous(
+                                 name = "Relative Abundance (%)",
+                                 expand=c(0,0)
+                                 ) +
+              scale_fill_manual(
+                                name = "Phylum",
+                                values = FILL
+                                ) +
+              facet_grid(
+                         .~location,
+                         scales = "free_x",
+                         space = "free_x",
+                         labeller = labeller(location = LOCATION.LABELS)
+                         ) +
+              coord_cartesian(clip = "off") +
+              geom_text(
+                        aes(label = type),
+                        angle = 45,
+                        fontface = "bold",
+                        color = "black",
+                        size = 5,
+                        vjust = 0.5,
+                        y = -4.5
+                        ) 
+PHYLUM.FIG
+ggsave(
+       "d2_locations-taxonomic_analysis-phylum.pdf",
+       PHYLUM.FIG,
+       device = "pdf",
+       dpi = 300,
+       units = "in",
+       height = 7.5,
+       width = 7.5
+       ) 
+              
+# create legend for figure
+LEG.PLOT <- PHYLUM.PLOT +
+            geom_point() +
+            theme(
+                  legend.title = element_blank(),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 16
+                                             ),
+                  legend.key = element_blank(),
+                  ) +
+            scale_fill_manual(
+                              name = "Phylum",
+                              values = FILL
+            ) +
+            guides(
+                   fill = guide_legend(
+                                       ncol = 1,
+                                       override.aes = list(
+                                                           shape = 22,
+                                                           color = "black",
+                                                           size = 5
+                                                           )
+                                       )
+                   )
+PHYLUM.LEG <- get_legend(LEG.PLOT)
+grid.draw(PHYLUM.LEG)
+ggsave(
+       "d2_locations-taxonomic_analysis-phylum_leg.pdf",
+       PHYLUM.LEG,
+       device = "pdf",
+       dpi = 300 
+       ) 
+
+
+# statistics
+PHYLUM.MEAN <- ddply(
+                     PHYLUM.MELT,
+                     ~type+location+tax,
+                     summarise,
+                     mean_RA = mean(RA)
+                     )
+PHYLUM.MEAN[order(-PHYLUM.MEAN$mean_RA),]
+
+###############################################################################
+# Taxonomic Analysis: Family 
+###############################################################################
+
+# normalize and create melted dataframe with metadata
+FAMILY.FILE <- read.csv(
+                        "d2_locations-taxonomic_analysis-family.csv", 
+                        sep = ",",
+                        header = T
+                        )
+FAMILY.MATRIX <- FAMILY.FILE[,2:397]
+FAMILY.RA <- apply(
+                   FAMILY.MATRIX,
+                   1,
+                   (function(x) x / sum(x)*100)
+                   )
+FAMILY.RA <- t(FAMILY.RA)
+FAMILY.META <- cbind(
+                     FAMILY.FILE[,398:400],
+                     FAMILY.RA
+                     )
+sample_id <- FAMILY.FILE[,1]
+FAMILY.META <- cbind(
+                     sample_id,
+                     FAMILY.META
+                     )
+FAMILY.MELT <- melt(
+                    FAMILY.META,
+                    value.name ="RA",
+                    variable.name = "tax"
+                    )
+FAMILY.MELT <- filter(
+                      FAMILY.MELT,
+                      RA > 0
+                      )
+FAMILY.MELT <- separate(
+                        FAMILY.MELT,
+                        tax,
+                        c("Kingdom",
+      		          "Phylum",
+      		          "Class",
+                          "Order",
+                          "Family",
+                          "Genus",
+		          "Species"),
+		        sep=".[k,p,c,o,f,g,s]__",
+                        remove=TRUE
+                        ) 
+
+# format dataframe
+levels(FAMILY.MELT$Family) <- c(
+                                levels(FAMILY.MELT$Family),
+                                "low abundance (< 1% RA)",
+                                "unclassified"
+                                )
+MASK <- FAMILY.MELT$RA < 1 
+FAMILY.MELT$Family[MASK] <- "low abundance (< 1% RA)"
+MASK1 <- FAMILY.MELT$Family == ""
+FAMILY.MELT$Family[MASK1] <- "unclassified"
+MASK2 <- is.na(FAMILY.MELT$Family)
+FAMILY.MELT$Family[MASK2] <- "unclassified"
+FAMILY.MELT$Family <- gsub(
+                           ".Cerasicoccaceae.",
+                           "Cerasicoccaceae",
+                           FAMILY.MELT$Family
+                           ) 
+FAMILY.MELT$Family <- gsub(
+                           ".Chromatiaceae.",
+                           "Chromatiaceae",
+                           FAMILY.MELT$Family
+                           ) 
+TAX_ORDER <- c(
+               "ACK.M1",
+               "Aeromonadaceae",        
+               "Alcaligenaceae",
+               "Alteromonadaceae",
+               "Bacillaceae",
+               "C111",          
+               "Campylobacteraceae",
+               "Caulobacteraceae",
+               "Cerasicoccaceae",
+               "Chitinophagaceae",
+               "Chromatiaceae",
+               "Clostridiaceae",     
+               "Comamonadaceae",
+               "Cryomorphaceae",
+               "Cytophagaceae",
+               "Enterobacteriaceae",
+               "Erythrobacteraceae",
+               "Flavobacteriaceae",
+               "Hyphomicrobiaceae",
+               "Lachnospiraceae",
+               "Methylocystaceae",
+               "Methylophilaceae",
+               "Microbacteriaceae",     
+               "Moraxellaceae",
+               "Neisseriaceae",
+               "Nocardiaceae",
+               "Oxalobacteraceae",
+               "Phyllobacteriaceae",
+               "Pirellulaceae",
+               "Porphyromonadaceae",
+               "Pseudomonadaceae", 
+               "Rhizobiaceae",
+               "Rhodobacteraceae",
+               "Rhodocyclaceae",
+               "Sphingomonadaceae", 
+               "Synechococcaceae",
+               "Xanthomonadaceae", 
+               "low abundance (< 1% RA)",
+               "unclassified"
+               )
+FAMILY.MELT$Family <- factor(
+                             FAMILY.MELT$Family,
+                             levels = TAX_ORDER
+                             )
+
+FAMILY.MELT <- filter(
+                      FAMILY.MELT,
+                      type != "rinse_solution"
+                      )
+FAMILY.MELT$type <- gsub(
+                         "ambient_water",
+                         "AW",
+                         FAMILY.MELT$type
+                         ) 
+FAMILY.MELT$type <- gsub(
+                         "rinsed_tissue",
+                         "DAB",
+                         FAMILY.MELT$type
+                         ) 
+
+SAMPLE_ORDER = c(
+                 "CH_W_A",
+                 "CH_W_B",
+                 "CH_W_C",
+                 "CH_W_D",
+                 "CH_RS_B",
+                 "CH_DT_A",
+                 "CH_DT_B",
+                 "CH_DT_C",
+                 "PP_W_A",
+                 "PP_W_B",
+                 "PP_W_C",
+                 "PP_W_D",
+                 "PP_DT_B",
+                 "PP_CT_D"
+                 )
+FAMILY.MELT$sample_id <- factor(
+                                FAMILY.MELT$sample_id,
+                                levels = SAMPLE_ORDER
+                                )
+
+FAMILY.MELT <- ddply(
+                     FAMILY.MELT,
+                     ~sample_id+location+type+species+Family,
+                     summarise,
+                     RA = sum(RA)
+                     )
+write.table(
+            FAMILY.MELT,
+            "d2_locations-taxonomic_analysis-family_ra_table.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+# d2_locations-taxonomic_analysis-family plot code
+COLSET1 <- brewer.pal(9,"Pastel1")
+COLSET2 <- brewer.pal(9,"Set1")
+COLSET3 <- brewer.pal(12,"Set3")
+COLSET4 <- brewer.pal(8,"Dark2")
+COLSET5 <- brewer.pal(4,"Set2")
+COLORS <- c(
+            COLSET1,
+            COLSET2,
+            COLSET3,
+            COLSET4,
+            COLSET5
+            )
+LOCATION.LABELS <- c(
+                     "Caldwell_House" = "Caldwell House",
+                     "Passion_Puddle" = "Passion Puddle"
+                     )
+
+FAMILY.PLOT <- ggplot(
+                      FAMILY.MELT,
+                      aes(
+                          sample_id,
+                          RA,
+              		  fill = Family
+                          )
+                      )
+
+FAMILY.FIG <- FAMILY.PLOT +
+              geom_bar(
+                       stat = "identity",
+                       color = "black",
+                       width = 1
+                       ) +
+              theme(
+                    axis.title = element_text(
+                                              size = 20,
+                                              face = "bold"
+                                              ),
+                    axis.text.x = element_blank(),
+                    axis.line.x = element_blank(),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               size = 16,
+                                               color = "black"
+                                               ),
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    color = "black"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 20
+                                              ),
+                    panel.background = element_blank(),
+                    legend.position = "none"
+                    ) +
+              xlab(label = "\n\nSample") +
+              scale_y_continuous(
+                                 name = "Relative Abundance (%)",
+                                 expand = c(0,0)
+                                 ) +
+              scale_fill_manual(
+                                name = "Family",
+                                values = COLORS
+                                ) +
+              facet_grid(
+                         .~location,
+                         labeller = labeller(location = LOCATION.LABELS),
+                         scales = "free_x",
+                         space = "free_x"
+                         ) +
+              coord_cartesian(clip = "off") +
+              geom_text(
+                        aes(label = type),
+                        angle = 45,
+                        fontface = "bold",
+                        color = "black",
+                        size = 5,
+                        vjust = 0.5,
+                        y = -4.5
+                        ) 
+ggsave(
+       "d2_locations-taxonomic_analysis-family.pdf",
+       FAMILY.FIG,
+       device = "pdf",
+       dpi = 300,
+       units = "in",
+       height = 7.5,
+       width = 7.5
+       ) 
+
+# create legend for figure
+LEG.PLOT <- FAMILY.PLOT +
+            geom_point() +
+            theme(
+                  legend.key = element_blank(),
+                  legend.title = element_blank(),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 16
+                                             ),
+                  ) +
+            scale_fill_manual(
+                              name = "Family",
+                              values = COLORS
+            ) +
+            guides(
+                   fill = guide_legend(
+                                       nrow = 15,
+                                       ncol = 3,
+                                       override.aes = list(
+                                                           shape = 22,
+                                                           size = 5,
+                                                           color = "black"
+                                                           )
+                                       )
+                   )
+FAMILY.LEG <- get_legend(LEG.PLOT)
+grid.draw(FAMILY.LEG)
+ggsave(
+       "d2_locations-taxonomic_analysis-family_leg.pdf",
+       FAMILY.LEG,
+       device = "pdf",
+       dpi = 300 
+       ) 
+
+# statistics
+FAMILY.MEAN <- ddply(
+                     FAMILY.MELT,
+                     ~type+location+Family,
+                     summarise,
+                     mean_RA = mean(RA)
+                     )
+FAMILY.MEAN <- FAMILY.MEAN[order(-FAMILY.MEAN$mean_RA),]
+filter(
+       FAMILY.MEAN,
+       location == "Caldwell_House"
+       )
+filter(
+       FAMILY.MEAN,
+       location == "Passion_Puddle"
+       )
+
+###############################################################################
+# Taxonomic Analysis: Genus 
+###############################################################################
+
+# get relative abundance table with metadata and taxonomy
+TABLE.NORM <- calculateRA_4_q2table(
+                                    "ch_pp-filtered_table.tsv"
+                                    )
+TABLE.META <- addtax_addmeta(
+                             TABLE.NORM,
+                             "ducitaplate2-ggBLAST_taxonomy.tsv",
+                             "ducitaplate2-metadata.tsv",
+                             sep = TRUE,
+                             value = "RA"
+                             )
+
+# filter table
+TABLE.FILTERED <- filter(
+                         TABLE.META,
+                         RA > 0
+                         )
+TABLE.FILTERED <- filter(
+                         TABLE.FILTERED,
+                         type != "rinse_solution"
+                         )
+TABLE.FILTERED <- filter(
+                         TABLE.FILTERED,
+                         location != "Johnson_Park"
+                         )
+TABLE.FILTERED <- remove_unknown_genus(TABLE.FILTERED)
+
+# get taxonomy
+TAX <- distinct(
+                select(
+                       TABLE.FILTERED,
+                       Phylum,
+                       Family,
+                       Genus
+                       )
+                )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# create venn diagram (d2_locations-taxonomic_analysis-genus.tiff
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+TYPES <- c(
+           "ambient_water",
+           "rinsed_tissue"
+           )
+LOCATIONS <- unique(TABLE.FILTERED$location)
+GENERA <- list()
+INDEX <- 1
+for (TYPE in TYPES){
+   print(TYPE)
+   TABLE.TYPE <- filter(
+                        TABLE.FILTERED,
+                        type == TYPE
+                        )
+   for (LOCATION in LOCATIONS){
+      print(LOCATION)
+      TABLE.TYPE.LOCATION <- filter(
+                                    TABLE.TYPE,
+                                    location == LOCATION
+                                    )
+      TYPE.LOCATION.GENERA <- unique(TABLE.TYPE.LOCATION$Genus)
+      GENERA[[INDEX]] <- c(TYPE.LOCATION.GENERA)
+      INDEX <- INDEX + 1
+      }
+}
+venn.diagram(
+             x = list(
+                      unlist(GENERA[1]),
+                      unlist(GENERA[2]),
+                      unlist(GENERA[3]),
+                      unlist(GENERA[4])
+                      ),
+             filename = "d2_locations-taxonomic_analysis-genus.tiff",
+             category = c(
+                          "AW CH",
+                          "AW PP",
+                          "DAB CH",
+                          "DAB PP"
+                          ),
+             fill = c(
+                      "orange",
+                      "orange4",
+                      "seagreen3",
+                      "seagreen4"
+                      ),
+             main.fontface = "bold",
+             cex = 4,
+             fontface = "bold",
+             cat.col = "black",
+             cat.cex = 2,
+             cat.fontface = "bold",
+             cat.dis = c(0.25,0.25,0.1,0.1),
+             cat.pos = c(350,10,0,0)
+             )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# tissue only genera
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+LOCATIONS <- unique(TABLE.FILTERED$location)
+for (LOCATION in LOCATIONS){
+TABLE.LOC <- filter(
+                    TABLE.FILTERED,
+                    location == LOCATION
+                    )
+TABLE.LOC.AW <- filter(
+                       TABLE.LOC,
+                       type == "ambient_water"
+                       )
+TABLE.LOC.TT <- filter(
+                       TABLE.LOC,
+                       type == "rinsed_tissue"
+                       )
+GENERA.LOC.AW <- unique(TABLE.LOC.AW$Genus)
+GENERA.LOC.TT <- unique(TABLE.LOC.TT$Genus)
+GENERA.TT.SPECIFIC <- setdiff(
+                              GENERA.LOC.TT,
+                              GENERA.LOC.AW
+                              )
+DATA.LOC.TT <- get_genus_info.v2(TABLE.LOC.TT)
+DATA.LOC.TT.SPECIFIC <- filter(
+                               DATA.LOC.TT,
+                               Genus %in% GENERA.TT.SPECIFIC
+                               )
+print(LOCATION)
+print(DATA.LOC.TT)
+print(DATA.LOC.TT.SPECIFIC)
+TAX.LOC.TT <- merge(
+                    TAX,
+                    DATA.LOC.TT.SPECIFIC,
+                    by = "Genus"
+                    )
+write.table(
+            TAX.LOC.TT,
+            sprintf(
+                    "d2_locations-taxonomic_analysis-%s_specific_genera.tsv",
+                    LOCATION
+                    ),
+            sep = "\t",
+            row.names = FALSE
+            )
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# location specific tissue genera
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+TABLE.FILTERED$type <- gsub(
+                            "ambient_water",
+                            "AW",
+                            TABLE.FILTERED$type
+                                 )
+TABLE.FILTERED$type <- gsub(
+                            "rinsed_tissue",
+                            "DK",
+                            TABLE.FILTERED$type
+                            )
+TABLE.CH <- filter(
+                   TABLE.FILTERED,
+                   location == "Caldwell_House"
+                   )
+TABLE.PP <- filter(
+                   TABLE.FILTERED,
+                   location == "Passion_Puddle"
+                   )
+TABLE.TT <- filter(
+                   TABLE.FILTERED,
+                   type == "DK"
+                   )
+TABLE.TT.CH <- filter(
+                      TABLE.TT,
+                      location == "Caldwell_House"
+                      )
+TABLE.TT.PP <- filter(
+                      TABLE.TT,
+                      location == "Passion_Puddle"
+                      )
+GENERA.TT.CH <- unique(TABLE.TT.CH$Genus)
+GENERA.TT.PP <- unique(TABLE.TT.PP$Genus)
+
+GENERA.CH.SPECIFIC <- setdiff(
+                              GENERA.TT.CH,
+                              GENERA.TT.PP
+                              )
+DATA.TT.CH <- get_genus_info.v2(TABLE.TT.CH)
+DATA.TT.CH <- merge(
+                    TAX,
+                    DATA.TT.CH,
+                    by = "Genus"
+                    )
+#write.table(
+#            DATA.TT.CH,
+#            "d2_locations-taxonomic_analysis-ch_dk-genera.tsv",
+#            sep = "\t",
+#            row.names = FALSE
+#            )
+DATA.CH.SPECIFIC <- filter(
+                           DATA.TT.CH,
+                           Genus %in% GENERA.CH.SPECIFIC
+                           )
+TT.CH.TYPE <- addtype_2_genus(
+                              DATA.CH.SPECIFIC$Genus,
+                              TABLE.CH
+                              )
+DATA.CH.SPECIFIC <- merge(
+                          DATA.CH.SPECIFIC,
+                          TT.CH.TYPE,
+                          by = "Genus"
+                          )
+#write.table(
+#            DATA.CH.SPECIFIC,
+#            "d2_locations-taxonomic_analysis-ch_specific_genera.tsv",
+#            sep = "\t",
+#            row.names = FALSE
+#            )
+
+GENERA.PP.SPECIFIC <- setdiff(
+                              GENERA.TT.PP,
+                              GENERA.TT.CH
+                              )
+DATA.TT.PP <- get_genus_info.v2(TABLE.TT.PP)
+DATA.TT.PP <- merge(
+                    TAX,
+                    DATA.TT.PP,
+                    by = "Genus"
+                    )
+#write.table(
+#            DATA.TT.PP,
+#            "d2_locations-taxonomic_analysis-pp_dk_genera.tsv",
+#            sep = "\t",
+#            row.names = FALSE
+#            )
+DATA.PP.SPECIFIC <- filter(
+                           DATA.TT.PP,
+                           Genus %in% GENERA.PP.SPECIFIC
+                           )
+TT.PP.TYPE <- addtype_2_genus(
+                              DATA.PP.SPECIFIC$Genus,
+                              TABLE.PP
+                              )
+DATA.PP.SPECIFIC <- merge(
+                          DATA.PP.SPECIFIC,
+                          TT.PP.TYPE,
+                          by = "Genus"
+                          )
+#write.table(
+#            DATA.PP.SPECIFIC,
+#            "d2_locations-taxonomic_analysis-pp_specific_genera.tsv",
+#            sep = "\t",
+#            row.names = FALSE
+#            )
+
+# are location specific genera found in ambient water?
+TABLE.PP.AW.CH_GENUS <- TABLE.PP[TABLE.PP$type == "AW" & TABLE.PP$Genus %in% DATA.CH.SPECIFIC$Genus,]
+unique(TABLE.PP.AW.CH_GENUS$Genus)
+
+TABLE.CH.AW.PP_GENUS <- TABLE.CH[TABLE.CH$type == "AW" & TABLE.CH$Genus %in% DATA.PP.SPECIFIC$Genus,]
+unique(TABLE.CH.AW.PP_GENUS$Genus)
+
+
+###############################################################################
+### Differential Abundance Testing
+###############################################################################
+
+library(ALDEx2)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# AW vs DAB
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# read tables and filter
+COUNT.TABLE <- read_my_table("ch_pp-filtered_table.tsv")
+META.TABLE <- read_my_table("ducitaplate2-metadata.tsv")
+META.FILTERED <- filter(
+                        META.TABLE,
+                        location != "Johnson_Park",
+                        )
+META.FILTERED <- filter(
+                        META.FILTERED,
+                        type != "rinse_solution"
+                        )
+TAX <- read_my_table("ducitaplate2-ggBLAST_taxonomy.tsv")
+TAX <- separate(
+                TAX,
+                Taxon,
+                c("Kingdom",
+                  "Phylum",
+      	          "Class",
+                  "Order",
+                  "Family",
+                  "Genus",
+	          "Species"),
+                  sep=".[k,p,c,o,f,g,s]__",
+                  remove=TRUE
+                  ) 
+TAX <- distinct(
+                select(
+                       TAX,
+                       Phylum,
+                       Genus
+                       )
+                 )
+TAX$Phylum <- gsub(
+                   ";",
+                   "",
+                   TAX$Phylum
+                   )
+TAX$Genus <- gsub(
+                  ";",
+                  "",
+                  TAX$Genus
+                  )
+
+# get aldex results and mc instances
+LOCATIONS <- unique(META.FILTERED$location)
+for (LOCATION in LOCATIONS){
+   LOCATION.TABLE <- filter(
+                            META.FILTERED,
+                            location == LOCATION
+                            )
+
+   # get aldex group vector
+   GROUPS <- as.vector(
+                       LOCATION.TABLE$type
+                       )
+
+   SORTED.TABLE <- sort_table_samples(
+                                      LOCATION.TABLE,
+                                      COUNT.TABLE
+                                      )
+   print(GROUPS)
+   print(colnames(SORTED.TABLE))
+
+   GENUS.TABLE <- create_genus_count_table(
+                                           SORTED.TABLE,
+                                           "ducitaplate2-ggBLAST_taxonomy.tsv",
+                                           "ducitaplate2-metadata.tsv"
+                                           )
+   # run aldex
+   LOCATION.CLR <- aldex.clr(
+                             GENUS.TABLE,
+                             GROUPS,
+                             mc.samples = 128,
+                             denom = "all",
+                             verbose = T,
+                             )
+   LOCATION.TEST <- aldex.ttest(
+                                LOCATION.CLR,
+                                verbose = T
+                                )
+   LOCATION.EFFECT <- aldex.effect(
+                                   LOCATION.CLR,
+                                   GROUPS,
+                                   verbose = T
+                                   ) 
+   ALDEX.OUT <- combine_aldex_output(
+                                     LOCATION.EFFECT,
+                                     LOCATION.TEST
+                                     )
+   write.table(
+               ALDEX.OUT,
+               sprintf(
+                       "d2_locations-aldex_out-location_%s.tsv",
+                       LOCATION
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+
+   # get mc instances
+   INSTANCES <- getMonteCarloInstances(LOCATION.CLR)
+   INSTANCE.DF <- as.data.frame(INSTANCES)
+   INSTANCE.DF$Genus <- rownames(INSTANCE.DF)
+   INSTANCE.MELT <- melt(
+                         INSTANCE.DF,
+                         variable.name = "sample_id",
+                         value.name = "clr"
+                         )
+   print(colnames(INSTANCE.MELT))
+   INSTANCE.SEPARATE <- separate(
+                                 INSTANCE.MELT,
+                                 sample_id,
+                                 into = c(
+                                          "sample_id",
+                                          "instance"
+                                          ),
+                                 sep ="\\."
+                                 )
+   print(colnames(INSTANCE.SEPARATE))
+   INSTANCE.INFO <- merge(
+                          META.FILTERED,
+                          INSTANCE.SEPARATE,
+                          by = "sample_id"
+                          )
+   print(colnames(INSTANCE.INFO))
+   write.table(
+               INSTANCE.INFO,
+               sprintf(
+                       "d2_locations-aldex_mc_instances-location_%s.tsv",
+                       LOCATION
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+}
+
+TEST.CH <- read_my_table("d2_locations-aldex_out-location_Caldwell_House.tsv")
+TEST.CH.SIG <- TEST.CH[TEST.CH$we.eBH < 0.05,]
+TEST.CH.SIG$effect <- round(
+                            TEST.CH.SIG$effect,
+                            2
+                            )
+TEST.CH.SIG$effect <- lapply(
+                             seq_along(TEST.CH.SIG$effect),
+                             function(i) with(
+                                              TEST.CH.SIG,
+                                              if (TEST.CH.SIG$we.eBH[i] < 0.05){
+                                                  paste(
+                                                        TEST.CH.SIG$effect[i],
+                                                        "*",
+                                                        sep = ""
+                                                        )
+                                              } else {
+                                                      paste(TEST.CH.SIG$effect[i])
+                                              }
+                                              )
+                             )
+
+MCINSTANCES.CH <- read_my_table("d2_locations-aldex_mc_instances-location_Caldwell_House.tsv")
+MCINSTANCES.CH.SIG <- filter(
+                             MCINSTANCES.CH,
+                             Genus %in% TEST.CH.SIG$Genus
+                             )
+MCINSTANCES.CH.SIG.OUT <- merge(
+                                MCINSTANCES.CH.SIG,
+                                TEST.CH.SIG,
+                                by = "Genus"
+                                )
+MCINSTANCES.CH.TAX <- merge(
+                            MCINSTANCES.CH.SIG.OUT,
+                            TAX,
+                            by = "Genus"
+                            )
+ 
+
+# d2_locations-aldex-Caldwell_House plot code
+CH.DA.SEG <- read_my_table("d2_locations-aldex-Caldwell_House-plot_segments.txt")
+CLR.PLOT <- ggplot(
+                   MCINSTANCES.CH.TAX,
+                   aes(
+                       Genus,
+                       clr,
+                       fill = type,
+                       label = effect
+                       )
+                   )
+FILL <- c(
+          "ambient_water" = "orange3",
+          "rinsed_tissue" = "seagreen3"
+          )
+CH.DA.PLOT <- CLR.PLOT + 
+              geom_violin() +
+              theme(
+                    plot.title = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 22,
+                                              hjust = 0.5
+                                              ),
+                    axis.text.x = element_text(
+                                               face = "italic",
+                                               color = "black",
+                                               size = 16,
+                                               angle = 45,
+                                               hjust = 1,
+                                               vjust = 1
+                                               ),
+                    axis.title = element_text(
+                                              face = "bold",
+                                              size = 20
+                                              ),
+                    axis.text.y = element_text(
+                                               color = "black",
+                                               size = 16
+                                               ),
+                    axis.line = element_line(
+                                             color = "black"
+                                             ),
+                    axis.ticks.y = element_blank(),
+                    axis.line.y = element_line(color = "black"),
+                    legend.title = element_text(
+                                                face = "bold",
+                                                size = 24
+                                                ),
+                    legend.text = element_text(
+                                               face = "bold",
+                                               size = 20
+                                               ),
+                    legend.key = element_blank(),
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    colour = "black",
+                                                    size = 0.5,
+                                                    linetype = "solid"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 18
+                                              ),
+                    panel.background = element_blank()
+                    ) +
+              labs(
+                   title = "Caldwell House",
+                   x = "Genus"
+                   ) +
+              scale_y_continuous(
+                                 name = "CLR",
+                                 expand = c(0,0),
+                                 limits = c(-30,17.5)
+                                 ) +
+              scale_fill_manual(
+                                name = "Type",
+                                labels = c(
+                                           "Ambient Water",
+                                           "DAB"
+                                           ),
+                                values = FILL
+                                ) +
+              geom_text(
+                        stat = "identity",
+                        position = "identity",
+                        check_overlap = TRUE,
+                        aes(label = effect),
+                        fontface = "bold",
+                        vjust = 0.5,
+                        hjust = 0.5,
+                        size = 4,
+                        y = 15
+                        ) +
+              facet_grid(
+                         scales = "free_x",
+                         space = "free_x",
+                         .~Phylum
+                         ) +
+              geom_segment(
+                           data = CH.DA.SEG,
+                           inherit.aes = FALSE,
+                           size = 1,
+                           aes(
+			       x = x,
+                               xend = xend,
+                               group = Phylum,
+                               y = 14,
+                               yend = 14
+                               )
+                           )
+ggsave(
+       "d2_locations-aldex-Caldwell_House.pdf",
+       CH.DA.PLOT,
+       device = "pdf",
+       dpi = 300
+       )
+
+              
+TEST.PP <- read_my_table("d2_locations-aldex_out-location_Passion_Puddle.tsv")
+TEST.PP.SIG <- TEST.PP[TEST.PP$we.eBH < 0.05,]
+TEST.PP.SIG$effect <- round(
+                            TEST.PP.SIG$effect,
+                            2
+                            )
+TEST.PP.SIG$effect <- lapply(
+                             seq_along(TEST.PP.SIG$effect),
+                             function(i) with(
+                                              TEST.PP.SIG,
+                                              if (TEST.PP.SIG$we.eBH[i] < 0.05){
+                                                 paste(
+                                                       TEST.PP.SIG$effect[i],
+                                                       "*",
+                                                       sep = ""
+                                                       )
+                                              } else {
+                                                 paste(TEST.PP.SIG$effect[i])
+                                              }
+                                              )
+                             )
+
+MCINSTANCES.PP <- read_my_table("d2_locations-aldex_mc_instances-location_Passion_Puddle.tsv")
+MCINSTANCES.PP.SIG <- filter(
+                             MCINSTANCES.PP,
+                             Genus %in% TEST.PP.SIG$Genus
+                             )
+MCINSTANCES.PP.SIG.OUT <- merge(
+                                MCINSTANCES.PP.SIG,
+                                TEST.PP.SIG,
+                                by = "Genus"
+                                )
+MCINSTANCES.PP.TAX <- merge(
+                            MCINSTANCES.PP.SIG.OUT,
+                            TAX,
+                            by = "Genus"
+                            )
+
+# d2_locations-aldex-Passion_Puddle plot code
+PP.DA.SEG <- read_my_table("d2_locations-aldex-Passion_Puddle-plot_segments.txt")
+CLR.PLOT <- ggplot(
+                   MCINSTANCES.PP.TAX,
+                   aes(
+                       Genus,
+                       clr,
+                       fill = type,
+                       label = effect
+                       )
+                   )
+FILL <- c(
+          "ambient_water" = "orange3",
+          "rinsed_tissue" = "seagreen3"
+          )
+PP.DA.PLOT <- CLR.PLOT + 
+              geom_violin() +
+              theme(
+                    plot.title = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 22,
+                                              hjust = 0.5
+                                              ),
+                    axis.text.x = element_text(
+                                               face = "italic",
+                                               color = "black",
+                                               size = 16,
+                                               angle = 45,
+                                               hjust = 1,
+                                               vjust = 1
+                                               ),
+                    axis.title = element_text(
+                                              face = "bold",
+                                              size = 20
+                                              ),
+                    axis.text.y = element_text(
+                                               color = "black",
+                                               size = 16
+                                               ),
+                    axis.line = element_line(
+                                             color = "black"
+                                             ),
+                    axis.ticks.y = element_blank(),
+                    axis.line.y = element_line(color = "black"),
+                    legend.title = element_text(
+                                                face = "bold",
+                                                size = 20
+                                                ),
+                    legend.text = element_text(
+                                               face = "bold",
+                                               size = 16
+                                               ),
+                    legend.key = element_blank(),
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    colour = "black",
+                                                    size = 0.5,
+                                                    linetype = "solid"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 17
+                                              ),
+                    panel.background = element_blank()
+                    ) +
+              labs(
+                   title = "Passion Puddle",
+                   x = "Genus"
+                   ) +
+              scale_y_continuous(
+                                 name = "CLR",
+                                 expand = c(0,0),
+                                 limits = c(-30,17.5)
+                                 ) +
+              scale_fill_manual(
+                                name = "Type",
+                                labels = c(
+                                           "Ambient Water",
+                                           "DAB"
+                                           ),
+                                values = FILL
+                                ) +
+              geom_text(
+                        stat = "identity",
+                        position = "identity",
+                        check_overlap = TRUE,
+                        aes(label = effect),
+                        fontface = "bold",
+                        vjust = 0.5,
+                        hjust = 0.5,
+                        size = 4,
+                        y = 15
+                        ) +
+              facet_grid(
+                         scales = "free_x",
+                         space = "free_x",
+                         .~Phylum
+                         ) +
+              geom_segment(
+                           data = PP.DA.SEG,
+                           inherit.aes = FALSE,
+                           size = 1,
+                           aes(
+			       x = x,
+                               xend = xend,
+                               group = Phylum,
+                               y = 14,
+                               yend = 14
+                               )
+                           )
+ggsave(
+       "d2_locations-aldex-Passion_Puddle.pdf",
+       PP.DA.PLOT,
+       device = "pdf",
+       dpi = 300
+       )
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# CH vs PP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# get aldex results and mc instances
+TYPES <- unique(META.FILTERED$type)
+for (TYPE in TYPES){
+   TYPE.TABLE <- filter(
+                        META.FILTERED,
+                        type == TYPE
+                        )
+
+   # get aldex group vector
+   GROUPS <- as.vector(
+                       TYPE.TABLE$location
+                       )
+
+   SORTED.TABLE <- sort_table_samples(
+                                      TYPE.TABLE,
+                                      COUNT.TABLE
+                                      )
+   print(GROUPS)
+   print(colnames(SORTED.TABLE))
+
+   GENUS.TABLE <- create_genus_count_table(
+                                           SORTED.TABLE,
+                                           "ducitaplate2-ggBLAST_taxonomy.tsv"
+                                           )
+   # run aldex
+   TYPE.CLR <- aldex.clr(
+                         GENUS.TABLE,
+                         GROUPS,
+                         mc.samples = 128,
+                         denom = "all",
+                         verbose = T,
+                         )
+   TYPE.TEST <- aldex.ttest(
+                            TYPE.CLR,
+                            verbose = T
+                            )
+   TYPE.EFFECT <- aldex.effect(
+                               TYPE.CLR,
+                               GROUPS,
+                               verbose = T
+                               ) 
+   ALDEX.OUT <- combine_aldex_output(
+                                     TYPE.EFFECT,
+                                     TYPE.TEST
+                                     )
+   write.table(
+               ALDEX.OUT,
+               sprintf(
+                       "d2_locations-aldex_out-type_%s.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+
+   # get mc instances
+   INSTANCES <- getMonteCarloInstances(TYPE.CLR)
+   INSTANCE.DF <- as.data.frame(INSTANCES)
+   INSTANCE.DF$Genus <- rownames(INSTANCE.DF)
+   INSTANCE.MELT <- melt(
+                         INSTANCE.DF,
+                         variable.name = "sample_id",
+                         value.name = "clr"
+                         )
+   print(colnames(INSTANCE.MELT))
+   INSTANCE.SEPARATE <- separate(
+                                 INSTANCE.MELT,
+                                 sample_id,
+                                 into = c(
+                                          "sample_id",
+                                          "instance"
+                                          ),
+                                 sep ="\\."
+                                 )
+   print(colnames(INSTANCE.SEPARATE))
+   INSTANCE.INFO <- merge(
+                          META.FILTERED,
+                          INSTANCE.SEPARATE,
+                          by = "sample_id"
+                          )
+   print(colnames(INSTANCE.INFO))
+   write.table(
+               INSTANCE.INFO,
+               sprintf(
+                       "d2_locations-aldex_mc_instances-type_%s.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+}
+
+TEST.CH <- read_my_table("d2_locations-aldex_out-type_rinsed_tissue.tsv")
+TEST.CH.SIG <- TEST.CH[TEST.CH$we.eBH < 0.05,]
+TEST.CH.SIG$effect <- round(
+                            TEST.CH.SIG$effect,
+                            2
+                            )
+TEST.CH.SIG$effect <- lapply(
+                             seq_along(TEST.CH.SIG$effect),
+                             function(i) with(
+                                              TEST.CH.SIG,
+                                              if (TEST.CH.SIG$we.eBH[i] < 0.05){
+                                                  paste(
+                                                        TEST.CH.SIG$effect[i],
+                                                        "*",
+                                                        sep = ""
+                                                        )
+                                              } else {
+                                                      paste(TEST.CH.SIG$effect[i])
+                                              }
+                                              )
+                             )
+
+MCINSTANCES.CH <- read_my_table("d2_locations-aldex_mc_instances-type_rinsed_tissue.tsv")
+MCINSTANCES.CH.SIG <- filter(
+                             MCINSTANCES.CH,
+                             Genus %in% TEST.CH.SIG$Genus
+                             )
+MCINSTANCES.CH.SIG.OUT <- merge(
+                                MCINSTANCES.CH.SIG,
+                                TEST.CH.SIG,
+                                by = "Genus"
+                                )
+MCINSTANCES.CH.TAX <- merge(
+                            MCINSTANCES.CH.SIG.OUT,
+                            TAX,
+                            by = "Genus"
+                            )
+ 
+
+# d2_locations-aldex-Caldwell_House plot code
+CLR.PLOT <- ggplot(
+                   MCINSTANCES.CH.TAX,
+                   aes(
+                       Genus,
+                       clr,
+                       fill = location,
+                       label = effect
+                       )
+                   )
+FILL <- c(
+          "ambient_water" = "purple",
+          "rinsed_tissue" = "blue"
+          )
+CH.DA.PLOT <- CLR.PLOT + 
+              geom_violin() +
+              theme(
+                    plot.title = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 22,
+                                              hjust = 0.5
+                                              ),
+                    axis.text.x = element_text(
+                                               face = "italic",
+                                               color = "black",
+                                               size = 16,
+                                               angle = 45,
+                                               hjust = 1,
+                                               vjust = 1
+                                               ),
+                    axis.title = element_text(
+                                              face = "bold",
+                                              size = 20
+                                              ),
+                    axis.text.y = element_text(
+                                               color = "black",
+                                               size = 16
+                                               ),
+                    axis.line = element_line(
+                                             color = "black"
+                                             ),
+                    axis.ticks.y = element_blank(),
+                    axis.line.y = element_line(color = "black"),
+                    legend.position = "none",
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    colour = "black",
+                                                    size = 0.5,
+                                                    linetype = "solid"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 18
+                                              ),
+                    panel.background = element_blank()
+                    ) +
+              labs(
+                   title = "Caldwell House",
+                   x = "Genus"
+                   ) +
+              scale_y_continuous(
+                                 name = "CLR",
+                                 expand = c(0,0),
+                                 limits = c(-30,17.5)
+                                 ) +
+              scale_fill_manual(
+                                name = "Type",
+                                labels = c(
+                                           "Ambient Water",
+                                           "Duckweed"
+                                           ),
+                                values = FILL
+                                ) +
+              geom_text(
+                        stat = "identity",
+                        position = "identity",
+                        check_overlap = TRUE,
+                        aes(label = effect),
+                        fontface = "bold",
+                        vjust = 0.5,
+                        hjust = 0.5,
+                        size = 4,
+                        y = 15
+                        ) 

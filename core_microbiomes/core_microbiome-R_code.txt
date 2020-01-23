@@ -1,0 +1,1368 @@
+library(viridis)
+library(rcompanion)
+library(DescTools)
+library(plyr) 
+library(dplyr)
+library(ggplot2)
+library(plyr)
+library(RColorBrewer)
+library(gplots)
+library(reshape2)
+library(ggtree)
+library(ggpubr)
+library(gridExtra)
+setwd("~/data/duckweed_microbiome/core_microbiomes/")
+source("~/data/duckweed_microbiome/q2_analysis_using_R.R")
+
+###############################################################################
+# Duckweed Core Microbiome 
+###############################################################################
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 1. core taxa - taxa present in all studies
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# calculate RA for each plate
+# remove unknown genus, time 0's
+# select common columns
+# create genus table for each plate
+
+# princeton meadows 1 filtering
+PM1.RA <- calculateRA_4_q2table("ducitaplate1-working_table.tsv")
+PM1.RA.META <- addtax_addmeta(
+                              PM1.RA,
+                              "ducitaplate1-ggBLAST_taxonomy.tsv",
+                              "ducitaplate1-metadata.tsv",
+                              sep = TRUE,
+                              value = "RA"
+                              )
+PM1.FILTERED <- filter(
+                       PM1.RA.META,
+                       time != 0
+                       )
+PM1.FILTERED <- filter(
+                       PM1.FILTERED,
+                       RA > 0
+                       )
+PM1.FILTERED <- filter(
+                       PM1.FILTERED,
+                       type == "treated_tissue"
+                       )
+PM1.FILTERED <- remove_unknown_genus(PM1.FILTERED)
+# princeton meadows 1 genus table
+PM1.TABLE <- select(
+                    PM1.FILTERED,
+                    sample_id,
+                    Phylum,
+                    Family,
+                    Genus,
+                    tissue,
+                    type,
+                    RA
+                    )
+colnames(PM1.TABLE)[5:6] <- c(
+                              "host_species",
+                              "sample_type"
+                              )
+PM1.GENUS <- ddply(
+                   PM1.TABLE,
+                   ~sample_id+Phylum+Family+Genus+host_species+sample_type,
+                   summarise,
+                   RA = sum(RA)
+                   )
+PM1.GENUS$location <- rep(
+                          "PM_year1",
+                          nrow(PM1.GENUS)
+                          )
+
+# ch_pp filtering
+CH_PP.RA <- calculateRA_4_q2table("ch_pp-working_table.tsv")
+CH_PP.RA.META <- addtax_addmeta(
+                                CH_PP.RA,
+	                        "ducitaplate2-ggBLAST_taxonomy.tsv",
+	               	        "ducitaplate2-metadata.tsv",
+                                sep = TRUE,
+                                value = "RA"
+                                )
+CH_PP.FILTERED <- filter(
+                         CH_PP.RA.META,
+                         RA > 0
+                         )
+CH_PP.FILTERED <- filter(
+                         CH_PP.RA.META,
+                         type == "rinsed_tissue"
+                         )
+CH_PP.FILTERED <- remove_unknown_genus(CH_PP.FILTERED)
+# ch_pp genus table
+CH_PP.TABLE <- select(
+                      CH_PP.FILTERED,
+                      sample_id,
+                      Phylum,
+                      Family,
+                      Genus,
+                      species,
+                      type,
+                      RA,
+                      location
+                      )
+colnames(CH_PP.TABLE)[5:6] <- c(
+                                "host_species",
+                                "sample_type"
+                                )
+CH_PP.GENUS <- ddply(
+                     CH_PP.TABLE,
+                     ~sample_id+Phylum+Family+Genus+host_species+sample_type+location,
+                     summarise,
+                     RA = sum(RA)
+                     )
+
+# princeton meadows year 2 filtering
+PM2.RA <- calculateRA_4_q2table("ducitaplates4_5-working_table.tsv")
+PM2.RA.META <- addtax_addmeta(
+                              PM2.RA,
+                              "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                              "ducitaplates4_5-metadata.tsv",
+                              sep = TRUE,
+                              value = "RA"
+                              )
+PM2.FILTERED <- filter(
+                       PM2.RA.META,
+                       time != 0
+                       )
+PM2.FILTERED <- filter(
+                       PM2.FILTERED,
+                       RA > 0
+                       )
+PM2.FILTERED <- filter(
+                       PM2.FILTERED,
+                       type == "treated_tissue"
+                       )
+PM2.FILTERED <- remove_unknown_genus(PM2.FILTERED)
+# princeton meadows year 2 genus table
+PM2.TABLE <- select(
+                    PM2.FILTERED,
+                    sample_id,
+                    Phylum,
+                    Family,
+                    Genus,
+                    tissue,
+                    type,
+                    RA
+                    )
+colnames(PM2.TABLE)[5:6] <- c(
+                              "host_species",
+                              "sample_type"
+                              )
+PM2.GENUS <- ddply(
+                   PM2.TABLE,
+                   ~sample_id+Phylum+Family+Genus+host_species+sample_type,
+                   summarise,
+                   RA = sum(RA)
+                   )
+PM2.GENUS$location <- rep(
+                          "PM_year2",
+                          nrow(PM2.GENUS)
+                          )
+
+# china microbiome table filtering
+CHINA.RA <- calculateRA_4_q2table("china_microbiome-working_table.tsv")
+CHINA.RA.META <- addtax_addmeta(
+                                CHINA.RA,
+                                "china_microbiome-ggBLAST_taxonomy.tsv",
+                                "china_microbiome-metadata.tsv",
+                                sep = TRUE,
+                                value = "RA"
+                                )
+CHINA.RA.FILTERED <- filter(
+                            CHINA.RA.META,
+                            RA > 0
+                            )
+CHINA.RA.FILTERED <- filter(
+                            CHINA.RA.META,
+                            host_species == "Lemna_aequinoctialis"
+                            )
+CHINA.FILTERED <- remove_unknown_genus(CHINA.RA.FILTERED)
+# china microbiome genus table
+CHINA.TABLE <- select(
+                      CHINA.FILTERED,
+                      sample_id,
+                      Phylum,
+                      Family,
+                      Genus,
+                      host_species,
+                      type,
+                      RA,
+                      location
+                      )
+colnames(CHINA.TABLE)[5:6] <- c(
+                                "host_species",
+                                "sample_type"
+                                )
+CHINA.GENUS <- ddply(
+                     CHINA.TABLE,
+                     ~sample_id+Phylum+Family+Genus+host_species+sample_type+location,
+                     summarise,
+                     RA = sum(RA)
+                     )
+
+ALLTABLES<- do.call(
+                    "rbind",
+                    list(
+                         PM1.GENUS,
+                         CH_PP.GENUS,
+                         PM2.GENUS,
+                         CHINA.GENUS
+                         )
+                    )
+
+# get table for tissue otus
+TABLE.TT <- filter(
+                   ALLTABLES,
+                   sample_type == "treated_tissue"| sample_type == "rinsed_tissue"
+                   )
+TABLE.TT <- filter(
+                   TABLE.TT,
+                   RA > 0
+                   )
+TABLE.TT$Genus <- gsub(
+                       "Candidatus Amoebophilus",
+                       "C. Amoebophilus",
+                       paste(TABLE.TT$Genus)
+                       )
+
+
+# taxa sample percentage in each study
+SAMPLECOUNT.PHYLUM <- get_phylum_samplecount(TABLE.TT)
+CONSERVED.SAMPLECOUNT <- filter(
+                                SAMPLECOUNT.PHYLUM,
+                                Sample_Percent > 90
+                                )
+CONSERVED.PHYLUM <- unique(CONSERVED.SAMPLECOUNT$Phylum)
+
+CONSERVED.TABLE <- filter(
+                          TABLE.TT,
+                          Phylum %in% CONSERVED.PHYLUM
+                          )
+CONSERVED.FILTERED <- remove_unknown_genus(CONSERVED.TABLE)
+                         
+INDEX <- 1
+for (PHYLA in CONSERVED.PHYLUM) {
+   PHYLA <- filter(
+                   CONSERVED.FILTERED,
+                   Phylum == PHYLA
+                   )
+
+   MATRIX.GENUS <- location_genus_samplepercent(
+                                                PHYLA,
+                                                TABLE.TT
+                                                )
+   #write.table(
+   #            MATRIX.GENUS,
+   #            sprintf(
+   #                    "dab_core_taxa-location_samplepercent-%s.tsv",
+   #                    CONSERVED.PHYLUM[[INDEX]]
+   #                    ),
+   #            sep = "\t",
+   #            quote = FALSE
+   #            )
+
+   MATRIX.ORDER <- MATRIX.GENUS[order(-rowMeans(MATRIX.GENUS)),]
+   LOCATION.COUNT <- apply(
+                           MATRIX.ORDER,
+                           1,
+                           function(x){
+                                       sum(x > 0)
+                                       }
+                           )
+   if (CONSERVED.PHYLUM[[INDEX]] == "Proteobacteria"){
+      MASK <- LOCATION.COUNT > 4
+   } else {
+      MASK <- LOCATION.COUNT > 1
+   }
+   LOCATION.COUNT.SORT <- sort(
+                               LOCATION.COUNT[MASK],
+                               decreasing = TRUE
+                               )
+   print(LOCATION.COUNT.SORT)
+   MATRIX.TOP <- MATRIX.ORDER[MASK,]
+   MATRIX.ORDERED <- MATRIX.TOP[names(LOCATION.COUNT.SORT),]
+   MATRIX.ORDERED <- MATRIX.ORDERED[,order(colnames(MATRIX.ORDERED))]
+   LABELS.GENUS <- rownames(MATRIX.ORDERED)
+   #LABELS.LOCATION <- colnames(MATRIX.ORDERED)
+   LABELS.LOCATION <- c(
+                        "Caldwell House",
+                        "Passion Puddle",
+                        "PM Year 1",
+                        "PM Year 2",
+                        "Leishan County",
+                        "Congjiang County",
+                        "Liping County"
+                        )
+   DATA <- as.matrix(MATRIX.ORDERED)
+   
+   BREAKS <- c(
+               0.0000,
+               seq(
+                   0.001,
+                   1.000,
+                   0.1
+                   )
+               )
+   COLORS <- c(
+               "black",
+               rev(
+                   brewer.pal(
+                              9,
+                              "Spectral"
+                              )
+                   )
+               )
+
+   if (CONSERVED.PHYLUM[[INDEX]] == "Proteobacteria"){
+      ROW.FONT.SIZE = 1
+   } else {
+      ROW.FONT.SIZE = 1
+   }
+   
+   OUTPUT <- sprintf(
+                     "dab_core_taxa-location_samplepercent-%s.pdf",
+                     CONSERVED.PHYLUM[[INDEX]]
+                     )
+   lmat = rbind(
+                c(0,3),
+                c(2,1),
+                c(0,4)
+                )
+   lwid = c(0.5,4)
+   lhei = c(0.5,4,0.5)
+
+   pdf(OUTPUT)
+   heatmap.2(
+             DATA,
+             Colv = NA,
+             Rowv = NA,
+             dendrogram = "none",
+             density.info = "none",
+             trace = "none",
+             main = paste(CONSERVED.PHYLUM[[INDEX]]),
+             labCol = LABELS.LOCATION,
+             labRow = LABELS.GENUS,
+             srtCol = 45,
+             breaks = BREAKS,
+             col = COLORS,
+             margins = c(10,10),
+             scale = "none",
+             cexCol = 1,
+             cexRow = ROW.FONT.SIZE,
+             key = FALSE,
+             lmat = lmat,
+             lwid = lwid,
+             lhei = lhei
+             )
+   dev.off()
+   INDEX <- INDEX + 1
+}
+
+# count number of core taxa 
+SAMPLECOUNT.PHYLUM <- get_phylum_samplecount(TABLE.TT)
+CONSERVED.SAMPLECOUNT <- filter(
+                                SAMPLECOUNT.PHYLUM,
+                                Sample_Percent > 90
+                                )
+CONSERVED.PHYLUM <- unique(CONSERVED.SAMPLECOUNT$Phylum)
+
+CONSERVED.TABLE <- filter(
+                          TABLE.TT,
+                          Phylum %in% CONSERVED.PHYLUM
+                          )
+CONSERVED.FILTERED <- remove_unknown_genus(CONSERVED.TABLE)
+                         
+CONSERVED.PHYLUM.TABLE <- filter(
+                                 CONSERVED.FILTERED,
+                                 Phylum %in% CONSERVED.PHYLUM
+                                 )
+MATRIX.GENUS <- location_genus_samplepercent(
+                                             CONSERVED.PHYLUM.TABLE,
+                                             TABLE.TT
+                                             )
+CONSERVED.FILTER <- apply(
+                          MATRIX.GENUS,
+                          1,
+                          function(x){
+                                      sum(x > 0)
+                                      }
+                          )
+CONSERVED.MATRIX <- MATRIX.GENUS[CONSERVED.FILTER >= 6,]
+CONSERVED.GENERA <- rownames(CONSERVED.MATRIX)
+
+# create location sample count legend
+BREAKS <- c(
+            0.0000,
+            seq(
+                0.001,
+                1.000,
+                0.1
+                )
+            )
+COLORS <- c(
+            "black",
+            rev(
+                brewer.pal(
+                           9,
+                           "Spectral"
+                           )
+                )
+            )
+lmat = rbind(
+             c(4,3),
+             c(2,1)
+             )
+lwid = c(3,1)
+lhei = c(1,1)
+HEAT.LEG <- heatmap.2(
+                      as.matrix(CONSERVED.MATRIX),
+                      dendrogram = "none",
+                      density.info = "none",
+                      trace = "none",
+                      srtCol = 45,
+                      breaks = BREAKS,
+                      col = COLORS,
+                      margins = c(10,10),
+                      scale = "none",
+                      cexCol = 1,
+                      cexRow = 1,
+                      lmat = lmat,
+                      lwid = lwid,
+                      lhei = lhei,
+                      key = TRUE,
+                      key.par = list(
+                                     cex.lab = 3,
+                                     cex.axis = 2,
+                                     font.axis = 2,
+                                     font = 2
+                                     ),
+                      key.xlab = "\nSample Percentage",
+                      )
+png(
+    "core_microbiome-sample_percentage_legend.png",
+    )
+eval(HEAT.LEG$call)
+dev.off()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 2. core taxa in moderate abundance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# plate 1 clr table
+PLATE1.RA <- calculateRA_4_q2table("ducitaplate1-working_table.tsv")
+PLATE1.GENUS <- create_genus_count_table(
+                                         PLATE1.RA,
+                                         "ducitaplate1-ggBLAST_taxonomy.tsv"
+                                         )
+PLATE1.CLR <- clr_transform_counttable(
+                                       PLATE1.GENUS,
+                                       PRIOR = 0.001
+                                       )
+PLATE1.CLR$Genus <- rownames(PLATE1.CLR)
+PLATE1.INFO <- add_clr_info(
+                            PLATE1.CLR,
+                            "ducitaplate1-ggBLAST_taxonomy.tsv",
+                            "ducitaplate1-metadata.tsv"
+                            )
+PLATE1.FILTERED <- filter(
+                          PLATE1.INFO,
+                          time != 0
+                          )
+PLATE1.TABLE <- select(
+                       PLATE1.FILTERED,
+                       sample_id,
+                       Phylum,
+                       Family,
+                       Genus,
+                       tissue,
+                       type,
+                       clr
+                       )
+colnames(PLATE1.TABLE)[5:6] <- c(
+                                 "host_species",
+                                 "sample_type"
+                                 )
+PLATE1.TABLE$location <- rep(
+                             "PM_year1",
+                             nrow(PLATE1.TABLE)
+                             )
+
+# caldwell house and passion puddle clr table
+CH_PP.RA <- calculateRA_4_q2table("ch_pp-working_table.tsv")
+CH_PP.GENUS <- create_genus_count_table(
+                                        CH_PP.RA,
+                                        "ducitaplate2-ggBLAST_taxonomy.tsv"
+                                        )
+CH_PP.CLR <- clr_transform_counttable(
+                                      CH_PP.GENUS,
+                                      PRIOR = 0.001
+                                      )
+CH_PP.CLR$Genus <- rownames(CH_PP.CLR)
+CH_PP.INFO <- add_clr_info(
+                           CH_PP.CLR,
+                           "ducitaplate2-ggBLAST_taxonomy.tsv",
+                           "ducitaplate2-metadata.tsv"
+                           )
+CH_PP.TABLE <- select(
+                      CH_PP.INFO,
+                      sample_id,
+                      Phylum,
+                      Family,
+                      Genus,
+                      species,
+                      type,
+                      clr,
+                      location
+                      )
+colnames(CH_PP.TABLE)[5:6] <- c(
+                                "host_species",
+                                "sample_type"
+                                )
+
+# plates 4 and 5 clr table
+PLATES4_5.RA <- calculateRA_4_q2table("ducitaplates4_5-working_table.tsv")
+PLATES4_5.GENUS <- create_genus_count_table(
+                                            PLATES4_5.RA,
+                                            "ducitaplates4_5-ggBLAST_taxonomy.tsv"
+                                            )
+PLATES4_5.CLR <- clr_transform_counttable(
+                                         PLATES4_5.GENUS,
+                                         PRIOR = 0.001
+                                         )
+PLATES4_5.CLR$Genus <- rownames(PLATES4_5.CLR)
+PLATES4_5.INFO <- add_clr_info(
+                               PLATES4_5.CLR,
+                               "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                               "ducitaplates4_5-metadata.tsv"
+                               )
+PLATES4_5.FILTERED <- filter(
+                             PLATES4_5.INFO,
+                             time != 0
+                             )
+PLATES4_5.TABLE <- select(
+                          PLATES4_5.FILTERED,
+                          sample_id,
+                          Phylum,
+                          Family,
+                          Genus,
+                          tissue,
+                          type,
+                          clr
+                          )
+colnames(PLATES4_5.TABLE)[5:6] <- c(
+                                    "host_species",
+                                    "sample_type"
+                                    )
+PLATES4_5.TABLE$location <- rep(
+                                "PM_year2",
+                                nrow(PLATES4_5.TABLE)
+                                )
+
+# china clr table
+CHINA.RA <- calculateRA_4_q2table("china_microbiome-working_table.tsv")
+CHINA.GENUS <- create_genus_count_table(
+                                        CHINA.RA,
+                                        "china_microbiome-ggBLAST_taxonomy.tsv"
+                                        )
+CHINA.CLR <- clr_transform_counttable(
+                                      CHINA.GENUS,
+                                      PRIOR = 0.001
+                                      )
+CHINA.CLR$Genus <- rownames(CHINA.CLR)
+CHINA.INFO <- add_clr_info(
+                           CHINA.CLR,
+                           "china_microbiome-ggBLAST_taxonomy.tsv",
+                           "china_microbiome-metadata.tsv"
+                           )
+CHINA.TABLE <- select(
+                      CHINA.INFO,
+                      sample_id,
+                      Phylum,
+                      Family,
+                      Genus,
+                      host_species,
+                      type,
+                      clr,
+                      location
+                      )
+colnames(CHINA.TABLE)[5:6] <- c(
+                                "host_species",
+                                "sample_type"
+                                )
+
+# create tissue clr table
+ALLTABLES <- do.call(
+                     "rbind",
+                     list(
+                          PLATE1.TABLE,
+                          CH_PP.TABLE,
+                          PLATES4_5.TABLE,
+                          CHINA.TABLE
+                          )
+                     )
+TABLE.TT <- filter(
+                   ALLTABLES,
+                   sample_type == "treated_tissue"| sample_type == "rinsed_tissue"
+                   )
+TABLE.TT$Genus <- gsub(
+                       "Candidatus Amoebophilus",
+                       "C. Amoebophilus",
+                       paste(TABLE.TT$Genus)
+                       )
+
+# distinguish core vs non core
+# determine signficance
+TABLE.TT$core_type <- sapply(
+                             TABLE.TT$Genus,
+                             function(x) if (x %in% CONSERVED.GENERA){
+                                            x
+                                            } else{
+                                            "non_core"
+                                            }
+                             )
+TABLE.TT$core_type <- as.factor(TABLE.TT$core_type)
+core_median = c()
+location = c()
+core_type = c()
+letter = c()
+for (LOCATION in unique(TABLE.TT$location)){
+   # get location table
+   LOC.TABLE <- filter(
+                       TABLE.TT,
+                       location == LOCATION
+                       )
+
+   # get Dunnett test command letters
+   TEST <- DunnettTest(
+                       x = TABLE.TT$clr,
+                       g = TABLE.TT$core_type,
+                       control = "non_core"
+                       )
+   NAMES <- attr(
+                 TEST$non_core,
+                 "dimnames"
+                 )[[1]]
+   PVAL <- TEST$non_core[,4]
+   DF <- data.frame(NAMES,PVAL)
+   CMLD <- cldList(
+                   PVAL ~ NAMES,
+                   data = DF,
+                   threshold = 0.05
+                   )
+
+   # get core taxa median values
+   MEDIANS <- aggregate(
+                        LOC.TABLE$clr,
+                        list(LOC.TABLE$core_type),
+                        median
+                        )
+   colnames(MEDIANS)[1] <- "core_type"
+   MEDIANS <- MEDIANS[match(as.vector(CMLD$Group),MEDIANS$core_type),]
+
+   # build dataframe vectors
+   core_type <- c(
+                  core_type,
+                  as.vector(CMLD$Group)
+                  )
+   letter <- c(
+               letter,
+               as.vector(CMLD$Letter)
+               )
+   location <- c(
+                 location,
+                 rep(
+                     LOCATION,
+                     length(CMLD$Group),
+                     )
+                 )
+   core_median <- c(
+                    core_median,
+                    round(
+                          MEDIANS[,2],
+                          2
+                          )
+                    )
+}
+DCMLD <- data.frame(
+                    "core_type" = core_type,
+                    "location" = location,
+                    "core_median" = core_median
+                    )
+DCMLD <- dcast(
+               DCMLD,
+               core_type~location,
+               value.var = "core_median"
+               )
+rownames(DCMLD) <- DCMLD[,1]
+DCMLD2 <- DCMLD[,2:8]
+
+
+# compute fold difference then take log2
+NON.CORE <- match(
+                  "non_core",
+                  rownames(DCMLD2)
+                  )
+FD.DF <- apply(
+               DCMLD2,
+               2,
+               function (x){
+                            ifelse(
+                                   x>0 & x[NON.CORE]>0,
+                                   x / x[NON.CORE],
+                                   ifelse(
+                                          x<0 & x[NON.CORE]<0,
+                                          x[NON.CORE] / x,
+                                          ifelse(
+                                                 x>0 & x[NON.CORE]<0,
+                                                 abs(x) + abs(x[NON.CORE]) / abs(x[NON.CORE]),
+                                                 abs(x[NON.CORE]) / abs(x) + abs(x[NON.CORE]) 
+                                                 )
+                                          )
+                                   )
+                            }
+               )
+FD.LOG2 <- log2(FD.DF)
+FD.LOG2 <- FD.LOG2[rownames(FD.LOG2) != "non_core",]
+FD.SORT <- FD.LOG2[order(-apply(FD.LOG2,1,mean)),]
+FD.MAT <- as.matrix(FD.SORT)
+FD.MAT <- round(
+                FD.MAT,
+                2
+                )
+
+
+# plot heatmap
+LABELS.LOCATION <- c(
+                     "Caldwell House",
+                     "Passion Puddle",
+                     "PM Year 1",
+                     "PM Year 2",
+                     "Leishan County",
+                     "Congjiang County",
+                     "Liping County"
+                     )
+BREAKS <- c(
+            -3,
+            seq(
+                0,
+                3,
+                1
+                )
+            )
+COLORS <- c(
+            viridis(4)
+            )
+
+par(font = 2)
+par(font.axis = 4)
+# 1: heatmap
+# 2: row dendrogram
+# 3: col dendrogram
+# 4: key
+lmat <-rbind(
+             c(4,3),
+             c(2,1)
+             )
+lhei <- c(1,3)
+lwid <- c(1,3)
+heatmap.2(
+          FD.MAT,
+          dendrogram = "none",
+          density.info = "none",
+          trace = "none",
+          scale = "none",
+          margins = c(14,18),
+          cellnote = FD.MAT,
+          notecol = "black",
+          notecex = 1.5,
+          Colv = NA,
+          Rowv = NA,
+          labRow = rownames(FD.MAT),
+          labCol = LABELS.LOCATION,
+          srtCol = 45,
+          cexCol = 2,
+          cexRow = 1.5,
+          col = COLORS,
+          breaks = BREAKS,
+          key = TRUE,
+          key.title = NA,
+          key.par = list(
+                         cex.lab = 2,
+                         cex.axis = 2,
+                         font.axis = 2,
+                         font = 2
+                         ),
+          key.xlab = "\nLog2 Fold Difference",
+          lmat = lmat,
+          lhei = lhei,
+          lwid = lwid
+          )
+
+###############################################################################
+# Rice Core Microbiome 
+###############################################################################
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# Rice Working Table - Edwards et al
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# load taxonomy 
+TISSUE.TAX <- read_my_table("edwards_et_al-ggBLAST_taxonomy.tsv")
+TISSUE.TAX <- separate(
+                       TISSUE.TAX,
+                       Taxon,
+                       c(
+                         "Kingdom",
+                         "Phylum",
+                         "Class",
+                         "Order",
+                         "Family",
+                         "Genus",
+			 "Species"
+			 ),
+                        sep=";\\s[k,p,c,o,f,g,s]__",
+                        remove = TRUE
+                        )
+TISSUE.TAX <- select(
+                     TISSUE.TAX,
+                     Phylum,
+                     Family,
+                     Genus
+                     )
+
+# load meta
+RICE.META <- read_my_table("edwards_et_al-metadata.tsv")
+TISSUE.META <- filter(
+                      RICE.META,
+                      Compartment != "Bulk Soil"
+                      )
+colnames(TISSUE.META)[1] <- "sample_id"
+
+# load count
+COLUMNS <- c(
+             as.vector(TISSUE.META$paired_id),
+             "Genus"
+             )
+
+RICE.COUNT <- read_my_table("edwards_et_al-bacteria_genus_table.tsv")
+RICE.MAT <- RICE.COUNT[,-1]
+RICE.RA <- apply(
+                 RICE.MAT,
+                 2,
+                 function(x) x / sum(x) * 100
+                 )
+RICE.RA <- as.data.frame(RICE.RA)
+RICE.RA$Genus <- RICE.COUNT$Genus
+TISSUE.RA <- RICE.RA[,colnames(RICE.RA) %in% COLUMNS]
+TISSUE.MELT <- melt(
+                    TISSUE.RA,
+                    variable.name = "paired_id",
+                    value.name = "RA"
+                    )
+	
+# merge
+TISSUE.MELT.TAX <- merge(
+                         TISSUE.MELT,
+                         TISSUE.TAX,
+                         by = "Genus"
+                         )
+TISSUE.INFO <- merge(
+                     TISSUE.MELT.TAX,
+                     TISSUE.META,
+                     by = "paired_id"
+                     )
+TISSUE.INFO <- filter(
+                      TISSUE.INFO,
+                      RA > 0
+                      )
+TISSUE.INFO <- remove_unknown_genus(TISSUE.INFO)
+TISSUE.INFO$sample_type <- rep(
+                               "rice_root",
+                               nrow(TISSUE.INFO)
+                               )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# Rice Working Table - Huang et al
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+RICE.META.2 <- read_my_table("china_microbiome-metadata.tsv")
+TISSUE.META.2 <- filter(
+                        RICE.META.2,
+                        host_species == "Oryza_sativa"
+                        )
+COLS.2 <- c(
+            as.vector(TISSUE.META.2$sample_id),
+            "feature_id"
+            )
+
+RICE.RA.2 <- calculateRA_4_q2table("china_microbiome-working_table.tsv")
+TISSUE.TABLE.2 <- RICE.RA.2[,colnames(RICE.RA.2) %in% COLS.2]
+TISSUE.INFO.2 <- addtax_addmeta(
+                                TISSUE.TABLE.2,
+                                "china_microbiome-ggBLAST_taxonomy.tsv",
+                                "china_microbiome-metadata.tsv",
+                                sep = TRUE,
+                                value = "RA"
+                                )
+TISSUE.INFO.2 <- filter(
+                        TISSUE.INFO.2,
+                        RA > 0
+                        )
+TISSUE.INFO.2 <- remove_unknown_genus(TISSUE.INFO.2)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# core taxa - taxa present in most studies
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+TISSUE.GENUS <- select(
+                       TISSUE.INFO,
+                       paired_id,
+                       location,
+                       Phylum,
+                       Genus,
+                       sample_type,
+                       RA
+                       )
+colnames(TISSUE.GENUS)[1] <- "sample_id"
+
+TISSUE.SELECT.2 <- select(
+                          TISSUE.INFO.2,
+                          sample_id,
+                          location,
+                          Phylum,
+                          Genus,
+                          sample_type,
+                          RA
+                          )
+TISSUE.GENUS.2 <- ddply(
+                        TISSUE.SELECT.2,
+                        ~sample_id+location+Phylum+Genus+sample_type,
+                        summarise,
+                        RA = sum(RA)
+                        )
+
+RICE.GENUS <- rbind(
+                    TISSUE.GENUS,
+                    TISSUE.GENUS.2
+                    )
+
+# count number of core taxa
+SAMPLECOUNT.PHYLUM <- get_phylum_samplecount(RICE.GENUS)
+CONSERVED.SAMPLECOUNT <- filter(
+                                SAMPLECOUNT.PHYLUM,
+                                Sample_Percent > 90
+                                )
+CONSERVED.PHYLUM <- unique(CONSERVED.SAMPLECOUNT$Phylum)
+
+CONSERVED.TABLE <- filter(
+                          RICE.GENUS,
+                          Phylum %in% CONSERVED.PHYLUM
+                          )
+
+GENUS.MATRIX <- location_genus_samplepercent(
+                                             CONSERVED.TABLE,
+                                             RICE.GENUS
+                                             )
+CONSERVED.FILTER <- apply(
+                          GENUS.MATRIX,
+                          1,
+                          function (x){
+                                       sum(x > 0)
+                                       }
+                          )
+SAMPLE_THRESHOLD <- length(unique(RICE.GENUS$location)) -1
+CORE.MATRIX <- GENUS.MATRIX[CONSERVED.FILTER >= SAMPLE_THRESHOLD,]
+CORE.GENERA <- rownames(CORE.MATRIX)
+     
+                         
+TYPES <- c(
+           "rice_root",
+           "rice_aerial_tissue"
+           )
+INDEX <- 1
+for (PHYLUM in CONSERVED.PHYLUM) {
+   print(PHYLUM)
+   PHYLUM.TABLE <- filter(
+                          CONSERVED.TABLE,
+                          Phylum == PHYLUM
+                          )
+   for (TYPE in TYPES){
+      print(TYPE)
+      PHYLUM.TYPE <- filter(
+                            PHYLUM.TABLE,
+                            sample_type == TYPE
+                            )
+      MATRIX.GENUS <- location_genus_samplepercent(
+                                                   PHYLUM.TYPE,
+                                                   RICE.GENUS
+                                                   )
+      str(MATRIX.GENUS)
+      #write.table(
+      #            MATRIX.GENUS,
+      #            sprintf(
+      #                    "conserved_analysis-location_sample_count-%s.tsv",
+      #                    CONSERVED.PHYLUM[[INDEX]]
+      #                    ),
+      #            sep = "\t",
+      #            quote = FALSE
+      #            )
+   
+      MATRIX.ORDER <- MATRIX.GENUS[order(-rowMeans(MATRIX.GENUS)),]
+      LOCATION.COUNT <- apply(
+                              MATRIX.ORDER,
+                              1,
+                              function(x){
+                                          sum(x > 0)
+                                          }
+                              )
+      ifelse(
+             PHYLUM == "Proteobacteria",
+             MASK <- LOCATION.COUNT > 6,
+             MASK <- LOCATION.COUNT > 3
+             )
+      LOCATION.COUNT.SORT <- sort(
+                                  LOCATION.COUNT[MASK],
+                                  decreasing = TRUE
+                                  )
+      print(LOCATION.COUNT.SORT)
+      MATRIX.TOP <- MATRIX.ORDER[MASK,]
+      if (nrow(MATRIX.TOP) > 2){
+         MATRIX.ORDERED <- MATRIX.TOP[names(LOCATION.COUNT.SORT),]
+         MATRIX.ORDERED <- MATRIX.ORDERED[,order(colnames(MATRIX.ORDERED))]
+         LABELS.GENUS <- rownames(MATRIX.ORDERED)
+         LABELS.LOCATION <- colnames(MATRIX.ORDERED)
+         DATA <- as.matrix(MATRIX.ORDERED)
+         
+         BREAKS <- c(
+                     0.0000,
+                     seq(
+                         0.001,
+                         1.000,
+                         0.1
+                         )
+                     )
+         COLORS <- c(
+                     "black",
+                     rev(
+                         brewer.pal(
+                                    9,
+                                    "Spectral"
+                                    )
+                         )
+                     )
+      
+         ifelse(
+                PHYLUM == "Proteobacteria",
+                ROW.FONT.SIZE <- 0.25,
+                ROW.FONT.SIZE <- 1
+                )
+         
+         OUTPUT <- sprintf(
+                           "core_bacteria-rice-location_genus_samplepercent-%s_%s.pdf",
+                           TYPE,
+                           PHYLUM
+                           )
+         lmat = rbind(
+                      c(0,3),
+                      c(2,1),
+                      c(0,4)
+                      )
+         lwid = c(0.5,4)
+         lhei = c(0.5,4,0.5)
+   
+         print(OUTPUT)
+         pdf(OUTPUT)
+         heatmap.2(
+                   DATA,
+                   Colv = NA,
+                   Rowv = NA,
+                   dendrogram = "none",
+                   density.info = "none",
+                   trace = "none",
+                   main = paste(PHYLUM),
+                   labCol = LABELS.LOCATION,
+                   labRow = LABELS.GENUS,
+                   srtCol = 45,
+                   breaks = BREAKS,
+                   col = COLORS,
+                   margins = c(10,10),
+                   scale = "none",
+                   cexCol = 1,
+                   cexRow = ROW.FONT.SIZE,
+                   key = FALSE,
+                   lmat = lmat,
+                   lwid = lwid,
+                   lhei = lhei
+                   )
+         dev.off()
+         }
+      }
+}
+   
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# core taxa abundance
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# load meta
+RICE.META <- read_my_table("edwards_et_al-metadata.tsv")
+TISSUE.META <- filter(
+                      RICE.META,
+                      Compartment != "Bulk Soil"
+                      )
+colnames(TISSUE.META)[1] <- "sample_id"
+
+# load count
+COLUMNS <- c(
+             as.vector(TISSUE.META$paired_id),
+             "Genus"
+             )
+
+RICE.COUNT <- read_my_table("edwards_et_al-bacteria_genus_table.tsv")
+RICE.MAT <- RICE.COUNT[,-1]
+RICE.RA <- apply(
+                 RICE.MAT,
+                 2,
+                 function(x) x / sum(x) * 100
+                 )
+RICE.RA <- as.data.frame(RICE.RA)
+RICE.RA$Genus <- RICE.COUNT$Genus
+TISSUE.RA <- RICE.RA[,colnames(RICE.RA) %in% COLUMNS]
+TISSUE.CLR <- clr_transform_counttable(
+                                       TISSUE.RA,
+                                       PRIOR
+                                       )
+TISSUE.CLR <- add_clr_info(
+                           TISSUE.CLR,
+                           "edwards_et_al-metadata.tsv",
+                           "edwards_et_al-ggBLAST_taxonomy.tsv"
+                           )
+TISSUE1.TABLE <- select(
+                        TISSUE.CLR,
+                        sample_id,
+                        Phylum,
+                        Family,
+                        Genus,
+                        
+ 
+
+
+                        
+
+###############################################################################
+# Arabidopsis Core Microbiome - Location Genus Sample Percent
+###############################################################################
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# Arabidopsis Working Table - Agler et al
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+AT.RA <- calculateRA_4_q2table("agler_et_al-working_table.tsv")
+AT.INFO <- addtax_addmeta(
+                          AT.RA,
+                          "agler_et_al-ggBLAST_taxonomy.tsv",
+                          "agler_et_al-metadata.tsv",
+                          sep = TRUE,
+                          value = "RA"
+                          )
+AT.INFO <- filter(
+                  AT.INFO,
+                  RA > 0
+                  )
+AT.INFO <- remove_unknown_genus(AT.INFO)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# Arabidopsis Working Table - Robbins et al
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# arabidopsis-robbins columns
+AT.META.2 <- read_my_table("robbins_et_al-metadata.tsv")
+AT.META.TT.2 <- filter(
+                       AT.META.2,
+                       type != "bulk_soil"
+                       )
+AT.COLS.2 <- c(
+               as.vector(AT.META.TT.2$sample_id),
+               "feature_id"
+               )
+
+# arabidopsis-robbins tables
+AT.RA.2 <- calculateRA_4_q2table("robbins_et_al-working_table.tsv")
+AT.RA.2 <- AT.RA.2[,colnames(AT.RA.2) %in% AT.COLS.2]
+AT.INFO.2 <- addtax_addmeta(
+                            AT.RA.2,
+                            "robbins_et_al-ggBLAST_taxonomy.tsv",
+                            "robbins_et_al-metadata.tsv",
+                            sep = TRUE,
+                            value = "RA"
+                            )
+AT.INFO.2 <- filter(
+                    AT.INFO.2,
+                    RA > 0
+                    )
+AT.INFO.2 <- remove_unknown_genus(AT.INFO.2)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# Location Genus Sample Percent 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+AT.SELECT <- select(
+                    AT.INFO,
+                    sample_id,
+                    Phylum,
+                    Family,
+                    Genus,
+                    location,
+                    RA
+                    )
+AT.GENUS <- ddply(
+                  AT.SELECT,
+                  ~sample_id+Phylum+Family+Genus+location,
+                  summarise,
+                  RA = sum(RA)
+                  )
+
+AT.SELECT.2 <- select(
+                      AT.INFO.2,
+                      sample_id,
+                      Phylum,
+                      Family,
+                      Genus,
+                      location,
+                      RA
+                      )
+AT.GENUS.2 <- ddply(
+                    AT.SELECT.2,
+                    ~sample_id+Phylum+Family+Genus+location,
+                    summarise,
+                    RA = sum(RA)
+                    )
+AT.ALL.GENUS <- rbind(
+                      AT.GENUS,
+                      AT.GENUS.2
+                      )
+
+
+AT.PHYLUM.SAMPLECOUNT <- get_phylum_samplecount(AT.ALL.GENUS)
+CONSERVED.PHYLUM.SAMPLECOUNT <- filter(
+                                       AT.PHYLUM.SAMPLECOUNT,
+                                       Sample_Percent > 90
+                                       )
+CONSERVED.PHYLUM <- unique(CONSERVED.PHYLUM.SAMPLECOUNT$Phylum)
+
+CONSERVED.TABLE <- filter(
+                          AT.ALL.GENUS,
+                          Phylum %in% CONSERVED.PHYLUM
+                          )
+
+INDEX <- 1
+for (PHYLA in CONSERVED.PHYLUM) {
+   PHYLA <- filter(
+                   CONSERVED.TABLE,
+                   Phylum == PHYLA
+                   )
+   MATRIX.GENUS <- location_genus_samplepercent(
+                                                PHYLA,
+                                                AT.ALL.GENUS
+                                                )
+   #write.table(
+   #            MATRIX.GENUS,
+   #            sprintf(
+   #                    "conserved_analysis-location_sample_count-%s.tsv",
+   #                    CONSERVED.PHYLUM[[INDEX]]
+   #                    ),
+   #            sep = "\t",
+   #            quote = FALSE
+   #            )
+
+   MATRIX.ORDER <- MATRIX.GENUS[order(-rowMeans(MATRIX.GENUS)),]
+   LOCATION.COUNT <- apply(
+                           MATRIX.ORDER,
+                           1,
+                           function(x){
+                                       sum(x > 0)
+                                       }
+                           )
+   if (CONSERVED.PHYLUM[[INDEX]] == "Proteobacteria"){
+      MASK <- LOCATION.COUNT > 3
+   } else {
+      MASK <- LOCATION.COUNT > 3
+   }
+   LOCATION.COUNT.SORT <- sort(
+                               LOCATION.COUNT[MASK],
+                               decreasing = TRUE
+                               )
+   print(LOCATION.COUNT.SORT)
+   MATRIX.TOP <- MATRIX.ORDER[MASK,]
+   MATRIX.ORDERED <- MATRIX.TOP[names(LOCATION.COUNT.SORT),]
+   MATRIX.ORDERED <- MATRIX.ORDERED[,order(colnames(MATRIX.ORDERED))]
+   LABELS.GENUS <- rownames(MATRIX.ORDERED)
+   LABELS.LOCATION <- colnames(MATRIX.ORDERED)
+   DATA <- as.matrix(MATRIX.ORDERED)
+   
+   BREAKS <- c(
+               0.0000,
+               seq(
+                   0.001,
+                   1.000,
+                   0.1
+                   )
+               )
+   COLORS <- c(
+               "black",
+               rev(
+                   brewer.pal(
+                              9,
+                              "Spectral"
+                              )
+                   )
+               )
+
+   if (CONSERVED.PHYLUM[[INDEX]] == "Proteobacteria"){
+      ROW.FONT.SIZE <- 0.50
+   } else {
+      ROW.FONT.SIZE = 1
+   }
+   
+   OUTPUT <- sprintf(
+                     "core_bacteria-arabidopsis-location_genus_samplepercent-%s.pdf",
+                     CONSERVED.PHYLUM[[INDEX]]
+                     )
+   lmat = rbind(
+                c(0,3),
+                c(2,1),
+                c(0,4)
+                )
+   lwid = c(0.5,4)
+   lhei = c(0.5,4,0.5)
+
+   pdf(OUTPUT)
+   heatmap.2(
+             DATA,
+             Colv = NA,
+             Rowv = NA,
+             dendrogram = "none",
+             density.info = "none",
+             trace = "none",
+             main = paste(CONSERVED.PHYLUM[[INDEX]]),
+             labCol = LABELS.LOCATION,
+             labRow = LABELS.GENUS,
+             srtCol = 45,
+             breaks = BREAKS,
+             col = COLORS,
+             margins = c(10,10),
+             scale = "none",
+             cexCol = 1,
+             cexRow = ROW.FONT.SIZE,
+             key = FALSE,
+             lmat = lmat,
+             lwid = lwid,
+             lhei = lhei
+             )
+   dev.off()
+   INDEX <- INDEX + 1
+}

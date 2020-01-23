@@ -1,0 +1,526 @@
+library(plyr) 
+library(dplyr)
+library(ggplot2)
+library(plyr)
+library(reshape2)
+library(ggpubr)
+library(ggdendro)
+library(dunn.test)
+library(rcompanion)
+library(vegan)
+setwd("~/data/duckweed_microbiome/evolution_analysis")
+source("~/data/duckweed_microbiome/q2_analysis_using_R.R")
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# PCoA Analysis
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+PCOA.OBJECT <- q2distance_2_pcoa(
+                                 "plant_only-beta_diversity-bray_curtis_distance_matrix.tsv",
+                                 "evolution_analysis-metadata.tsv"
+                                 )
+PCOA.META <- PCOA.OBJECT$points
+PCOA.VARIANCE <- PCOA.OBJECT$variance
+PCOA.META$host <- factor(PCOA.META$host)
+PCOA.META$host <- factor(
+                         PCOA.META$host,
+                         levels = c(
+                                    "duckweed",
+                                    "rice",
+                                    "arabidopsis"
+                                    )
+                         )
+PCOA.META$tissue <- factor(PCOA.META$tissue)
+PCOA.META$tissue <- factor(
+                           PCOA.META$tissue,
+                           levels = c(
+                                      "root",
+                                      "leaf_like"
+                                      )
+                           )
+
+# plot code
+FILL <- c(
+          "root" = "orange",
+          "leaf_like" = "forestgreen"
+          )
+SHAPES <- c(
+            "duckweed" = 21,
+            "arabidopsis" = 22,
+            "rice" = 23
+            )
+PLOT <- ggplot(
+               PCOA.META,
+               aes(
+                   x,
+                   y,
+                   fill = tissue,
+                   shape = host
+                   )
+               )
+EVO.BETA.FIG <- PLOT +
+                geom_point(
+                           size = 4,
+                           stroke = 1.25
+                           ) +
+                scale_fill_manual(
+                                  name = "Tissue",
+                                  labels = c(
+                                             "Root",
+                                             "Leaf Like"
+                                             ),
+                                  values  = FILL
+                                  ) +
+                scale_shape_manual(
+                                   name = "Host",
+                                   values = SHAPES
+                                   ) + 
+                theme(
+                      axis.line = element_line(
+                                               color = "black",
+                                               size = 3
+                                               ),
+                      axis.title = element_text(
+                                                size = 20,
+                                                face = "bold"
+                                                ),
+                      axis.text = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 16
+                                               ),
+                      legend.key = element_blank(),
+                      legend.title = element_text(
+                                                  face = "bold",
+                                                  size = 20
+                                                  ),
+                      legend.text = element_text(
+                                                 face = "bold",
+                                                 size = 16
+                                                 ),
+                      panel.background = element_blank()
+                      ) +
+                xlab(
+                     paste("PCoA 1 (",PCOA.VARIANCE[1],"%)")
+                     ) +
+                ylab(
+                     paste("PCoA 2 (",PCOA.VARIANCE[2],"%)")
+                     ) +
+                guides(
+                       shape = guide_legend(
+                                            order = 2,
+                                            override.aes = list(size = 5),
+                                            ),
+                       fill = guide_legend(
+                                           order = 1,
+                                           override.aes = list(
+                                                               size = 5,
+                                                               shape = 21,
+                                                               color = "black",
+                                                               fill = c(
+                                                                        "orange",
+                                                                        "forestgreen"
+                                                                        )
+                                                               )
+                                           )
+                       )
+ggsave(
+       "evolution_analysis-bray_curtis.pdf",
+       EVO.BETA.FIG,
+       units = "in",
+       width = 10.5,
+       height = 7
+       )
+
+# statistics: permanova
+BC.FILE <- read.table(
+                      "plant_only-beta_diversity-bray_curtis_distance_matrix.tsv",
+                      sep = "\t",
+                      header = T,
+                      row.names = 1,
+                      check.names = FALSE
+                      )
+JAC.FILE <- read.table(
+                       "plant_only-beta_diversity-jaccard_distance_matrix.tsv",
+                       sep = "\t",
+                       header = T,
+                       row.names = 1,
+                       check.names = FALSE
+                       )
+
+META <- read_my_table("evolution_analysis-metadata.tsv")
+META <- filter(
+               META,
+               sample_id %in% colnames(BC.FILE)
+               )
+
+BC.MAT <- as.matrix(BC.FILE)
+BC.DIS <- as.dist(BC.MAT)
+adonis(
+       BC.DIS~tissue+location+study+host,
+       data = META
+       )
+
+JAC.MAT <- as.matrix(JAC.FILE)
+JAC.DIS <- as.dist(JAC.MAT)
+adonis(
+       JAC.DIS~tissue+location+study+host,
+       data = META
+       )
+
+           
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# Phylum Genus Count
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# create taxonomy file
+AGLER.TAX <- read_my_table("agler_et_al_2016/agler_et_al-ggBLAST_taxonomy.tsv")
+EDWARDS.TAX <- read_my_table("edwards_et_al_2015/edwards_et_al-ggBLAST_taxonomy.tsv")
+ROBBINS.TAX <- read_my_table("robbins_et_al_2018/robbins_et_al-ggBLAST_taxonomy.tsv")
+CH_PP.TAX <- read_my_table("ch_pp/ducitaplate2-ggBLAST_taxonomy.tsv")
+PM1.TAX <- read_my_table("PM_Year1/ducitaplate1-ggBLAST_taxonomy.tsv")
+PM2.TAX <- read_my_table("PM_Year2/ducitaplates4_5-ggBLAST_taxonomy.tsv")
+
+ALL.TAX <- do.call(
+                   "rbind",
+                   list(
+                        AGLER.TAX,
+                        EDWARDS.TAX,
+                        ROBBINS.TAX,
+                        CH_PP.TAX,
+                        PM1.TAX,
+                        PM2.TAX
+                        )
+                   )
+ALL.TAX.SEP <- separate(
+                        ALL.TAX,
+                        Taxon,
+                        c(
+                          "Kingdom",
+    		          "Phylum",
+		          "Class",
+                          "Order",
+		          "Family",
+    		          "Genus",
+		          "Species"
+		          ),
+     		        sep="; [k,p,c,o,f,g,s]__",
+                        remove=TRUE
+                        )
+ALL.TAX.SEL <- select(
+                      ALL.TAX.SEP,
+                      Phylum,
+                      Family,
+                      Genus
+                      )
+ALL.TAX.CLASS <- remove_unknown_genus(ALL.TAX.SEL)
+ALL.TAX.TABLE <- distinct(ALL.TAX.CLASS)
+
+# load tables
+RARE.TABLE <- read_my_table("plant_only-rarefied_table.tsv")
+RARE.MELT <- melt(
+                  RARE.TABLE,
+                  variable.name = "sample_id",
+                  value.name = "reads"
+                  )
+META.TABLE <- read_my_table("evolution_analysis-metadata.tsv")
+
+# merge tables
+RARE.META <- merge(
+                   RARE.MELT,
+                   META.TABLE,
+                   by = "sample_id"
+                   )
+RARE.INFO <- merge(
+                   RARE.META,
+                   ALL.TAX.TABLE,
+                   by = "Genus"
+                   )
+
+# filter and format tables
+RARE.FIL <- filter(
+                   RARE.INFO,
+                   reads > 0
+                   )
+RARE.GENUSCOUNT <- ddply(
+                         RARE.FIL,
+                         ~sample_id+location+study+host+tissue+paired_type+Phylum,
+                         summarise,
+                         total_genus_count = length(Genus)
+                         )
+RARE.GENUSCOUNT <- unite(
+                         RARE.GENUSCOUNT,
+                         host_tissue,
+                         c(host,tissue),
+                         remove=TRUE
+                         )
+RARE.GENUSCOUNT$host_tissue <- factor(
+                                      RARE.GENUSCOUNT$host_tissue,
+                                      levels = c(
+                                                 "duckweed_leaf_like",
+                                                 "rice_leaf_like",
+                                                 "arabidopsis_leaf_like",
+                                                 "rice_root",
+                                                 "arabidopsis_root"
+                                                 )
+                                      )
+PHYLA <- c(
+           "Actinobacteria",
+           "Bacteroidetes",
+           "Firmicutes",
+	   "Proteobacteria"
+           )
+RARE.WORKING.DF <- filter(
+                          RARE.GENUSCOUNT,
+                          Phylum %in% PHYLA
+                          )
+
+# statistics: dunn test
+GROUPS <- unique(RARE.WORKING.DF$host_tissue)
+for (PHYLUM in PHYLA){
+   RARE.PHYLUM <- filter(
+                         RARE.WORKING.DF,
+                         Phylum == PHYLUM
+                         )
+   for (GROUP in GROUPS){
+      TEST <- with(
+                   RARE.PHYLUM,
+                   shapiro.test(
+                                total_genus_count[host_tissue == GROUP]
+                                )
+                   )
+      print(PHYLUM) 
+      print(GROUP) 
+      print(TEST) 
+   }
+}
+
+host_tissue = c()
+Phylum = c()
+letter = c()
+for (PHYLUM in PHYLA){
+   RARE.PHYLUM <- filter(
+                         RARE.WORKING.DF,
+                         Phylum == PHYLUM
+                         )
+   TEST <- dunn.test(
+                     x = RARE.PHYLUM$total_genus_count,
+                     g = RARE.PHYLUM$host_tissue,
+                     )
+   CMLD <- cldList(
+                   P.adjusted ~ comparisons,
+                   data = TEST,
+                   threshold = 0.05
+                   )
+   print(CMLD)
+   host_tissue <- c(host_tissue,as.vector(CMLD$Group))
+   letter <- c(letter,as.vector(CMLD$Letter))
+   Phylum <- c(
+               Phylum,
+               rep(
+                   PHYLUM,
+                   length(CMLD$Group)
+                   )
+               )
+}          
+CMLD <- data.frame(
+                   "Phylum" = Phylum,
+                   "host_tissue" = host_tissue,
+                   "letter" = letter
+                   )
+
+
+FILL <- c(
+          "Actinobacteria" = "khaki1",
+          "Bacteroidetes" = "steelblue1",
+          "Firmicutes" = "firebrick1",
+          "Proteobacteria" = "darkolivegreen1"
+          )
+PLOT <- ggplot(
+               RARE.WORKING.DF,
+               aes(
+                   host_tissue,
+                   total_genus_count,
+                   fill = Phylum
+                   )
+               )
+EVO.ALPHA.FIG <- PLOT +
+                 geom_jitter(
+                             width = 0.2,
+                             shape = 21
+                             ) +
+                 facet_grid(
+                            ~Phylum
+                            ) +
+                 theme(
+                       axis.line.x = element_line(
+                                                  color = "black",
+                                                  size = 1
+                                                  ),
+                       axis.title = element_text(
+                                                 size = 20,
+                                                 face = "bold"
+                                                 ),
+                       axis.text.y = element_text(
+                                                  color = "black",
+                                                  size = 16
+                                                  ),
+                       axis.text.x = element_text(
+                                                  color = "black",
+                                                  size = 16,
+                                                  angle = 45,
+                                                  hjust = 1,
+                                                  vjust = 1
+                                                  ),
+                       strip.background = element_rect(
+                                                       fill = NA,
+                                                       color = "black"
+                                                       ),
+                       strip.text = element_text(
+                                                 face = "bold",
+                                                 color = "black",
+                                                 size = 20
+                                                 ),
+                       legend.position = "none",
+                       panel.background = element_blank()
+                       ) +
+                 labs(
+                      x = "\nTissue",
+                      y = "# of Taxa"
+                      ) +
+                 scale_fill_manual(
+                                   name = "Phylum",
+                                   values = FILL
+                                   ) +
+                 ylim(0,80) +
+                 scale_x_discrete(
+                                  labels = c(
+                                             "Duckweed",
+                                             "Rice Leaf",
+                                             "At Leaf",
+                                             "Rice Root",
+                                             "At Root"
+                                             )
+                                  ) +
+                 geom_text(
+                           data = CMLD,
+                           size = 5,
+                           fontface = "bold",
+                           aes(
+                               host_tissue,
+                               75,
+                               group = Phylum, 
+                               label = letter
+                               )
+                           )
+ggsave(
+       "evolution_analysis-taxa_count.pdf",
+       EVO.ALPHA.FIG,
+       dpi = 300,
+       width = 12,
+       height = 7
+       )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# GLM - tissue,host
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+library(ALDEx2)
+
+COUNT.TABLE <- read_my_table("plant-bacteria_genus_table.tsv")
+META.TABLE <- read_my_table("evolution_analysis-metadata.tsv")
+META.FILTERED <- filter(
+                        META.TABLE,
+                        tissue != "environment"
+                        )
+
+SAMPLES <- as.vector(META.FILTERED$sample_id)
+COLS <- c(
+          "Genus",
+          SAMPLES
+          )
+TABLE.SAMPLES <- COUNT.TABLE[,colnames(COUNT.TABLE) %in% COLS]
+COUNT.SORT <- TABLE.SAMPLES[COLS]
+rownames(COUNT.SORT) <- COUNT.SORT[,1]
+COUNT.SORT <- COUNT.SORT[,-1]
+
+TISSUE <- as.factor(
+                    META.FILTERED$tissue
+                    )
+HOST <- as.factor(
+                  META.FILTERED$host
+                  )
+MM <- model.matrix(~TISSUE+HOST)
+
+CLR <- aldex.clr(
+                 COUNT.SORT,
+                 MM,
+                 mc.samples = 128,
+                 denom = "all",
+                 verbose = T,
+                 )
+GLM <- aldex.glm(
+                 CLR,
+                 MM
+                 )
+
+write.table(
+            TEST,
+            "evolution_analysis-aldex-glm.tsv",
+            sep = "\t",
+            row.names = TRUE
+            )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# Pairwise - tissue
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+library(ALDEx2)
+
+COUNT.TABLE <- read_my_table("plant-bacteria_genus_table.tsv")
+META.TABLE <- read_my_table("evolution_analysis-metadata.tsv")
+META.FILTERED <- filter(
+                        META.TABLE,
+                        tissue != "environment"
+                        )
+
+SAMPLES <- as.vector(META.FILTERED$sample_id)
+COLS <- c(
+          "Genus",
+          SAMPLES
+          )
+TABLE.SAMPLES <- COUNT.TABLE[,colnames(COUNT.TABLE) %in% COLS]
+COUNT.SORT <- TABLE.SAMPLES[COLS]
+rownames(COUNT.SORT) <- COUNT.SORT[,1]
+COUNT.SORT <- COUNT.SORT[,-1]
+
+TISSUE <- as.vector(
+                    META.FILTERED$tissue
+                    )
+
+CLR <- aldex.clr(
+                 COUNT.SORT,
+                 TISSUE,
+                 mc.samples = 128,
+                 denom = "all",
+                 verbose = T,
+                 )
+TEST <- aldex.ttest(
+                    CLR,
+                    verbose = T
+                    )
+EFFECT <- aldex.effect(
+                       CLR,
+                       TISSUE,
+                       verbose = T
+                       )
+OUT <- combine_aldex_output(
+                            TEST,
+                            EFFECT,
+                            )
+write.table(
+            OUT,
+            "evolution_analysis-aldex-tissue.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )

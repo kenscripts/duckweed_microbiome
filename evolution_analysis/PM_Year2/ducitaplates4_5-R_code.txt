@@ -1,0 +1,68 @@
+library(plyr) 
+library(dplyr)
+library(reshape2)
+setwd("~/Downloads/duckweed_microbiome/evolution_analysis/PM_Year2/")
+source("~/Downloads/duckweed_microbiome/q2_analysis_using_R.R")
+
+###############################################################################
+#			feature table de-compartmentalized
+###############################################################################
+
+# load tables
+COUNT.TABLE <- read_my_table("ducitaplates4_5-working_table.tsv")
+COUNT.MELT <- melt(
+                   COUNT.TABLE,
+                   variable.name = "sample_id",
+                   value.name = "reads"
+                   )
+META.TABLE <- read_my_table("ducitaplates4_5-metadata.tsv")
+TAX.TABLE <- read_my_table("ducitaplates4_5-ggBLAST_taxonomy.tsv")
+TAX.SEP <- separate(
+                    TAX.TABLE,
+                    Taxon,
+		    c(
+                      "Kingdom",
+		      "Phylum",
+		      "Class",
+                      "Order",
+		      "Family",
+		      "Genus",
+		      "Species"
+		      ),
+     		    sep="; [k,p,c,o,f,g,s]__",
+                    remove=TRUE
+                    )
+
+# merge tables
+COUNT.META <- merge(
+                    COUNT.MELT,
+                    META.TABLE,
+                    by = "sample_id"
+                    )
+COUNT.INFO <- merge(
+                    COUNT.META,
+                    TAX.SEP,
+                    by = "feature_id"
+                    )
+
+# create genus table
+COUNT.CLASS <- remove_unknown_genus(COUNT.INFO)
+GENUS.TABLE <- ddply(
+                     COUNT.CLASS,
+                     ~Genus+sample_id,
+                     summarise,
+                     total_reads = sum(reads)
+                     )
+GENUS.CAST <- dcast(
+                    GENUS.TABLE,
+                    Genus~sample_id
+                    )
+
+# imported table into q2; see ducitaplates4_5-q2_workflow.txt
+write.table(
+            GENUS.CAST,
+            "ducitaplates4_5-bacteria_genus_table.tsv",
+            sep = "\t",
+            row.names = FALSE,
+            quote  = FALSE
+            )

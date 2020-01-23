@@ -1,0 +1,132 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# agler_et_al_2016
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# imported genus table from R
+biom \
+convert \
+-i agler_et_al-bacteria_genus_table.tsv \
+-o agler_et_al-bacteria_genus_table.biom \
+--table-type="OTU table" \
+--to-hdf5
+qiime tools import \
+--input-path agler_et_al-bacteria_genus_table.biom \
+--type 'FeatureTable[Frequency]' \
+--source-format BIOMV210Format \
+--output-path agler_et_al-bacteria_genus_table.qza 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# china_microbiome
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# imported genus table from R
+biom \
+convert \
+-i china_microbiome-bacteria_genus_table.tsv \
+-o china_microbiome-bacteria_genus_table.biom \
+--table-type="OTU table" \
+--to-hdf5
+qiime tools import \
+--input-path china_microbiome-bacteria_genus_table.biom \
+--type 'FeatureTable[Frequency]' \
+--source-format BIOMV210Format \
+--output-path china_microbiome-bacteria_genus_table.qza 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# edwards_et_al_2015
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# imported genus table from R
+biom \
+convert \
+-i edwards_et_al-bacteria_genus_table.tsv \
+-o edwards_et_al-bacteria_genus_table.biom \
+--table-type="OTU table" \
+--to-hdf5
+qiime tools import \
+--input-path edwards_et_al-bacteria_genus_table.biom \
+--type 'FeatureTable[Frequency]' \
+--source-format BIOMV210Format \
+--output-path edwards_et_al-bacteria_genus_table.qza 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# robbins_et_al_2018
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# imported genus table from R
+biom \
+convert \
+-i robbins_et_al-bacteria_genus_table.tsv 
+-o robbins_et_al-bacteria_genus_table.biom \
+--table-type="OTU table" \
+--to-hdf5
+qiime tools import \
+--input-path robbins_et_al-bacteria_genus_table.biom \
+--type 'FeatureTable[Frequency]' \ 
+--source-format BIOMV210Format \
+--output-path robbins_et_al-bacteria_genus_table.qza 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# ch_pp
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# imported genus table from R
+biom \
+convert \
+-i ch_pp-bacteria_genus_table.tsv \
+-o ch_pp-bacteria_genus_table.biom \
+--table-type="OTU table" \
+--to-hdf5
+qiime tools import \
+--input-path ch_pp-bacteria_genus_table.biom \
+--type 'FeatureTable[Frequency]' \
+--source-format BIOMV210Format \
+--output-path ch_pp-bacteria_genus_table.qza 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# PM Year 1
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# imported genus table from R
+biom \
+convert \
+-i ducitaplate1-bacteria_genus_table.tsv \
+-o ducitaplate1-bacteria_genus_table.biom \
+--table-type="OTU table" \
+--to-hdf5
+qiime tools import \
+--input-path ducitaplate1-bacteria_genus_table.biom \
+--type 'FeatureTable[Frequency]' \
+--source-format BIOMV210Format \
+--output-path ducitaplate1-bacteria_genus_table.qza 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# PM Year 2
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# imported genus table from R
+biom \
+convert \
+-i ducitaplates4_5-bacteria_genus_table.tsv \
+-o ducitaplates4_5-bacteria_genus_table.biom \
+--table-type="OTU table" \
+--to-hdf5
+qiime tools import \
+--input-path ducitaplates4_5-bacteria_genus_table.biom \
+--type 'FeatureTable[Frequency]' \
+--source-format BIOMV210Format \
+--output-path ducitaplates4_5-bacteria_genus_table.qza 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# merging
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+qiime feature-table merge \
+--i-tables agler_et_al-bacteria_genus_table.qza \
+--i-tables edwards_et_al-bacteria_genus_table.qza \
+--i-tables robbins_et_al-bacteria_genus_table.qza \
+--i-tables china_microbiome-bacteria_genus_table.qza \
+--i-tables ch_pp-bacteria_genus_table.qza \
+--i-tables ducitaplate1-bacteria_genus_table.qza \
+--i-tables ducitaplates4_5-bacteria_genus_table.qza \
+--o-merged-table plant-bacteria_genus_table.qza

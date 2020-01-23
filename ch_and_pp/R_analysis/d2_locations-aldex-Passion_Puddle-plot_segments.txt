@@ -1,0 +1,8 @@
+x	xend	Phylum
+0.75	1.25	Bacteroidetes
+0.75	1.25	Firmicutes
+0.75	1.25	Proteobacteria
+1.75	2.25	Proteobacteria
+2.75	3.25	Proteobacteria
+3.75	4.25	Proteobacteria
+4.75	5.25	Proteobacteria

@@ -1,0 +1,141 @@
+###############################################################################
+#			activated environment
+###############################################################################
+
+ source activate qiime2-2018.6
+
+###############################################################################
+#			imported sequences and QC analysis
+###############################################################################
+
+# imported sequences from china_microbiome into q2
+nohup \
+qiime tools import \
+--type 'SampleData[SequencesWithQuality]' \
+--output-path china_microbiome-single_end_demux.qza \
+--source-format SingleEndFastqManifestPhred33 \
+--input-path china_microbiome-manifest.tsv \
+&
+
+# created q2 visualization to examine sequence quality
+# chose to trim at 200 bps where 25th percentile had score higher than 25
+nohup \
+qiime demux summarize \
+--i-data china_microbiome-single_end_demux.qza \
+--o-visualization china_microbiome-single_end_demux.qzv 
+&
+
+###############################################################################
+#			feature table construction 
+###############################################################################
+
+# constructed table
+nohup \
+qiime dada2 denoise-single \
+--i-demultiplexed-seqs china_microbiome-single_end_demux.qza \
+--p-trim-left 5 \
+--p-trunc-len 200 \
+--o-representative-sequences china_microbiome-rep_seqs.qza \
+--o-table china_microbiome-table.qza \
+--o-denoising-stats china_microbiome-stats.qza \
+& 
+
+# exported stats
+# summarized in excel
+
+###############################################################################
+#			created classifier
+###############################################################################
+
+# used artifacts created from ducitaplate2 workflow
+# downloaded Greengenes 13_8 marker gene reference database
+# created otu artifact 
+qiime tools import \
+--type 'FeatureData[Sequence]' \
+--input-path gg-99_otus.fasta \
+--output-path gg-99_otus.qza \
+&
+# created taxnomy artifact 
+qiime tools import \
+--type 'FeatureData[Taxonomy] ' \
+--source-format HeaderlessTSVTaxonomyFormat \
+--input-path gg-99_otu_taxonomy.txt \
+--output-path gg-ref-taxonomy.qza \
+&
+# created reference read artifact
+nohup \
+qiime feature-classifier extract-reads \
+--i-sequences gg-99_otus.qza \
+--p-f-primer GTGYCAGCMGCCGCGGTAA \
+--p-r-primer CCGYCAATTYMTTTRAGTTT \
+--o-reads gg-ref-seqs.qza \
+&
+
+# created china_microbiome classifier
+nohup
+qiime feature-classifier classify-consensus-blast \
+--i-query china_microbiome-rep_seqs.qza \
+--i-reference-reads taxonomy_files/gg-ref-seqs.qza \
+--i-reference-taxonomy taxonomy_files/gg-ref-taxonomy.qza \
+--o-classification china_microbiome-ggBLAST-classifier.qza \
+&
+
+###############################################################################
+#			feature table filtering
+###############################################################################
+
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime feature-table summarize \
+--i-table china_microbiome-table.qza \
+--o-visualization china_microbiome-table.qzv
+
+# filtered out unclassified sequences
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime taxa filter-table \
+--i-table china_microbiome-table.qza \
+--i-taxonomy china_microbiome-ggBLAST-classifier.qza \
+--p-include p_ \
+--o-filtered-table china_microbiome-classified.qza 
+qiime feature-table summarize \
+--i-table china_microbiome-classified.qza \
+--o-visualization china_microbiome-classified.qzv
+
+# filtered out chloroplast and mitochondria sequences
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime taxa filter-table \
+--i-table china_microbiome-classified.qza \
+--i-taxonomy china_microbiome-ggBLAST-classifier.qza \
+--p-exclude mitchondria,chloroplast \
+--o-filtered-table china_microbiome-no_chloroplast.qza
+qiime feature-table summarize \
+--i-table china_microbiome-no_chloroplast.qza \
+--o-visualization china_microbiome-no_chloroplast.qzv
+
+# filtered out features with a frequency of 1
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+qiime feature-table filter-features \
+--i-table china_microbiome-no_chloroplast.qza \
+--p-min-frequency 1 \
+--o-filtered-table china_microbiome-filtered_table.qza
+qiime feature-table summarize \
+--i-table china_microbiome-filtered_table.qza \
+--o-visualization china_microbiome-filtered_table.qzv
+
+# filtered out archea sequences
+qiime taxa filter-table \
+--i-table china_microbiome-filtered_table.qza \
+--i-taxonomy china_microbiome-ggBLAST-classifier.qza \
+--p-include k__Bacteria \
+--o-filtered-table china_microbiome-working_table.qza
+
+# filter seqs to get working seqs
+qiime feature-table filter-seqs \
+--i-data china_microbiome-rep_seqs.qza \
+--i-table china_microbiome-working_table.qza \
+--o-filtered-data china_microbiome-working_rep_seqs.qza 
+
+# created china_microbiome-stats csv file from visualizations

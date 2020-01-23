@@ -1,0 +1,30 @@
+FILES <- system("ls *R1.fastq.gz",intern=TRUE)
+
+for (FILE in FILES){
+foo <- readLines(FILE)
+seq <- sapply(foo[seq(1,length(foo),4)],function(x) x)
+seqlens <- sapply(foo[seq(2,length(foo),4)], nchar)
+quallens <- sapply(foo[seq(4,length(foo),4)], nchar)
+print(FILE)
+#print(table(seqlens))
+#print(table(quallens))
+RESULT <- table(seqlens) == table(quallens)
+print(RESULT)
+}
+
+[1] "1161.SH.GA.Endo.1_R1.fastq.gz"
+seqlens
+   251 
+119292 
+quallens
+     1    251    268    269 
+   106 119178      1      7 
+
+
+foo <- readLines("1161.SH.GA.Endo.1_R1.fastq.gz")
+seq <- sapply(foo[seq(1,length(foo),4)],function(x) x)
+seqlens <- sapply(foo[seq(2,length(foo),4)], nchar)
+quallens <- sapply(foo[seq(4,length(foo),4)], nchar)
+seq[seqlens != quallens]
+
+"@MISEQ:65:000000000-A9RHB:1:2114:26921:22826 1:N:0:AATCAGATAAAC\t1161.SH.GA.Endo.1"

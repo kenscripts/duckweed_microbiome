@@ -1,0 +1,21 @@
+Replicate	leaf_epiphyte_compartment_rep1	leaf_epiphyte_compartment_rep2	leaf_endophyte_compartment_rep1	leaf_endophyte_compartment_rep2	SampleID	Lab_Col_Tub	Tub_Loc	Ecotype
+10_S3	F.BacV5.7		B.BacV5.1			C	NA	W
+10_S4	A.BacV5.9		B.BacV5.9			C	NA	C
+10_S5	A.BacV5.10		B.BacV5.10			C	NA	C
+10_S6	A.BacV5.18		B.BacV5.18			C	NA	C
+10_S7	A.BacV5.19		B.BacV5.19			C	NA	K
+10_S8	F.BacV5.8		B.BacV5.20			C	NA	K
+10_S9	E.BacV5.1		E.BacV5.11			C	NA	K
+F_ERG	G.BacV5.3		G.BacV5.14	G.BacV5.13		T	ERG	U
+F_EY	G.BacV5.9		G.BacV5.18	G.BacV5.19		T	EY	U
+F_JUG	G.BacV5.5	G.BacV5.6	G.BacV5.16			T	JUG	U
+F_WH	G.BacV5.1		G.BacV5.11	G.BacV5.12		T	WH	U
+S_S1	H.BacV5.7		C.BacV5.19			T	WH	U
+S_S12	E.BacV5.2		E.BacV5.12			T	EY	U
+S_S14	E.BacV5.3		E.BacV5.13			T	EY	U
+S_S15	E.BacV5.4		E.BacV5.14			T	EY	U
+S_S18	E.BacV5.5		E.BacV5.15	G.BacV5.20		T	PFN	U
+S_S2	C.BacV5.10		C.BacV5.20			T	WH	U
+S_S3	D.BacV5.7		D.BacV5.17			T	ERG	U
+S_S8	D.BacV5.9		D.BacV5.19			T	JUG	U
+S_S9	H.BacV5.8		D.BacV5.20			T	JUG	U

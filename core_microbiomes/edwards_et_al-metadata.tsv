@@ -1,0 +1,415 @@
+sample_id	Compartment	Site	Cultivation	Run	Cultivar	SampleCounts	Description	paired_id	paired_type	location
+JE.Soil.190	Rhizosphere	Arbuckle	Greenhouse	4	93-11	39724	1-9-1mm	9-1-plant	plant	Arbuckle
+JE.Soil.110	Rhizosphere	Sacramento	Greenhouse	3	93-11	78980	10-9-1mm	9-10-plant	plant	Sacramento
+JE.Soil.310	Rhizosphere	Sacramento	Greenhouse	4	93-11	65560	11-9-1mm	9-11-plant	plant	Sacramento
+JE.Soil.134	Rhizosphere	Sacramento	Greenhouse	3	93-11	35111	12-9-1mm	9-12-plant	plant	Sacramento
+JE.Soil.214	Rhizosphere	Arbuckle	Greenhouse	4	93-11	51050	2-9-1mm	9-2-plant	plant	Arbuckle
+JE.Soil.14	Rhizosphere	Arbuckle	Greenhouse	3	93-11	39636	3-9-1mm	9-3-plant	plant	Arbuckle
+JE.Soil.38	Rhizosphere	Arbuckle	Greenhouse	3	93-11	35023	4-9-1mm	9-4-plant	plant	Arbuckle
+JE.Soil.62	Rhizosphere	Davis	Greenhouse	3	93-11	41386	5-9-1mm	9-5-plant	plant	Davis
+JE.Soil.86	Rhizosphere	Davis	Greenhouse	3	93-11	40904	7-9-1mm	9-7-plant	plant	Davis
+JE.Soil.262	Rhizosphere	Davis	Greenhouse	4	93-11	95911	8-9-1mm	9-8-plant	plant	Davis
+JE.Soil.286	Rhizosphere	Sacramento	Greenhouse	4	93-11	68478	9-9-1mm	9-9-plant	plant	Sacramento
+JE.Soil.198	Rhizosphere	Arbuckle	Greenhouse	4	Glab_B	86397	1-B-1mm	B-1-plant	plant	Arbuckle
+JE.Soil.118	Rhizosphere	Sacramento	Greenhouse	3	Glab_B	89221	10-B-1mm	B-10-plant	plant	Sacramento
+JE.Soil.318	Rhizosphere	Sacramento	Greenhouse	4	Glab_B	84188	11-B-1mm	B-11-plant	plant	Sacramento
+JE.Soil.142	Rhizosphere	Sacramento	Greenhouse	3	Glab_B	35921	12-B-1mm	B-12-plant	plant	Sacramento
+JE.Soil.222	Rhizosphere	Arbuckle	Greenhouse	4	Glab_B	53120	2-B-1mm	B-2-plant	plant	Arbuckle
+JE.Soil.22	Rhizosphere	Arbuckle	Greenhouse	3	Glab_B	51110	3-B-1mm	B-3-plant	plant	Arbuckle
+JE.Soil.46	Rhizosphere	Arbuckle	Greenhouse	3	Glab_B	34080	4-B-1mm	B-4-plant	plant	Arbuckle
+JE.Soil.70	Rhizosphere	Davis	Greenhouse	3	Glab_B	56085	5-B-1mm	B-5-plant	plant	Davis
+JE.Soil.270	Rhizosphere	Davis	Greenhouse	4	Glab_B	79304	8-B-1mm	B-8-plant	plant	Davis
+JE.Soil.294	Rhizosphere	Sacramento	Greenhouse	4	Glab_B	228561	9-B-1mm	B-9-plant	plant	Sacramento
+JE.Lundberg.121	Rhizosphere	BB P1	Organic	1	S102	74331	Rhizosphere_6.1	BB P1-6.1-plant	plant	BB P1
+JE.Lundberg.124	Rhizosphere	BB P1	Organic	1	S102	113432	Rhizosphere_6.2	BB P1-6.2-plant	plant	BB P1
+JE.Lundberg.127	Rhizosphere	BB P1	Organic	1	S102	92773	Rhizosphere_6.3	BB P1-6.3-plant	plant	BB P1
+JE.Lundberg.130	Rhizosphere	BB P1	Organic	1	S102	93943	Rhizosphere_6.4	BB P1-6.4-plant	plant	BB P1
+JE.Lundberg.133	Rhizosphere	BB P1	Organic	1	S102	98406	Rhizosphere_6.5	BB P1-6.5-plant	plant	BB P1
+JE.Lundberg.136	Rhizosphere	BB P1	Organic	1	S102	103346	Rhizosphere_6.6	BB P1-6.6-plant	plant	BB P1
+JE.Lundberg.139	Rhizosphere	BB P1	Organic	1	S102	92035	Rhizosphere_6.7	BB P1-6.7-plant	plant	BB P1
+JE.Lundberg.142	Rhizosphere	BB P1	Organic	1	S102	107319	Rhizosphere_6.8	BB P1-6.8-plant	plant	BB P1
+JE.Lundberg.145	Rhizosphere	BB P4	Organic	2	S102	91944	Rhizosphere_7.1	BB P4-7.1-plant	plant	BB P4
+JE.Lundberg.148	Rhizosphere	BB P4	Organic	2	S102	139314	Rhizosphere_7.2	BB P4-7.2-plant	plant	BB P4
+JE.Lundberg.151	Rhizosphere	BB P4	Organic	2	S102	88276	Rhizosphere_7.3	BB P4-7.3-plant	plant	BB P4
+JE.Lundberg.154	Rhizosphere	BB P4	Organic	2	S102	115017	Rhizosphere_7.4	BB P4-7.4-plant	plant	BB P4
+JE.Lundberg.157	Rhizosphere	BB P4	Organic	2	S102	125756	Rhizosphere_7.5	BB P4-7.5-plant	plant	BB P4
+JE.Lundberg.160	Rhizosphere	BB P4	Organic	2	S102	133641	Rhizosphere_7.6	BB P4-7.6-plant	plant	BB P4
+JE.Lundberg.163	Rhizosphere	BB P4	Organic	2	S102	161250	Rhizosphere_7.7	BB P4-7.7-plant	plant	BB P4
+JE.Lundberg.166	Rhizosphere	BB P4	Organic	2	S102	111813	Rhizosphere_7.8	BB P4-7.8-plant	plant	BB P4
+JE.Lundberg.1	Rhizosphere	Ditaler 18	Organic	1	S102	45658	Rhizosphere_1.1	Ditaler 18-1.1-plant	plant	Ditaler 18
+JE.Lundberg.4	Rhizosphere	Ditaler 18	Organic	1	S102	83364	Rhizosphere_1.2	Ditaler 18-1.2-plant	plant	Ditaler 18
+JE.Lundberg.7	Rhizosphere	Ditaler 18	Organic	1	S102	66286	Rhizosphere_1.3	Ditaler 18-1.3-plant	plant	Ditaler 18
+JE.Lundberg.10	Rhizosphere	Ditaler 18	Organic	1	S102	95299	Rhizosphere_1.4	Ditaler 18-1.4-plant	plant	Ditaler 18
+JE.Lundberg.13	Rhizosphere	Ditaler 18	Organic	1	S102	21907	Rhizosphere_1.5	Ditaler 18-1.5-plant	plant	Ditaler 18
+JE.Lundberg.16	Rhizosphere	Ditaler 18	Organic	1	S102	100481	Rhizosphere_1.6	Ditaler 18-1.6-plant	plant	Ditaler 18
+JE.Lundberg.19	Rhizosphere	Ditaler 18	Organic	1	S102	92518	Rhizosphere_1.7	Ditaler 18-1.7-plant	plant	Ditaler 18
+JE.Lundberg.22	Rhizosphere	Ditaler 18	Organic	1	S102	85255	Rhizosphere_1.8	Ditaler 18-1.8-plant	plant	Ditaler 18
+JE.Lundberg.25	Rhizosphere	Ditaler 19	Organic	2	S102	87617	Rhizosphere_2.1	Ditaler 19-2.1-plant	plant	Ditaler 19
+JE.Lundberg.28	Rhizosphere	Ditaler 19	Organic	2	S102	115537	Rhizosphere_2.2	Ditaler 19-2.2-plant	plant	Ditaler 19
+JE.Lundberg.31	Rhizosphere	Ditaler 19	Organic	2	S102	94242	Rhizosphere_2.3	Ditaler 19-2.3-plant	plant	Ditaler 19
+JE.Lundberg.34	Rhizosphere	Ditaler 19	Organic	2	S102	84800	Rhizosphere_2.4	Ditaler 19-2.4-plant	plant	Ditaler 19
+JE.Lundberg.37	Rhizosphere	Ditaler 19	Organic	2	S102	103885	Rhizosphere_2.5	Ditaler 19-2.5-plant	plant	Ditaler 19
+JE.Lundberg.40	Rhizosphere	Ditaler 19	Organic	2	S102	98206	Rhizosphere_2.6	Ditaler 19-2.6-plant	plant	Ditaler 19
+JE.Lundberg.43	Rhizosphere	Ditaler 19	Organic	2	S102	119565	Rhizosphere_2.7	Ditaler 19-2.7-plant	plant	Ditaler 19
+JE.Lundberg.46	Rhizosphere	Ditaler 19	Organic	2	S102	99082	Rhizosphere_2.8	Ditaler 19-2.8-plant	plant	Ditaler 19
+JE.Lundberg.97	Rhizosphere	DS RR	EcoFarm	1	S102	107424	Rhizosphere_5.1	DS RR-5.1-plant	plant	DS RR
+JE.Lundberg.100	Rhizosphere	DS RR	EcoFarm	1	S102	89359	Rhizosphere_5.2	DS RR-5.2-plant	plant	DS RR
+JE.Lundberg.103	Rhizosphere	DS RR	EcoFarm	1	S102	71382	Rhizosphere_5.3	DS RR-5.3-plant	plant	DS RR
+JE.Lundberg.106	Rhizosphere	DS RR	EcoFarm	1	S102	86923	Rhizosphere_5.4	DS RR-5.4-plant	plant	DS RR
+JE.Lundberg.109	Rhizosphere	DS RR	EcoFarm	1	S102	62147	Rhizosphere_5.5	DS RR-5.5-plant	plant	DS RR
+JE.Lundberg.112	Rhizosphere	DS RR	EcoFarm	1	S102	81073	Rhizosphere_5.6	DS RR-5.6-plant	plant	DS RR
+JE.Lundberg.115	Rhizosphere	DS RR	EcoFarm	1	S102	78061	Rhizosphere_5.7	DS RR-5.7-plant	plant	DS RR
+JE.Lundberg.118	Rhizosphere	DS RR	EcoFarm	1	S102	76483	Rhizosphere_5.8	DS RR-5.8-plant	plant	DS RR
+JE.Soil.194	Rhizosphere	Arbuckle	Greenhouse	4	Glab_E	30421	1-E-1mm	E-1-plant	plant	Arbuckle
+JE.Soil.314	Rhizosphere	Sacramento	Greenhouse	4	Glab_E	92378	11-E-1mm	E-11-plant	plant	Sacramento
+JE.Soil.138	Rhizosphere	Sacramento	Greenhouse	3	Glab_E	78606	12-E-1mm	E-12-plant	plant	Sacramento
+JE.Soil.218	Rhizosphere	Arbuckle	Greenhouse	4	Glab_E	85294	2-E-1mm	E-2-plant	plant	Arbuckle
+JE.Soil.18	Rhizosphere	Arbuckle	Greenhouse	3	Glab_E	36422	3-E-1mm	E-3-plant	plant	Arbuckle
+JE.Soil.42	Rhizosphere	Arbuckle	Greenhouse	3	Glab_E	39725	4-E-1mm	E-4-plant	plant	Arbuckle
+JE.Soil.66	Rhizosphere	Davis	Greenhouse	3	Glab_E	63011	5-E-1mm	E-5-plant	plant	Davis
+JE.Soil.266	Rhizosphere	Davis	Greenhouse	4	Glab_E	66131	8-E-1mm	E-8-plant	plant	Davis
+JE.Soil.290	Rhizosphere	Sacramento	Greenhouse	4	Glab_E	46865	9-E-1mm	E-9-plant	plant	Sacramento
+JE.Soil.186	Rhizosphere	Arbuckle	Greenhouse	4	IR50	69957	1-I-1mm	I-1-plant	plant	Arbuckle
+JE.Soil.106	Rhizosphere	Sacramento	Greenhouse	3	IR50	33139	10-I-1mm	I-10-plant	plant	Sacramento
+JE.Soil.130	Rhizosphere	Sacramento	Greenhouse	3	IR50	123586	12-I-1mm	I-12-plant	plant	Sacramento
+JE.Soil.210	Rhizosphere	Arbuckle	Greenhouse	4	IR50	155602	2-I-1mm	I-2-plant	plant	Arbuckle
+JE.Soil.34	Rhizosphere	Arbuckle	Greenhouse	3	IR50	26259	4-I-1mm	I-4-plant	plant	Arbuckle
+JE.Soil.58	Rhizosphere	Davis	Greenhouse	3	IR50	69366	5-I-1mm	I-5-plant	plant	Davis
+JE.Soil.234	Rhizosphere	Davis	Greenhouse	4	IR50	58041	6-I-1mm	I-6-plant	plant	Davis
+JE.Soil.82	Rhizosphere	Davis	Greenhouse	3	IR50	67661	7-I-1mm	I-7-plant	plant	Davis
+JE.Soil.258	Rhizosphere	Davis	Greenhouse	4	IR50	76510	8-I-1mm	I-8-plant	plant	Davis
+JE.Soil.282	Rhizosphere	Sacramento	Greenhouse	4	IR50	53567	9-I-1mm	I-9-plant	plant	Sacramento
+JE.Soil.182	Rhizosphere	Arbuckle	Greenhouse	4	M104	69931	1-M-1mm	M-1-plant	plant	Arbuckle
+JE.Soil.102	Rhizosphere	Sacramento	Greenhouse	3	M104	153728	10-M-1mm	M-10-plant	plant	Sacramento
+JE.Soil.302	Rhizosphere	Sacramento	Greenhouse	4	M104	203420	11-M-1mm	M-11-plant	plant	Sacramento
+JE.Soil.126	Rhizosphere	Sacramento	Greenhouse	3	M104	71115	12-M-1mm	M-12-plant	plant	Sacramento
+JE.Soil.206	Rhizosphere	Arbuckle	Greenhouse	4	M104	75353	2-M-1mm	M-2-plant	plant	Arbuckle
+JE.Soil.6	Rhizosphere	Arbuckle	Greenhouse	3	M104	36255	3-M-1mm	M-3-plant	plant	Arbuckle
+JE.Soil.30	Rhizosphere	Arbuckle	Greenhouse	3	M104	34524	4-M-1mm	M-4-plant	plant	Arbuckle
+JE.Soil.54	Rhizosphere	Davis	Greenhouse	3	M104	84647	5-M-1mm	M-5-plant	plant	Davis
+JE.Soil.78	Rhizosphere	Davis	Greenhouse	3	M104	74494	7-M-1mm	M-7-plant	plant	Davis
+JE.Soil.254	Rhizosphere	Davis	Greenhouse	4	M104	135968	8-M-1mm	M-8-plant	plant	Davis
+JE.Soil.278	Rhizosphere	Sacramento	Greenhouse	4	M104	55255	9-M-1mm	M-9-plant	plant	Sacramento
+JE.Soil.178	Rhizosphere	Arbuckle	Greenhouse	4	Nipponebare	145874	1-N-1mm	N-1-plant	plant	Arbuckle
+JE.Soil.98	Rhizosphere	Sacramento	Greenhouse	3	Nipponebare	104694	10-N-1mm	N-10-plant	plant	Sacramento
+JE.Soil.298	Rhizosphere	Sacramento	Greenhouse	4	Nipponebare	166193	11-N-1mm	N-11-plant	plant	Sacramento
+JE.Soil.122	Rhizosphere	Sacramento	Greenhouse	3	Nipponebare	127707	12-N-1mm	N-12-plant	plant	Sacramento
+JE.Soil.202	Rhizosphere	Arbuckle	Greenhouse	4	Nipponebare	140518	2-N-1mm	N-2-plant	plant	Arbuckle
+JE.Soil.2	Rhizosphere	Arbuckle	Greenhouse	3	Nipponebare	46999	3-N-1mm	N-3-plant	plant	Arbuckle
+JE.Soil.26	Rhizosphere	Arbuckle	Greenhouse	3	Nipponebare	50431	4-N-1mm	N-4-plant	plant	Arbuckle
+JE.Soil.50	Rhizosphere	Davis	Greenhouse	3	Nipponebare	130735	5-N-1mm	N-5-plant	plant	Davis
+JE.Soil.74	Rhizosphere	Davis	Greenhouse	3	Nipponebare	127418	7-N-1mm	N-7-plant	plant	Davis
+JE.Soil.250	Rhizosphere	Davis	Greenhouse	4	Nipponebare	83143	8-N-1mm	N-8-plant	plant	Davis
+JE.Soil.274	Rhizosphere	Sacramento	Greenhouse	4	Nipponebare	56938	9-N-1mm	N-9-plant	plant	Sacramento
+JE.Lundberg.169	Rhizosphere	Scheidec	Organic	2	S102	90999	Rhizosphere_8.1	Scheidec-8.1-plant	plant	Scheidec
+JE.Lundberg.172	Rhizosphere	Scheidec	Organic	2	S102	107668	Rhizosphere_8.2	Scheidec-8.2-plant	plant	Scheidec
+JE.Lundberg.175	Rhizosphere	Scheidec	Organic	2	S102	123651	Rhizosphere_8.3	Scheidec-8.3-plant	plant	Scheidec
+JE.Lundberg.178	Rhizosphere	Scheidec	Organic	2	S102	229407	Rhizosphere_8.4	Scheidec-8.4-plant	plant	Scheidec
+JE.Lundberg.181	Rhizosphere	Scheidec	Organic	2	S102	131971	Rhizosphere_8.5	Scheidec-8.5-plant	plant	Scheidec
+JE.Lundberg.187	Rhizosphere	Scheidec	Organic	2	S102	98692	Rhizosphere_8.7	Scheidec-8.7-plant	plant	Scheidec
+JE.Lundberg.190	Rhizosphere	Scheidec	Organic	2	S102	113418	Rhizosphere_8.8	Scheidec-8.8-plant	plant	Scheidec
+JE.Lundberg.73	Rhizosphere	SFT 20 A	EcoFarm	2	S102	116855	Rhizosphere_4.1	SFT 20 A-4.1-plant	plant	SFT 20 A
+JE.Lundberg.76	Rhizosphere	SFT 20 A	EcoFarm	2	S102	101097	Rhizosphere_4.2	SFT 20 A-4.2-plant	plant	SFT 20 A
+JE.Lundberg.79	Rhizosphere	SFT 20 A	EcoFarm	2	S102	100076	Rhizosphere_4.3	SFT 20 A-4.3-plant	plant	SFT 20 A
+JE.Lundberg.82	Rhizosphere	SFT 20 A	EcoFarm	2	S102	175359	Rhizosphere_4.4	SFT 20 A-4.4-plant	plant	SFT 20 A
+JE.Lundberg.85	Rhizosphere	SFT 20 A	EcoFarm	2	S102	27814	Rhizosphere_4.5	SFT 20 A-4.5-plant	plant	SFT 20 A
+JE.Lundberg.88	Rhizosphere	SFT 20 A	EcoFarm	2	S102	117269	Rhizosphere_4.6	SFT 20 A-4.6-plant	plant	SFT 20 A
+JE.Lundberg.91	Rhizosphere	SFT 20 A	EcoFarm	2	S102	94496	Rhizosphere_4.7	SFT 20 A-4.7-plant	plant	SFT 20 A
+JE.Lundberg.94	Rhizosphere	SFT 20 A	EcoFarm	2	S102	127372	Rhizosphere_4.8	SFT 20 A-4.8-plant	plant	SFT 20 A
+JE.Lundberg.49	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	69814	Rhizosphere_3.1	Spooner Airstrip-3.1-plant	plant	Spooner Airstrip
+JE.Lundberg.52	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	66703	Rhizosphere_3.2	Spooner Airstrip-3.2-plant	plant	Spooner Airstrip
+JE.Lundberg.55	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	64636	Rhizosphere_3.3	Spooner Airstrip-3.3-plant	plant	Spooner Airstrip
+JE.Lundberg.58	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	52160	Rhizosphere_3.4	Spooner Airstrip-3.4-plant	plant	Spooner Airstrip
+JE.Lundberg.61	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	59483	Rhizosphere_3.5	Spooner Airstrip-3.5-plant	plant	Spooner Airstrip
+JE.Lundberg.64	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	50805	Rhizosphere_3.6	Spooner Airstrip-3.6-plant	plant	Spooner Airstrip
+JE.Lundberg.67	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	66586	Rhizosphere_3.7	Spooner Airstrip-3.7-plant	plant	Spooner Airstrip
+JE.Lundberg.70	Rhizosphere	Spooner Airstrip	EcoFarm	1	S102	69346	Rhizosphere_3.8	Spooner Airstrip-3.8-plant	plant	Spooner Airstrip
+JE.Soil.191	Rhizoplane	Arbuckle	Greenhouse	4	93-11	65637	1-9-BF	9-1-plant	plant	Arbuckle
+JE.Soil.111	Rhizoplane	Sacramento	Greenhouse	3	93-11	43894	10-9-BF	9-10-plant	plant	Sacramento
+JE.Soil.135	Rhizoplane	Sacramento	Greenhouse	3	93-11	27209	12-9-BF	9-12-plant	plant	Sacramento
+JE.Soil.215	Rhizoplane	Arbuckle	Greenhouse	4	93-11	60160	2-9-BF	9-2-plant	plant	Arbuckle
+JE.Soil.15	Rhizoplane	Arbuckle	Greenhouse	3	93-11	50053	3-9-BF	9-3-plant	plant	Arbuckle
+JE.Soil.39	Rhizoplane	Arbuckle	Greenhouse	3	93-11	30171	4-9-BF	9-4-plant	plant	Arbuckle
+JE.Soil.63	Rhizoplane	Davis	Greenhouse	3	93-11	39906	5-9-BF	9-5-plant	plant	Davis
+JE.Soil.239	Rhizoplane	Davis	Greenhouse	4	93-11	47050	6-9-BF	9-6-plant	plant	Davis
+JE.Soil.87	Rhizoplane	Davis	Greenhouse	3	93-11	42461	7-9-BF	9-7-plant	plant	Davis
+JE.Soil.287	Rhizoplane	Sacramento	Greenhouse	4	93-11	75216	9-9-BF	9-9-plant	plant	Sacramento
+JE.Soil.199	Rhizoplane	Arbuckle	Greenhouse	4	Glab_B	68120	1-B-BF	B-1-plant	plant	Arbuckle
+JE.Soil.119	Rhizoplane	Sacramento	Greenhouse	3	Glab_B	63165	10-B-BF	B-10-plant	plant	Sacramento
+JE.Soil.319	Rhizoplane	Sacramento	Greenhouse	4	Glab_B	51067	11-B-BF	B-11-plant	plant	Sacramento
+JE.Soil.143	Rhizoplane	Sacramento	Greenhouse	3	Glab_B	39063	12-B-BF	B-12-plant	plant	Sacramento
+JE.Soil.223	Rhizoplane	Arbuckle	Greenhouse	4	Glab_B	54276	2-B-BF	B-2-plant	plant	Arbuckle
+JE.Soil.23	Rhizoplane	Arbuckle	Greenhouse	3	Glab_B	60557	3-B-BF	B-3-plant	plant	Arbuckle
+JE.Soil.47	Rhizoplane	Arbuckle	Greenhouse	3	Glab_B	34725	4-B-BF	B-4-plant	plant	Arbuckle
+JE.Soil.71	Rhizoplane	Davis	Greenhouse	3	Glab_B	41199	5-B-BF	B-5-plant	plant	Davis
+JE.Soil.95	Rhizoplane	Davis	Greenhouse	3	Glab_B	40469	7-B-BF	B-7-plant	plant	Davis
+JE.Soil.295	Rhizoplane	Sacramento	Greenhouse	4	Glab_B	66612	9-B-BF	B-9-plant	plant	Sacramento
+JE.Lundberg.122	Rhizoplane	BB P1	Organic	1	S102	75041	Rhizoplane_6.1	BB P1-6.1-plant	plant	BB P1
+JE.Lundberg.125	Rhizoplane	BB P1	Organic	1	S102	90076	Rhizoplane_6.2	BB P1-6.2-plant	plant	BB P1
+JE.Lundberg.128	Rhizoplane	BB P1	Organic	1	S102	137596	Rhizoplane_6.3	BB P1-6.3-plant	plant	BB P1
+JE.Lundberg.131	Rhizoplane	BB P1	Organic	1	S102	89805	Rhizoplane_6.4	BB P1-6.4-plant	plant	BB P1
+JE.Lundberg.134	Rhizoplane	BB P1	Organic	1	S102	102815	Rhizoplane_6.5	BB P1-6.5-plant	plant	BB P1
+JE.Lundberg.137	Rhizoplane	BB P1	Organic	1	S102	76171	Rhizoplane_6.6	BB P1-6.6-plant	plant	BB P1
+JE.Lundberg.140	Rhizoplane	BB P1	Organic	1	S102	68345	Rhizoplane_6.7	BB P1-6.7-plant	plant	BB P1
+JE.Lundberg.143	Rhizoplane	BB P1	Organic	1	S102	63631	Rhizoplane_6.8	BB P1-6.8-plant	plant	BB P1
+JE.Lundberg.149	Rhizoplane	BB P4	Organic	2	S102	90579	Rhizoplane_7.2	BB P4-7.2-plant	plant	BB P4
+JE.Lundberg.152	Rhizoplane	BB P4	Organic	2	S102	84144	Rhizoplane_7.3	BB P4-7.3-plant	plant	BB P4
+JE.Lundberg.155	Rhizoplane	BB P4	Organic	2	S102	46715	Rhizoplane_7.4	BB P4-7.4-plant	plant	BB P4
+JE.Lundberg.158	Rhizoplane	BB P4	Organic	2	S102	125204	Rhizoplane_7.5	BB P4-7.5-plant	plant	BB P4
+JE.Lundberg.161	Rhizoplane	BB P4	Organic	2	S102	114353	Rhizoplane_7.6	BB P4-7.6-plant	plant	BB P4
+JE.Lundberg.164	Rhizoplane	BB P4	Organic	2	S102	140847	Rhizoplane_7.7	BB P4-7.7-plant	plant	BB P4
+JE.Lundberg.167	Rhizoplane	BB P4	Organic	2	S102	156808	Rhizoplane_7.8	BB P4-7.8-plant	plant	BB P4
+JE.Lundberg.146	Rhizoplane	BB_	Organic	2	S102	99979	Rhizoplane_7.1	BB_-7.1-plant	plant	BB_
+JE.Lundberg.2	Rhizoplane	Ditaler 18	Organic	1	S102	72152	Rhizoplane_1.1	Ditaler 18-1.1-plant	plant	Ditaler 18
+JE.Lundberg.5	Rhizoplane	Ditaler 18	Organic	1	S102	57801	Rhizoplane_1.2	Ditaler 18-1.2-plant	plant	Ditaler 18
+JE.Lundberg.8	Rhizoplane	Ditaler 18	Organic	1	S102	74956	Rhizoplane_1.3	Ditaler 18-1.3-plant	plant	Ditaler 18
+JE.Lundberg.11	Rhizoplane	Ditaler 18	Organic	1	S102	59175	Rhizoplane_1.4	Ditaler 18-1.4-plant	plant	Ditaler 18
+JE.Lundberg.17	Rhizoplane	Ditaler 18	Organic	1	S102	82606	Rhizoplane_1.6	Ditaler 18-1.6-plant	plant	Ditaler 18
+JE.Lundberg.20	Rhizoplane	Ditaler 18	Organic	1	S102	50878	Rhizoplane_1.7	Ditaler 18-1.7-plant	plant	Ditaler 18
+JE.Lundberg.23	Rhizoplane	Ditaler 18	Organic	1	S102	77593	Rhizoplane_1.8	Ditaler 18-1.8-plant	plant	Ditaler 18
+JE.Lundberg.26	Rhizoplane	Ditaler 19	Organic	2	S102	89729	Rhizoplane_2.1	Ditaler 19-2.1-plant	plant	Ditaler 19
+JE.Lundberg.29	Rhizoplane	Ditaler 19	Organic	2	S102	98197	Rhizoplane_2.2	Ditaler 19-2.2-plant	plant	Ditaler 19
+JE.Lundberg.32	Rhizoplane	Ditaler 19	Organic	2	S102	96896	Rhizoplane_2.3	Ditaler 19-2.3-plant	plant	Ditaler 19
+JE.Lundberg.35	Rhizoplane	Ditaler 19	Organic	2	S102	81227	Rhizoplane_2.4	Ditaler 19-2.4-plant	plant	Ditaler 19
+JE.Lundberg.38	Rhizoplane	Ditaler 19	Organic	2	S102	100081	Rhizoplane_2.5	Ditaler 19-2.5-plant	plant	Ditaler 19
+JE.Lundberg.41	Rhizoplane	Ditaler 19	Organic	2	S102	103335	Rhizoplane_2.6	Ditaler 19-2.6-plant	plant	Ditaler 19
+JE.Lundberg.44	Rhizoplane	Ditaler 19	Organic	2	S102	89418	Rhizoplane_2.7	Ditaler 19-2.7-plant	plant	Ditaler 19
+JE.Lundberg.47	Rhizoplane	Ditaler 19	Organic	2	S102	91016	Rhizoplane_2.8	Ditaler 19-2.8-plant	plant	Ditaler 19
+JE.Lundberg.98	Rhizoplane	DS RR	EcoFarm	1	S102	92777	Rhizoplane_5.1	DS RR-5.1-plant	plant	DS RR
+JE.Lundberg.101	Rhizoplane	DS RR	EcoFarm	1	S102	67392	Rhizoplane_5.2	DS RR-5.2-plant	plant	DS RR
+JE.Lundberg.104	Rhizoplane	DS RR	EcoFarm	1	S102	75737	Rhizoplane_5.3	DS RR-5.3-plant	plant	DS RR
+JE.Lundberg.107	Rhizoplane	DS RR	EcoFarm	1	S102	45815	Rhizoplane_5.4	DS RR-5.4-plant	plant	DS RR
+JE.Lundberg.110	Rhizoplane	DS RR	EcoFarm	1	S102	74787	Rhizoplane_5.5	DS RR-5.5-plant	plant	DS RR
+JE.Lundberg.113	Rhizoplane	DS RR	EcoFarm	1	S102	66457	Rhizoplane_5.6	DS RR-5.6-plant	plant	DS RR
+JE.Lundberg.116	Rhizoplane	DS RR	EcoFarm	1	S102	58132	Rhizoplane_5.7	DS RR-5.7-plant	plant	DS RR
+JE.Lundberg.119	Rhizoplane	DS RR	EcoFarm	1	S102	60192	Rhizoplane_5.8	DS RR-5.8-plant	plant	DS RR
+JE.Soil.195	Rhizoplane	Arbuckle	Greenhouse	4	Glab_E	64800	1-E-BF	E-1-plant	plant	Arbuckle
+JE.Soil.115	Rhizoplane	Sacramento	Greenhouse	3	Glab_E	32546	10-E-BF	E-10-plant	plant	Sacramento
+JE.Soil.315	Rhizoplane	Sacramento	Greenhouse	4	Glab_E	51519	11-E-BF	E-11-plant	plant	Sacramento
+JE.Soil.139	Rhizoplane	Sacramento	Greenhouse	3	Glab_E	27276	12-E-BF	E-12-plant	plant	Sacramento
+JE.Soil.219	Rhizoplane	Arbuckle	Greenhouse	4	Glab_E	66996	2-E-BF	E-2-plant	plant	Arbuckle
+JE.Soil.19	Rhizoplane	Arbuckle	Greenhouse	3	Glab_E	53795	3-E-BF	E-3-plant	plant	Arbuckle
+JE.Soil.43	Rhizoplane	Arbuckle	Greenhouse	3	Glab_E	31769	4-E-BF	E-4-plant	plant	Arbuckle
+JE.Soil.67	Rhizoplane	Davis	Greenhouse	3	Glab_E	45417	5-E-BF	E-5-plant	plant	Davis
+JE.Soil.91	Rhizoplane	Davis	Greenhouse	3	Glab_E	40772	7-E-BF	E-7-plant	plant	Davis
+JE.Soil.291	Rhizoplane	Sacramento	Greenhouse	4	Glab_E	69938	9-E-BF	E-9-plant	plant	Sacramento
+JE.Soil.187	Rhizoplane	Arbuckle	Greenhouse	4	IR50	71128	1-I-BF	I-1-plant	plant	Arbuckle
+JE.Soil.107	Rhizoplane	Sacramento	Greenhouse	3	IR50	39666	10-I-BF	I-10-plant	plant	Sacramento
+JE.Soil.307	Rhizoplane	Sacramento	Greenhouse	4	IR50	126990	11-I-BF	I-11-plant	plant	Sacramento
+JE.Soil.131	Rhizoplane	Sacramento	Greenhouse	3	IR50	19000	12-I-BF	I-12-plant	plant	Sacramento
+JE.Soil.211	Rhizoplane	Arbuckle	Greenhouse	4	IR50	37826	2-I-BF	I-2-plant	plant	Arbuckle
+JE.Soil.35	Rhizoplane	Arbuckle	Greenhouse	3	IR50	28685	4-I-BF	I-4-plant	plant	Arbuckle
+JE.Soil.59	Rhizoplane	Davis	Greenhouse	3	IR50	36987	5-I-BF	I-5-plant	plant	Davis
+JE.Soil.235	Rhizoplane	Davis	Greenhouse	4	IR50	65010	6-I-BF	I-6-plant	plant	Davis
+JE.Soil.83	Rhizoplane	Davis	Greenhouse	3	IR50	40007	7-I-BF	I-7-plant	plant	Davis
+JE.Soil.283	Rhizoplane	Sacramento	Greenhouse	4	IR50	51816	9-I-BF	I-9-plant	plant	Sacramento
+JE.Soil.183	Rhizoplane	Arbuckle	Greenhouse	4	M104	93363	1-M-BF	M-1-plant	plant	Arbuckle
+JE.Soil.103	Rhizoplane	Sacramento	Greenhouse	3	M104	35403	10-M-BF	M-10-plant	plant	Sacramento
+JE.Soil.303	Rhizoplane	Sacramento	Greenhouse	4	M104	56515	11-M-BF	M-11-plant	plant	Sacramento
+JE.Soil.127	Rhizoplane	Sacramento	Greenhouse	3	M104	35394	12-M-BF	M-12-plant	plant	Sacramento
+JE.Soil.7	Rhizoplane	Arbuckle	Greenhouse	3	M104	88242	3-M-BF	M-3-plant	plant	Arbuckle
+JE.Soil.31	Rhizoplane	Arbuckle	Greenhouse	3	M104	3349	4-M-BF	M-4-plant	plant	Arbuckle
+JE.Soil.231	Rhizoplane	Davis	Greenhouse	4	M104	55939	6-M-BF	M-6-plant	plant	Davis
+JE.Soil.279	Rhizoplane	Sacramento	Greenhouse	4	M104	67798	9-M-BF	M-9-plant	plant	Sacramento
+JE.Soil.179	Rhizoplane	Arbuckle	Greenhouse	4	Nipponebare	59021	1-N-BF	N-1-plant	plant	Arbuckle
+JE.Soil.99	Rhizoplane	Sacramento	Greenhouse	3	Nipponebare	33416	10-N-BF	N-10-plant	plant	Sacramento
+JE.Soil.3	Rhizoplane	Arbuckle	Greenhouse	3	Nipponebare	41148	3-N-BF	N-3-plant	plant	Arbuckle
+JE.Soil.27	Rhizoplane	Arbuckle	Greenhouse	3	Nipponebare	22690	4-N-BF	N-4-plant	plant	Arbuckle
+JE.Soil.51	Rhizoplane	Davis	Greenhouse	3	Nipponebare	73886	5-N-BF	N-5-plant	plant	Davis
+JE.Soil.227	Rhizoplane	Davis	Greenhouse	4	Nipponebare	56679	6-N-BF	N-6-plant	plant	Davis
+JE.Soil.75	Rhizoplane	Davis	Greenhouse	3	Nipponebare	31095	7-N-BF	N-7-plant	plant	Davis
+JE.Lundberg.170	Rhizoplane	Scheidec	Organic	2	S102	144745	Rhizoplane_8.1	Scheidec-8.1-plant	plant	Scheidec
+JE.Lundberg.173	Rhizoplane	Scheidec	Organic	2	S102	95564	Rhizoplane_8.2	Scheidec-8.2-plant	plant	Scheidec
+JE.Lundberg.176	Rhizoplane	Scheidec	Organic	2	S102	67102	Rhizoplane_8.3	Scheidec-8.3-plant	plant	Scheidec
+JE.Lundberg.182	Rhizoplane	Scheidec	Organic	2	S102	91292	Rhizoplane_8.5	Scheidec-8.5-plant	plant	Scheidec
+JE.Lundberg.188	Rhizoplane	Scheidec	Organic	2	S102	89933	Rhizoplane_8.7	Scheidec-8.7-plant	plant	Scheidec
+JE.Lundberg.191	Rhizoplane	Scheidec	Organic	2	S102	96385	Rhizoplane_8.8	Scheidec-8.8-plant	plant	Scheidec
+JE.Lundberg.74	Rhizoplane	SFT 20 A	EcoFarm	2	S102	54901	Rhizoplane_4.1	SFT 20 A-4.1-plant	plant	SFT 20 A
+JE.Lundberg.77	Rhizoplane	SFT 20 A	EcoFarm	2	S102	70773	Rhizoplane_4.2	SFT 20 A-4.2-plant	plant	SFT 20 A
+JE.Lundberg.80	Rhizoplane	SFT 20 A	EcoFarm	2	S102	107343	Rhizoplane_4.3	SFT 20 A-4.3-plant	plant	SFT 20 A
+JE.Lundberg.86	Rhizoplane	SFT 20 A	EcoFarm	2	S102	85914	Rhizoplane_4.5	SFT 20 A-4.5-plant	plant	SFT 20 A
+JE.Lundberg.89	Rhizoplane	SFT 20 A	EcoFarm	2	S102	91554	Rhizoplane_4.6	SFT 20 A-4.6-plant	plant	SFT 20 A
+JE.Lundberg.92	Rhizoplane	SFT 20 A	EcoFarm	2	S102	86912	Rhizoplane_4.7	SFT 20 A-4.7-plant	plant	SFT 20 A
+JE.Lundberg.95	Rhizoplane	SFT 20 A	EcoFarm	2	S102	89856	Rhizoplane_4.8	SFT 20 A-4.8-plant	plant	SFT 20 A
+JE.Lundberg.50	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	88243	Rhizoplane_3.1	Spooner Airstrip-3.1-plant	plant	Spooner Airstrip
+JE.Lundberg.53	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	49428	Rhizoplane_3.2	Spooner Airstrip-3.2-plant	plant	Spooner Airstrip
+JE.Lundberg.56	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	65545	Rhizoplane_3.3	Spooner Airstrip-3.3-plant	plant	Spooner Airstrip
+JE.Lundberg.59	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	57144	Rhizoplane_3.4	Spooner Airstrip-3.4-plant	plant	Spooner Airstrip
+JE.Lundberg.62	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	64166	Rhizoplane_3.5	Spooner Airstrip-3.5-plant	plant	Spooner Airstrip
+JE.Lundberg.65	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	68783	Rhizoplane_3.6	Spooner Airstrip-3.6-plant	plant	Spooner Airstrip
+JE.Lundberg.68	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	54469	Rhizoplane_3.7	Spooner Airstrip-3.7-plant	plant	Spooner Airstrip
+JE.Lundberg.71	Rhizoplane	Spooner Airstrip	EcoFarm	1	S102	63003	Rhizoplane_3.8	Spooner Airstrip-3.8-plant	plant	Spooner Airstrip
+JE.Soil.192	Endosphere	Arbuckle	Greenhouse	4	93-11	107998	1-9-Endo	9-1-plant	plant	Arbuckle
+JE.Soil.112	Endosphere	Sacramento	Greenhouse	3	93-11	87298	10-9-Endo	9-10-plant	plant	Sacramento
+JE.Soil.312	Endosphere	Sacramento	Greenhouse	4	93-11	73639	11-9-Endo	9-11-plant	plant	Sacramento
+JE.Soil.136	Endosphere	Sacramento	Greenhouse	3	93-11	57998	12-9-Endo	9-12-plant	plant	Sacramento
+JE.Soil.216	Endosphere	Arbuckle	Greenhouse	4	93-11	76257	2-9-Endo	9-2-plant	plant	Arbuckle
+JE.Soil.16	Endosphere	Arbuckle	Greenhouse	3	93-11	43233	3-9-Endo	9-3-plant	plant	Arbuckle
+JE.Soil.40	Endosphere	Arbuckle	Greenhouse	3	93-11	35290	4-9-Endo	9-4-plant	plant	Arbuckle
+JE.Soil.64	Endosphere	Davis	Greenhouse	3	93-11	76808	5-9-Endo	9-5-plant	plant	Davis
+JE.Soil.240	Endosphere	Davis	Greenhouse	4	93-11	63846	6-9-Endo	9-6-plant	plant	Davis
+JE.Soil.88	Endosphere	Davis	Greenhouse	3	93-11	50306	7-9-Endo	9-7-plant	plant	Davis
+JE.Soil.264	Endosphere	Davis	Greenhouse	4	93-11	86760	8-9-Endo	9-8-plant	plant	Davis
+JE.Soil.288	Endosphere	Sacramento	Greenhouse	4	93-11	64761	9-9-Endo	9-9-plant	plant	Sacramento
+JE.Soil.200	Endosphere	Arbuckle	Greenhouse	4	Glab_B	67831	1-B-Endo	B-1-plant	plant	Arbuckle
+JE.Soil.120	Endosphere	Sacramento	Greenhouse	3	Glab_B	89514	10-B-Endo	B-10-plant	plant	Sacramento
+JE.Soil.320	Endosphere	Sacramento	Greenhouse	4	Glab_B	47164	11-B-Endo	B-11-plant	plant	Sacramento
+JE.Soil.144	Endosphere	Sacramento	Greenhouse	3	Glab_B	31449	12-B-Endo	B-12-plant	plant	Sacramento
+JE.Soil.224	Endosphere	Arbuckle	Greenhouse	4	Glab_B	69386	2-B-Endo	B-2-plant	plant	Arbuckle
+JE.Soil.24	Endosphere	Arbuckle	Greenhouse	3	Glab_B	35791	3-B-Endo	B-3-plant	plant	Arbuckle
+JE.Soil.48	Endosphere	Arbuckle	Greenhouse	3	Glab_B	31129	4-B-Endo	B-4-plant	plant	Arbuckle
+JE.Soil.72	Endosphere	Davis	Greenhouse	3	Glab_B	40145	5-B-Endo	B-5-plant	plant	Davis
+JE.Soil.248	Endosphere	Davis	Greenhouse	4	Glab_B	75565	6-B-Endo	B-6-plant	plant	Davis
+JE.Soil.96	Endosphere	Davis	Greenhouse	3	Glab_B	58178	7-B-Endo	B-7-plant	plant	Davis
+JE.Soil.272	Endosphere	Davis	Greenhouse	4	Glab_B	65799	8-B-Endo	B-8-plant	plant	Davis
+JE.Soil.296	Endosphere	Sacramento	Greenhouse	4	Glab_B	85663	9-B-Endo	B-9-plant	plant	Sacramento
+JE.Lundberg.123	Endosphere	BB P1	Organic	1	S102	56466	Endosphere_6.1	BB P1-6.1-plant	plant	BB P1
+JE.Lundberg.126	Endosphere	BB P1	Organic	1	S102	65461	Endosphere_6.2	BB P1-6.2-plant	plant	BB P1
+JE.Lundberg.129	Endosphere	BB P1	Organic	1	S102	72333	Endosphere_6.3	BB P1-6.3-plant	plant	BB P1
+JE.Lundberg.132	Endosphere	BB P1	Organic	1	S102	66012	Endosphere_6.4	BB P1-6.4-plant	plant	BB P1
+JE.Lundberg.135	Endosphere	BB P1	Organic	1	S102	94578	Endosphere_6.5	BB P1-6.5-plant	plant	BB P1
+JE.Lundberg.138	Endosphere	BB P1	Organic	1	S102	69119	Endosphere_6.6	BB P1-6.6-plant	plant	BB P1
+JE.Lundberg.141	Endosphere	BB P1	Organic	1	S102	107918	Endosphere_6.7	BB P1-6.7-plant	plant	BB P1
+JE.Lundberg.144	Endosphere	BB P1	Organic	1	S102	69767	Endosphere_6.8	BB P1-6.8-plant	plant	BB P1
+JE.Lundberg.147	Endosphere	BB P4	Organic	2	S102	87486	Endosphere_7.1	BB P4-7.1-plant	plant	BB P4
+JE.Lundberg.150	Endosphere	BB P4	Organic	2	S102	94695	Endosphere_7.2	BB P4-7.2-plant	plant	BB P4
+JE.Lundberg.153	Endosphere	BB P4	Organic	2	S102	80819	Endosphere_7.3	BB P4-7.3-plant	plant	BB P4
+JE.Lundberg.156	Endosphere	BB P4	Organic	2	S102	92113	Endosphere_7.4	BB P4-7.4-plant	plant	BB P4
+JE.Lundberg.159	Endosphere	BB P4	Organic	2	S102	91484	Endosphere_7.5	BB P4-7.5-plant	plant	BB P4
+JE.Lundberg.162	Endosphere	BB P4	Organic	2	S102	99269	Endosphere_7.6	BB P4-7.6-plant	plant	BB P4
+JE.Lundberg.165	Endosphere	BB P4	Organic	2	S102	80349	Endosphere_7.7	BB P4-7.7-plant	plant	BB P4
+JE.Lundberg.168	Endosphere	BB P4	Organic	2	S102	102900	Endosphere_7.8	BB P4-7.8-plant	plant	BB P4
+JE.Lundberg.3	Endosphere	Ditaler 18	Organic	1	S102	35015	Endosphere_1.1	Ditaler 18-1.1-plant	plant	Ditaler 18
+JE.Lundberg.6	Endosphere	Ditaler 18	Organic	1	S102	56100	Endosphere_1.2	Ditaler 18-1.2-plant	plant	Ditaler 18
+JE.Lundberg.9	Endosphere	Ditaler 18	Organic	1	S102	59733	Endosphere_1.3	Ditaler 18-1.3-plant	plant	Ditaler 18
+JE.Lundberg.12	Endosphere	Ditaler 18	Organic	1	S102	63941	Endosphere_1.4	Ditaler 18-1.4-plant	plant	Ditaler 18
+JE.Lundberg.15	Endosphere	Ditaler 18	Organic	1	S102	60741	Endosphere_1.5	Ditaler 18-1.5-plant	plant	Ditaler 18
+JE.Lundberg.18	Endosphere	Ditaler 18	Organic	1	S102	59885	Endosphere_1.6	Ditaler 18-1.6-plant	plant	Ditaler 18
+JE.Lundberg.21	Endosphere	Ditaler 18	Organic	1	S102	61164	Endosphere_1.7	Ditaler 18-1.7-plant	plant	Ditaler 18
+JE.Lundberg.24	Endosphere	Ditaler 18	Organic	1	S102	52225	Endosphere_1.8	Ditaler 18-1.8-plant	plant	Ditaler 18
+JE.Lundberg.27	Endosphere	Ditaler 19	Organic	2	S102	63994	Endosphere_2.1	Ditaler 19-2.1-plant	plant	Ditaler 19
+JE.Lundberg.30	Endosphere	Ditaler 19	Organic	2	S102	85042	Endosphere_2.2	Ditaler 19-2.2-plant	plant	Ditaler 19
+JE.Lundberg.33	Endosphere	Ditaler 19	Organic	2	S102	162253	Endosphere_2.3	Ditaler 19-2.3-plant	plant	Ditaler 19
+JE.Lundberg.36	Endosphere	Ditaler 19	Organic	2	S102	80894	Endosphere_2.4	Ditaler 19-2.4-plant	plant	Ditaler 19
+JE.Lundberg.39	Endosphere	Ditaler 19	Organic	2	S102	94360	Endosphere_2.5	Ditaler 19-2.5-plant	plant	Ditaler 19
+JE.Lundberg.42	Endosphere	Ditaler 19	Organic	2	S102	96496	Endosphere_2.6	Ditaler 19-2.6-plant	plant	Ditaler 19
+JE.Lundberg.45	Endosphere	Ditaler 19	Organic	2	S102	114061	Endosphere_2.7	Ditaler 19-2.7-plant	plant	Ditaler 19
+JE.Lundberg.48	Endosphere	Ditaler 19	Organic	2	S102	94260	Endosphere_2.8	Ditaler 19-2.8-plant	plant	Ditaler 19
+JE.Lundberg.99	Endosphere	DS RR	EcoFarm	1	S102	49657	Endosphere_5.1	DS RR-5.1-plant	plant	DS RR
+JE.Lundberg.102	Endosphere	DS RR	EcoFarm	1	S102	72005	Endosphere_5.2	DS RR-5.2-plant	plant	DS RR
+JE.Lundberg.105	Endosphere	DS RR	EcoFarm	1	S102	54182	Endosphere_5.3	DS RR-5.3-plant	plant	DS RR
+JE.Lundberg.108	Endosphere	DS RR	EcoFarm	1	S102	52219	Endosphere_5.4	DS RR-5.4-plant	plant	DS RR
+JE.Lundberg.111	Endosphere	DS RR	EcoFarm	1	S102	75251	Endosphere_5.5	DS RR-5.5-plant	plant	DS RR
+JE.Lundberg.114	Endosphere	DS RR	EcoFarm	1	S102	75113	Endosphere_5.6	DS RR-5.6-plant	plant	DS RR
+JE.Lundberg.117	Endosphere	DS RR	EcoFarm	1	S102	55506	Endosphere_5.7	DS RR-5.7-plant	plant	DS RR
+JE.Lundberg.120	Endosphere	DS RR	EcoFarm	1	S102	48666	Endosphere_5.8	DS RR-5.8-plant	plant	DS RR
+JE.Soil.196	Endosphere	Arbuckle	Greenhouse	4	Glab_E	73498	1-E-Endo	E-1-plant	plant	Arbuckle
+JE.Soil.116	Endosphere	Sacramento	Greenhouse	3	Glab_E	46658	10-E-Endo	E-10-plant	plant	Sacramento
+JE.Soil.316	Endosphere	Sacramento	Greenhouse	4	Glab_E	103454	11-E-Endo	E-11-plant	plant	Sacramento
+JE.Soil.220	Endosphere	Arbuckle	Greenhouse	4	Glab_E	71137	2-E-Endo	E-2-plant	plant	Arbuckle
+JE.Soil.20	Endosphere	Arbuckle	Greenhouse	3	Glab_E	41568	3-E-Endo	E-3-plant	plant	Arbuckle
+JE.Soil.44	Endosphere	Arbuckle	Greenhouse	3	Glab_E	34065	4-E-Endo	E-4-plant	plant	Arbuckle
+JE.Soil.68	Endosphere	Davis	Greenhouse	3	Glab_E	46079	5-E-Endo	E-5-plant	plant	Davis
+JE.Soil.244	Endosphere	Davis	Greenhouse	4	Glab_E	61394	6-E-Endo	E-6-plant	plant	Davis
+JE.Soil.92	Endosphere	Davis	Greenhouse	3	Glab_E	45790	7-E-Endo	E-7-plant	plant	Davis
+JE.Soil.268	Endosphere	Davis	Greenhouse	4	Glab_E	71147	8-E-Endo	E-8-plant	plant	Davis
+JE.Soil.188	Endosphere	Arbuckle	Greenhouse	4	IR50	69050	1-I-Endo	I-1-plant	plant	Arbuckle
+JE.Soil.108	Endosphere	Sacramento	Greenhouse	3	IR50	83503	10-I-Endo	I-10-plant	plant	Sacramento
+JE.Soil.308	Endosphere	Sacramento	Greenhouse	4	IR50	139285	11-I-Endo	I-11-plant	plant	Sacramento
+JE.Soil.212	Endosphere	Arbuckle	Greenhouse	4	IR50	55167	2-I-Endo	I-2-plant	plant	Arbuckle
+JE.Soil.12	Endosphere	Arbuckle	Greenhouse	3	IR50	46251	3-I-Endo	I-3-plant	plant	Arbuckle
+JE.Soil.36	Endosphere	Arbuckle	Greenhouse	3	IR50	49765	4-I-Endo	I-4-plant	plant	Arbuckle
+JE.Soil.60	Endosphere	Davis	Greenhouse	3	IR50	52955	5-I-Endo	I-5-plant	plant	Davis
+JE.Soil.236	Endosphere	Davis	Greenhouse	4	IR50	68337	6-I-Endo	I-6-plant	plant	Davis
+JE.Soil.84	Endosphere	Davis	Greenhouse	3	IR50	30525	7-I-Endo	I-7-plant	plant	Davis
+JE.Soil.260	Endosphere	Davis	Greenhouse	4	IR50	73203	8-I-Endo	I-8-plant	plant	Davis
+JE.Soil.284	Endosphere	Sacramento	Greenhouse	4	IR50	51351	9-I-Endo	I-9-plant	plant	Sacramento
+JE.Soil.184	Endosphere	Arbuckle	Greenhouse	4	M104	84433	1-M-Endo	M-1-plant	plant	Arbuckle
+JE.Soil.104	Endosphere	Sacramento	Greenhouse	3	M104	60417	10-M-Endo	M-10-plant	plant	Sacramento
+JE.Soil.304	Endosphere	Sacramento	Greenhouse	4	M104	98568	11-M-Endo	M-11-plant	plant	Sacramento
+JE.Soil.128	Endosphere	Sacramento	Greenhouse	3	M104	69964	12-M-Endo	M-12-plant	plant	Sacramento
+JE.Soil.208	Endosphere	Arbuckle	Greenhouse	4	M104	106035	2-M-Endo	M-2-plant	plant	Arbuckle
+JE.Soil.8	Endosphere	Arbuckle	Greenhouse	3	M104	46964	3-M-Endo	M-3-plant	plant	Arbuckle
+JE.Soil.32	Endosphere	Arbuckle	Greenhouse	3	M104	67923	4-M-Endo	M-4-plant	plant	Arbuckle
+JE.Soil.56	Endosphere	Davis	Greenhouse	3	M104	59644	5-M-Endo	M-5-plant	plant	Davis
+JE.Soil.232	Endosphere	Davis	Greenhouse	4	M104	63085	6-M-Endo	M-6-plant	plant	Davis
+JE.Soil.80	Endosphere	Davis	Greenhouse	3	M104	47281	7-M-Endo	M-7-plant	plant	Davis
+JE.Soil.256	Endosphere	Davis	Greenhouse	4	M104	89903	8-M-Endo	M-8-plant	plant	Davis
+JE.Soil.280	Endosphere	Sacramento	Greenhouse	4	M104	44469	9-M-Endo	M-9-plant	plant	Sacramento
+JE.Soil.180	Endosphere	Arbuckle	Greenhouse	4	Nipponebare	54945	1-N-Endo	N-1-plant	plant	Arbuckle
+JE.Soil.100	Endosphere	Sacramento	Greenhouse	3	Nipponebare	108680	10-N-Endo	N-10-plant	plant	Sacramento
+JE.Soil.300	Endosphere	Sacramento	Greenhouse	4	Nipponebare	121754	11-N-Endo	N-11-plant	plant	Sacramento
+JE.Soil.124	Endosphere	Sacramento	Greenhouse	3	Nipponebare	50502	12-N-Endo	N-12-plant	plant	Sacramento
+JE.Soil.204	Endosphere	Arbuckle	Greenhouse	4	Nipponebare	75970	2-N-Endo	N-2-plant	plant	Arbuckle
+JE.Soil.4	Endosphere	Arbuckle	Greenhouse	3	Nipponebare	38169	3-N-Endo	N-3-plant	plant	Arbuckle
+JE.Soil.28	Endosphere	Arbuckle	Greenhouse	3	Nipponebare	27541	4-N-Endo	N-4-plant	plant	Arbuckle
+JE.Soil.52	Endosphere	Davis	Greenhouse	3	Nipponebare	60905	5-N-Endo	N-5-plant	plant	Davis
+JE.Soil.228	Endosphere	Davis	Greenhouse	4	Nipponebare	83772	6-N-Endo	N-6-plant	plant	Davis
+JE.Soil.76	Endosphere	Davis	Greenhouse	3	Nipponebare	38293	7-N-Endo	N-7-plant	plant	Davis
+JE.Soil.252	Endosphere	Davis	Greenhouse	4	Nipponebare	94194	8-N-Endo	N-8-plant	plant	Davis
+JE.Soil.276	Endosphere	Sacramento	Greenhouse	4	Nipponebare	55008	9-N-Endo	N-9-plant	plant	Sacramento
+JE.Lundberg.171	Endosphere	Scheidec	Organic	2	S102	73493	Endosphere_8.1	Scheidec-8.1-plant	plant	Scheidec
+JE.Lundberg.174	Endosphere	Scheidec	Organic	2	S102	127372	Endosphere_8.2	Scheidec-8.2-plant	plant	Scheidec
+JE.Lundberg.177	Endosphere	Scheidec	Organic	2	S102	117720	Endosphere_8.3	Scheidec-8.3-plant	plant	Scheidec
+JE.Lundberg.180	Endosphere	Scheidec	Organic	2	S102	103898	Endosphere_8.4	Scheidec-8.4-plant	plant	Scheidec
+JE.Lundberg.183	Endosphere	Scheidec	Organic	2	S102	110348	Endosphere_8.5	Scheidec-8.5-plant	plant	Scheidec
+JE.Lundberg.186	Endosphere	Scheidec	Organic	2	S102	107241	Endosphere_8.6	Scheidec-8.6-plant	plant	Scheidec
+JE.Lundberg.189	Endosphere	Scheidec	Organic	2	S102	110419	Endosphere_8.7	Scheidec-8.7-plant	plant	Scheidec
+JE.Lundberg.192	Endosphere	Scheidec	Organic	2	S102	61712	Endosphere_8.8	Scheidec-8.8-plant	plant	Scheidec
+JE.Lundberg.75	Endosphere	SFT 20 A	EcoFarm	2	S102	70789	Endosphere_4.1	SFT 20 A-4.1-plant	plant	SFT 20 A
+JE.Lundberg.78	Endosphere	SFT 20 A	EcoFarm	2	S102	90452	Endosphere_4.2	SFT 20 A-4.2-plant	plant	SFT 20 A
+JE.Lundberg.81	Endosphere	SFT 20 A	EcoFarm	2	S102	81464	Endosphere_4.3	SFT 20 A-4.3-plant	plant	SFT 20 A
+JE.Lundberg.84	Endosphere	SFT 20 A	EcoFarm	2	S102	91493	Endosphere_4.4	SFT 20 A-4.4-plant	plant	SFT 20 A
+JE.Lundberg.87	Endosphere	SFT 20 A	EcoFarm	2	S102	97059	Endosphere_4.5	SFT 20 A-4.5-plant	plant	SFT 20 A
+JE.Lundberg.90	Endosphere	SFT 20 A	EcoFarm	2	S102	102717	Endosphere_4.6	SFT 20 A-4.6-plant	plant	SFT 20 A
+JE.Lundberg.93	Endosphere	SFT 20 A	EcoFarm	2	S102	78666	Endosphere_4.7	SFT 20 A-4.7-plant	plant	SFT 20 A
+JE.Lundberg.96	Endosphere	SFT 20 A	EcoFarm	2	S102	90104	Endosphere_4.8	SFT 20 A-4.8-plant	plant	SFT 20 A
+JE.Lundberg.51	Endosphere	Spooner Airstrip	EcoFarm	1	S102	42720	Endosphere_3.1	Spooner Airstrip-3.1-plant	plant	Spooner Airstrip
+JE.Lundberg.54	Endosphere	Spooner Airstrip	EcoFarm	1	S102	68581	Endosphere_3.2	Spooner Airstrip-3.2-plant	plant	Spooner Airstrip
+JE.Lundberg.57	Endosphere	Spooner Airstrip	EcoFarm	1	S102	58640	Endosphere_3.3	Spooner Airstrip-3.3-plant	plant	Spooner Airstrip
+JE.Lundberg.60	Endosphere	Spooner Airstrip	EcoFarm	1	S102	58005	Endosphere_3.4	Spooner Airstrip-3.4-plant	plant	Spooner Airstrip
+JE.Lundberg.63	Endosphere	Spooner Airstrip	EcoFarm	1	S102	56535	Endosphere_3.5	Spooner Airstrip-3.5-plant	plant	Spooner Airstrip
+JE.Lundberg.66	Endosphere	Spooner Airstrip	EcoFarm	1	S102	64906	Endosphere_3.6	Spooner Airstrip-3.6-plant	plant	Spooner Airstrip
+JE.Lundberg.69	Endosphere	Spooner Airstrip	EcoFarm	1	S102	56461	Endosphere_3.7	Spooner Airstrip-3.7-plant	plant	Spooner Airstrip
+JE.Lundberg.72	Endosphere	Spooner Airstrip	EcoFarm	1	S102	61291	Endosphere_3.8	Spooner Airstrip-3.8-plant	plant	Spooner Airstrip
+JE.Soil.189	Bulk Soil	Arbuckle	Greenhouse	4	Soil	87593	1-9-BS	9-1-environment	environment	Arbuckle
+JE.Soil.109	Bulk Soil	Sacramento	Greenhouse	3	Soil	52083	10-9-BS	9-10-environment	environment	Sacramento
+JE.Soil.309	Bulk Soil	Sacramento	Greenhouse	4	Soil	84938	11-9-BS	9-11-environment	environment	Sacramento
+JE.Soil.133	Bulk Soil	Sacramento	Greenhouse	3	Soil	12493	12-9-BS	9-12-environment	environment	Sacramento
+JE.Soil.13	Bulk Soil	Arbuckle	Greenhouse	3	Soil	51258	3-9-BS	9-3-environment	environment	Arbuckle
+JE.Soil.37	Bulk Soil	Arbuckle	Greenhouse	3	Soil	60094	4-9-BS	9-4-environment	environment	Arbuckle
+JE.Soil.285	Bulk Soil	Sacramento	Greenhouse	4	Soil	61590	9-9-BS	9-9-environment	environment	Sacramento
+JE.Soil.197	Bulk Soil	Arbuckle	Greenhouse	4	Soil	76869	1-B-BS	B-1-environment	environment	Arbuckle
+JE.Soil.117	Bulk Soil	Sacramento	Greenhouse	3	Soil	91768	10-B-BS	B-10-environment	environment	Sacramento
+JE.Soil.141	Bulk Soil	Sacramento	Greenhouse	3	Soil	33116	12-B-BS	B-12-environment	environment	Sacramento
+JE.Soil.21	Bulk Soil	Arbuckle	Greenhouse	3	Soil	34582	3-B-BS	B-3-environment	environment	Arbuckle
+JE.Soil.45	Bulk Soil	Arbuckle	Greenhouse	3	Soil	33451	4-B-BS	B-4-environment	environment	Arbuckle
+JE.Soil.269	Bulk Soil	Davis	Greenhouse	4	Soil	91223	8-B-BS	B-8-environment	environment	Davis
+JE.Soil.293	Bulk Soil	Sacramento	Greenhouse	4	Soil	71363	9-B-BS	B-9-environment	environment	Sacramento
+JE.Soil.193	Bulk Soil	Arbuckle	Greenhouse	4	Soil	76327	1-E-BS	E-1-environment	environment	Arbuckle
+JE.Soil.113	Bulk Soil	Sacramento	Greenhouse	3	Soil	61932	10-E-BS	E-10-environment	environment	Sacramento
+JE.Soil.17	Bulk Soil	Arbuckle	Greenhouse	3	Soil	46397	3-E-BS	E-3-environment	environment	Arbuckle
+JE.Soil.41	Bulk Soil	Arbuckle	Greenhouse	3	Soil	35329	4-E-BS	E-4-environment	environment	Arbuckle
+JE.Soil.241	Bulk Soil	Davis	Greenhouse	4	Soil	71964	6-E-BS	E-6-environment	environment	Davis
+JE.Soil.265	Bulk Soil	Davis	Greenhouse	4	Soil	81976	8-E-BS	E-8-environment	environment	Davis
+JE.Soil.185	Bulk Soil	Arbuckle	Greenhouse	4	Soil	48312	1-I-BS	I-1-environment	environment	Arbuckle
+JE.Soil.105	Bulk Soil	Sacramento	Greenhouse	3	Soil	94463	10-I-BS	I-10-environment	environment	Sacramento
+JE.Soil.129	Bulk Soil	Sacramento	Greenhouse	3	Soil	86138	12-I-BS	I-12-environment	environment	Sacramento
+JE.Soil.33	Bulk Soil	Arbuckle	Greenhouse	3	Soil	33353	4-I-BS	I-4-environment	environment	Arbuckle
+JE.Soil.57	Bulk Soil	Davis	Greenhouse	3	Soil	46630	5-I-BS	I-5-environment	environment	Davis
+JE.Soil.233	Bulk Soil	Davis	Greenhouse	4	Soil	62656	6-I-BS	I-6-environment	environment	Davis
+JE.Soil.257	Bulk Soil	Davis	Greenhouse	4	Soil	53434	8-I-BS	I-8-environment	environment	Davis
+JE.Soil.281	Bulk Soil	Sacramento	Greenhouse	4	Soil	49564	9-I-BS	I-9-environment	environment	Sacramento
+JE.Soil.181	Bulk Soil	Arbuckle	Greenhouse	4	Soil	78758	1-M-BS	M-1-environment	environment	Arbuckle
+JE.Soil.101	Bulk Soil	Sacramento	Greenhouse	3	Soil	30539	10-M-BS	M-10-environment	environment	Sacramento
+JE.Soil.301	Bulk Soil	Sacramento	Greenhouse	4	Soil	120078	11-M-BS	M-11-environment	environment	Sacramento
+JE.Soil.125	Bulk Soil	Sacramento	Greenhouse	3	Soil	40605	12-M-BS	M-12-environment	environment	Sacramento
+JE.Soil.5	Bulk Soil	Arbuckle	Greenhouse	3	Soil	161407	3-M-BS	M-3-environment	environment	Arbuckle
+JE.Soil.29	Bulk Soil	Arbuckle	Greenhouse	3	Soil	33794	4-M-BS	M-4-environment	environment	Arbuckle
+JE.Soil.229	Bulk Soil	Davis	Greenhouse	4	Soil	55874	6-M-BS	M-6-environment	environment	Davis
+JE.Soil.253	Bulk Soil	Davis	Greenhouse	4	Soil	81798	8-M-BS	M-8-environment	environment	Davis
+JE.Soil.177	Bulk Soil	Arbuckle	Greenhouse	4	Soil	79524	1-N-BS	N-1-environment	environment	Arbuckle
+JE.Soil.121	Bulk Soil	Sacramento	Greenhouse	3	Soil	26753	12-N-BS	N-12-environment	environment	Sacramento
+JE.Soil.1	Bulk Soil	Arbuckle	Greenhouse	3	Soil	36592	3-N-BS	N-3-environment	environment	Arbuckle
+JE.Soil.249	Bulk Soil	Davis	Greenhouse	4	Soil	169811	8-N-BS	N-8-environment	environment	Davis
+JE.Soil.273	Bulk Soil	Sacramento	Greenhouse	4	Soil	58754	9-N-BS	N-9-environment	environment	Sacramento

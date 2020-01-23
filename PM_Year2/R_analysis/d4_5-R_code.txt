@@ -1,0 +1,2307 @@
+# decided to not analyze ambient water samples because of small sample size
+
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(plyr)
+library(reshape)
+library(vegan)
+library(ape)
+library(GUniFrac)
+library(gridExtra)
+library(cowplot)
+library(RColorBrewer)
+library(wesanderson)
+library(VennDiagram)
+setwd("~/data/duckweed_microbiome/PM_Year2/R_analysis/")
+source("~/data/duckweed_microbiome/q2_analysis_using_R.R")
+
+###############################################################################
+# Initial Tissue Analysis
+###############################################################################
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# find initial tissue ASVs
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+COUNT.TABLE <- read_my_table("ducitaplates4_5-working_table.tsv")
+COUNT.META <- addtax_addmeta(
+                             COUNT.TABLE,
+                             "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                             "ducitaplates4_5-working_metadata.tsv",
+                             value = "reads",
+                             sep = TRUE
+                             )
+COUNT.META <- filter(
+                     COUNT.META,
+                     reads > 0
+                     )
+DABt0.TABLE <- filter(
+                      COUNT.META,
+                      type == "treated_tissue" & time == 0
+                      )
+DABt0.TABLE <- select(
+                      DABt0.TABLE,
+                      sample_id,
+                      feature_id,
+                      reads,
+                      Phylum,
+                      Family,
+                      Genus,
+                      tissue,
+                      bacteria
+                      )
+
+# d4_5-initial_tissue-reads
+write.table(
+            DABt0.TABLE,
+            "d4_5-initial_tissue-reads.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# d4_5-initial_tissue-stable_asv venn diagram
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# venn diagram
+DABt0.ASV <- unique(DABt0.TABLE$feature_id)
+
+WWDAB.TABLE <- filter(
+                      COUNT.META,
+                      type == "treated_tissue" & time != 0
+                      )
+WWDAB.ASV <- unique(WWDAB.TABLE$feature_id)
+
+venn.diagram(
+             x = list(
+                      DABt0.ASV,
+                      WWDAB.ASV
+                      ),
+             filename = "d4_5-initial_tissue-venn_diagram.tiff",
+             category = c(
+                          "DAB_t0",
+                          "WWDAB"
+                          ),
+             fill = c(
+                      "purple",
+                      "forestgreen"
+                      ),
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             cat.cex = 1.5,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.05,0.05),
+             cat.pos = c(25,-25),
+             scaled = FALSE
+             )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# d4_5-initial_tissue-stable_asv stability
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+STABLE.ASV <- intersect(
+                        DABt0.ASV,
+                        WWDAB.ASV
+                        )
+
+# generate clr table
+COUNT.TABLE <- read_my_table("ducitaplates4_5-working_table.tsv")
+COUNT.MATRIX <- COUNT.TABLE[,-1]
+CLR.TABLE <- clr_transform_counttable(
+                                      COUNT.MATRIX,
+                                      PRIOR = 0.001
+                                      )
+CLR.TABLE$feature_id <- COUNT.TABLE$feature_id
+CLR.INFO <- addtax_addmeta(
+                           CLR.TABLE,
+                           "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                           "ducitaplates4_5-metadata.tsv",
+                           value = "clr",
+                           sep = TRUE
+                           )
+CLR.INFO$time <- as.factor(CLR.INFO$time)
+
+# generate stable asv tissue table
+STABLE.ASV.TABLE <- filter(
+                           CLR.INFO,
+                           feature_id %in% STABLE.ASV
+                           )
+STABLE.ASV.TABLE.TT <- filter(
+                              STABLE.ASV.TABLE,
+                              type == "treated_tissue"
+                              )
+STABLE.ASV.TABLE.TT <- select(
+                              STABLE.ASV.TABLE.TT,
+                              sample_id,
+                              feature_id,
+                              clr,
+                              Phylum,
+                              Family,
+                              Genus,
+                              tissue,
+                              treatment,
+                              time
+                              )
+
+# find stable asvs with higher than average abundance at t0 and t7
+STABLE.ASV.SUM <- ddply(
+                        STABLE.ASV.TABLE.TT,
+                        ~feature_id+Phylum+Family+Genus+tissue+time,
+                        summarise,
+                        median_clr = median(clr)
+                        )
+
+STABLE.ASV.CAST <- dcast(
+                         STABLE.ASV.SUM,
+                         feature_id+Phylum+Family+Genus+tissue~time
+                         )
+colnames(STABLE.ASV.CAST)[6:8] <- c("t0","t2","t7")
+write.table(
+            STABLE.ASV.CAST,
+            "d4_5-initial_tissue-stable_asv.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+###############################################################################
+# Alpha Rarefaction Code
+###############################################################################
+
+# url: https://rdrr.io/rforge/vegan/man/rarefy.html
+# url: https://www.fromthebottomoftheheap.net/2015/04/16/drawing-rarefaction-curves-with-custom-colours/
+
+META.TABLE <- read_my_table("ducitaplates4_5-working_metadata.tsv")
+META.FILTERED <- filter(
+                        META.TABLE,
+                        type == "treated_tissue"
+                        )
+META.FILTERED$time <- as.factor(META.FILTERED$time)
+
+COLS <- c(
+          "feature_id",
+          as.vector(META.FILTERED$sample_id)
+          )
+          
+
+COUNT.TABLE <- read_my_table("ducitaplates4_5-working_table.tsv")
+COUNT.FILTERED <- COUNT.TABLE[,colnames(COUNT.TABLE) %in% COLS]
+
+
+RAREMAX <- 108000
+RAREFY.OUT <- get_rarefy_out(
+                             COUNT.FILTERED,
+                             subsampling = 5000
+                             )
+
+RAREFY.DF <- generate_rarefy_df(
+                                RAREFY.OUT,
+                                COUNT.FILTERED
+                                )
+RAREFY.META <- merge(
+                     META.FILTERED,
+                     RAREFY.DF,
+                     by = "sample_id"
+                     )
+
+RAREFY.PLOT <- ggplot(
+                      RAREFY.META,
+                      aes(
+                          x = sample_size,
+                          y = no_species,
+			  color = tissue,
+                          shape = time,
+                          group = sample_id
+                          )
+                      )
+
+# d4_5-rarefaction_plot code
+options(scipen = 999)
+RAREFY.META$tissue <- factor(
+                             RAREFY.META$tissue,
+                             levels = c(
+                                        "L_minor370_DWC112",
+                                        "S_polyrhiza432_9509"
+                                        )
+                             )
+COLOR <- c(
+           "L_minor370_DWC112" = "forestgreen",
+           "S_polyrhiza432_9509" = "seagreen"
+           )
+SHAPES <- c(
+            "0" = 15,
+            "2" = 16,
+            "7" = 17
+            )
+RAREFY.FIG <- RAREFY.PLOT +
+              geom_line(
+                        size = 1
+                        ) +
+              scale_color_manual(
+                                 name = "Type",
+                                 labels = c(
+                                            "LmDAB",
+                                            "SpDAB"
+                                            ),
+                                 values = COLOR
+                                 ) +
+              scale_shape_manual(
+                                 name = "Time",
+                                 labels = c(
+                                            "0",
+                                            "2",
+                                            "7"
+                                            ),
+                                 values = SHAPES
+                                 ) +
+              scale_y_continuous(
+                                 expand = c(0,0),
+                                 limits = c(0,2000)
+                                 ) +
+              theme(
+                    axis.line = element_line(
+                                             color = "black",
+                                             size = 1
+                                             ),
+                    axis.title.y = element_text(
+                                                size = 24,
+                                                face = "bold"
+                                                ),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 20
+                                               ),
+                    axis.title.x = element_text(
+                                                size = 24,
+                                                face = "bold"
+                                                ),
+                    axis.text.x = element_text(
+                                               face = "bold",
+                                               color = "black",
+                                               size = 20,
+                                               angle = 45,
+                                               hjust = 1,
+                                               vjust = 1
+                                               ),
+                    strip.background = element_blank(),
+                    legend.key = element_blank(),
+                    legend.title = element_text(
+                                                face = "bold",
+                                                size = 24
+                                                ),
+                    legend.text = element_text(
+                                               face = "bold",
+                                               size = 20
+                                               ),
+                    panel.background = element_blank()
+                    ) +
+              xlab("Sample Size") +
+              ylab("# of ASVs") +
+              geom_vline(xintercept = RAREMAX) +
+              guides(
+                     color = guide_legend(
+                                          override.aes = list(size = 3)
+                                          ),
+                     shape = guide_legend(
+                                          override.aes = list(size = 3)
+                                          )
+                     )
+RAREFY.FIG
+ggsave(
+       "d4_5-rarefaction_plot.pdf",
+       RAREFY.FIG,
+       device = "pdf",
+       dpi = 300
+       )
+
+###############################################################################
+# Alpha Diversity Using q2 Vectors
+###############################################################################
+
+VECTORS <- c(
+             "d4_5-alpha_diversity-shannon_vector.tsv",
+             "d4_5-alpha_diversity-evenness_vector.tsv",
+             "d4_5-alpha_diversity-observed_otus_vector.tsv",
+             "d4_5-alpha_diversity-faith_pd_vector.tsv"
+             )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# compare species - no t0; no ambient water samples
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+for (VECTOR in VECTORS){
+   VECTOR.PATH <- paste0(
+                         "../q2_analysis/",
+                         VECTOR
+                         )
+   VECTOR.DATA <- addmeta_2_q2vector(
+                                     VECTOR.PATH,
+                                     "ducitaplates4_5-working_metadata.tsv"
+                                     )
+   VECTOR.DATA$time <- as.factor(VECTOR.DATA$time)
+   VECTOR.DATA <- filter(
+                         VECTOR.DATA,
+                         time != 0
+                         )
+   VECTOR.DATA$tissue <- factor(
+                                VECTOR.DATA$tissue,
+                                levels = c(
+                                           "L_minor370_DWC112",
+                                           "S_polyrhiza432_9509"
+                                           )
+                                )
+   VECTOR.DATA$treatment <- factor(
+                                   VECTOR.DATA$treatment,
+                                   levels = c(
+                                              "water_treated",
+                                              "SD_treated"
+                                              )
+                                )
+   TYPES <- c(
+              "treated_tissue"
+              )
+   INDEX <- 1
+   for (TYPE in TYPES){
+      VECTOR.TYPE <- filter(
+                            VECTOR.DATA,
+                            type == TYPE
+                            )
+      YLAB <- colnames(VECTOR.TYPE)[2]
+      YLAB.SEPARATE <- strsplit(
+                                YLAB,
+                                "_"
+                                )
+      YLAB.CAP <- sapply(
+                         YLAB.SEPARATE,
+                         function(WORD)paste(toupper(
+                                                     substring(
+                                                               WORD,
+                                                               1,
+                                                               1
+                                                               )
+                                                     ),
+                                             substring(
+                                                       WORD,
+                                                       2
+                                                       ),
+                                             sep = "",
+                                             collapse = " "
+                                             )
+      
+                         )
+      YLAB.MAX <- max(VECTOR.TYPE[,2])
+      YLAB.LIMIT <- YLAB.MAX + YLAB.MAX/4
+      MY_COMPARISONS <- list(
+                             c("L_minor370_DWC112","S_polyrhiza432_9509")
+                             )
+      FILL <- c(
+                "2" = "dodgerblue",
+                "7" = "navy"
+                )
+      SHAPES <- c(
+                  "water_treated" = 24,
+                  "SD_treated" = 22
+                  )
+
+      #COLOR <- c(
+      #           "none" = "black",
+      #           "MicrobacteriumRU1A" = "gold",
+      #           "BacillusRU3D" = "firebrick",
+      #           "PaenibacillusRU5A" = "purple"
+      #           )
+
+      VECTOR.PLOT <- ggplot(
+                            VECTOR.TYPE,
+                            aes(
+                                tissue,
+                                VECTOR.TYPE[,2],
+                                fill = time,
+                                shape = treatment
+                                )
+                            )
+      NAME.INDEX <- gregexpr(
+                             pattern = "vector.tsv",
+                             VECTOR
+                             )[[1]][[1]]
+      NAME <- substr(
+                     VECTOR,
+                     0,
+                     NAME.INDEX-2
+                     )
+      OUTPUT <- sprintf(
+                        "%s-%s-plot.pdf",
+                        NAME,
+                        TYPE
+                        )
+      pdf(OUTPUT)
+      print(
+            VECTOR.PLOT +
+            geom_jitter(
+                        width = 0.1,
+                        size = 3,
+                        stroke = 1,
+                        aes(
+                            fill = time,
+                            shape = treatment
+                            )
+                        ) +
+            theme(
+                  axis.line = element_line(
+                                           color = "black",
+                                           size = 1
+                                           ),
+                  axis.title.y = element_text(
+                                              size = 14,
+                                              face = "bold"
+                                              ),
+                  axis.text.y = element_text(
+                                             face = "bold",
+                                             color = "black",
+                                             size = 12
+                                             ),
+                  axis.title.x = element_blank(),
+                  axis.text.x = element_text(
+                                             face = "bold",
+                                             color = "black",
+                                             size = 14,
+                                             angle = 45,
+                                             hjust = 1,
+                                             vjust = 1
+                                             ),
+                  strip.background = element_blank(),
+                  legend.key = element_blank(),
+                  legend.title = element_text(
+                                              face = "bold",
+                                              size = 14
+                                              ),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 10
+                                             ),
+                  panel.background = element_blank()
+                  ) +
+            ylab(YLAB.CAP) +
+            scale_y_continuous(
+                               expand = c(0,0),
+                               limits = c(0,YLAB.LIMIT)
+                               ) +
+            scale_fill_manual(
+                              name = "Time",
+                              values = FILL
+                              ) +
+            scale_shape_manual(
+                               name = "Treatment",
+                               labels = c(
+                                          "Water Treated",
+                                          "SD Treated"
+                                          ),
+                               values = SHAPES
+                               ) +
+            scale_x_discrete(
+                             labels = c(
+                                        "LmDAB",
+                                        "SpDAB"
+                                        )
+                             ) +
+            guides(
+                   fill = guide_legend(
+                                       order = 1,
+                                       override.aes = list(color = c(
+                                                                     "dodgerblue",
+                                                                     "navy"
+                                                                     )
+                                                           )
+                                       ),
+                   shape = guide_legend(order = 2),
+                   color = guide_legend(
+                                        order = 3,
+                                        override.aes = list(shape = 22)
+                                        )
+                   ) +
+            stat_compare_means(
+                               comparisons = MY_COMPARISONS,
+                               size = 5,
+                               label = "p.signif",
+                               label.y = YLAB.MAX + (YLAB.MAX/10)
+                               ) 
+            )
+      dev.off()
+      INDEX <- INDEX + 1
+   }
+}
+
+###############################################################################
+# Beta Diversity Using Q2 Distance Matrix
+###############################################################################
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# create generalized unifrac
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+RAREFY.TABLE <- read_my_table(
+                              "ducitaplates4_5-working_rarefied_table.tsv",
+                              rows = 1
+                              )
+RAREFY.TREE <- read.tree(
+                         "ducitaplates4_5-working_rarefied_tree.nwk"
+                         )
+UNIFRACS <- GUniFrac(
+                     t(RAREFY.TABLE),
+                     RAREFY.TREE,
+                     alpha = 0.5
+                     )$unifracs
+GUNIFRAC <- UNIFRACS[,,"d_0.5"]
+
+# filters
+TIME0 <- grepl(
+               "t0",
+               colnames(GUNIFRAC)
+               )
+
+TT.SAMPLES <- c(
+                "W",
+                "SD"
+                )
+TISSUE <- grepl(
+                paste(
+                      TT.SAMPLES,
+                      collapse = "|"
+                      ),
+                colnames(GUNIFRAC)
+                )
+GUNIFRAC.FILTERED <- GUNIFRAC[!TIME0,!TIME0]
+GUNIFRAC.FILTERED <- GUNIFRAC.FILTERED[TISSUE,TISSUE]
+
+write.table(
+            data.frame(GUNIFRAC.FILTERED),
+            "d4_5-beta_diversity-generalized_unifrac_distance_matrix-tissue.tsv",
+            sep = "\t",
+            quote = FALSE
+            )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# create tissue only distance metrics
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+DISTANCES <- c(
+               "d4_5-beta_diversity-bray_curtis_distance_matrix.tsv",
+               "d4_5-beta_diversity-jaccard_distance_matrix.tsv",
+               "d4_5-beta_diversity-unweighted_unifrac_distance_matrix.tsv",
+               "d4_5-beta_diversity-weighted_unifrac_distance_matrix.tsv"
+               )
+for (DISTANCE in DISTANCES){
+   IS.GEN.UNIFRAC <- grepl(
+                           "generalized",
+                           paste(DISTANCE)
+                           )
+
+   if(IS.GEN.UNIFRAC){
+      DIS.PATH <- DISTANCE
+   } else {
+      DIS.PATH <- paste0(
+                         "../q2_analysis/",
+                         DISTANCE
+                         )
+   }
+   DISTANCE.TABLE <- read.table(
+                                DIS.PATH,
+                                sep = "\t",
+                                header = T,
+                                check.names = FALSE,
+                                row.names = 1
+                                )
+   print(colnames(DISTANCE.TABLE))
+   TT.SAMPLES <- c(
+                   "W",
+                   "SD"
+                   )
+   TISSUE <- grepl(
+                   paste(
+                         TT.SAMPLES,
+                         collapse = "|"
+                         ),
+                   colnames(DISTANCE.TABLE)
+                   )
+   DISTANCE.FILTERED <- DISTANCE.TABLE[TISSUE,TISSUE]
+   print(colnames(DISTANCE.FILTERED))
+   write.table(
+               DISTANCE.FILTERED,
+               paste0(
+                      substr(
+                             DISTANCE,
+                             1,
+                             nchar(DISTANCE)-4
+                             ),
+                      "-tissue.tsv"
+                      ),
+               sep = "\t",
+               quote = FALSE,
+               col.names = NA
+               )
+}
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# create tissue only PCOA
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+DISTANCES <- c(
+               "d4_5-beta_diversity-bray_curtis_distance_matrix-tissue.tsv",
+               "d4_5-beta_diversity-jaccard_distance_matrix-tissue.tsv",
+               "d4_5-beta_diversity-unweighted_unifrac_distance_matrix-tissue.tsv",
+               "d4_5-beta_diversity-weighted_unifrac_distance_matrix-tissue.tsv",
+               "d4_5-beta_diversity-generalized_unifrac_distance_matrix-tissue.tsv"
+               )
+for (DISTANCE in DISTANCES){
+   PCOA.OBJECT <- q2distance_2_pcoa(
+                                    DISTANCE,
+                                    "ducitaplates4_5-metadata.tsv"
+                                    )
+   PCOA.META <- PCOA.OBJECT$points
+   PCOA.META$time <- as.factor(PCOA.META$time)
+   PCOA.META$tissue <- factor(
+                              PCOA.META$tissue,
+                              levels = c(
+                                         "L_minor370_DWC112",
+                                         "S_polyrhiza432_9509"
+                                         )
+                              )
+   PCOA.VARIANCE <- PCOA.OBJECT$variance
+
+   SHAPES <- c(
+               "2" = 24,
+               "7" = 22
+               )
+   FILL <- c(
+             "L_minor370_DWC112" = "forestgreen",
+             "S_polyrhiza432_9509" = "yellowgreen"
+             )
+   PLOT <- ggplot(
+                  PCOA.META,
+                  aes(x,
+                      y,
+                      shape = time,
+                      fill = tissue,
+                      )
+                  ) 
+   NAME <- strsplit(
+                    DISTANCE,
+                    "-"
+                    )[[1]]            
+   SUBNAME <- strsplit(
+                       NAME[3],
+                       "_"
+                       )[[1]]
+   print(SUBNAME)
+   OUTPUT <- paste0(
+                    "d4_5-beta_diversity-",
+                    SUBNAME[1],
+                    "_",
+                    SUBNAME[2],
+                    "_pcoa.pdf"
+                    ) 
+   PCOA <- PLOT + 
+           geom_point(
+                      size = 5,
+                      stroke = 1
+                      ) +
+           scale_shape_manual(
+                              name = "Time",
+                              values = SHAPES
+                              ) +
+           scale_fill_manual(
+                             name = "Type",
+                             labels = c(
+                                        "LmDAB",
+                                        "SpDAB"
+                                        ), 
+                             values = FILL
+                             ) +
+           theme(
+                 axis.line = element_line(
+                                          color = "black",
+                                          size = 2
+                                          ),
+                 axis.title = element_text(size = 20,
+                                           face = "bold"),
+                 axis.text = element_text(face = "bold",
+                                          color = "black",
+                                          size = 16),
+                 legend.key = element_blank(),
+                 legend.title = element_text(face = "bold",
+                                             size = 20),
+                 legend.text = element_text(face = "bold",
+                                            size = 16),
+                 panel.background = element_blank()
+                 ) +
+           xlab(paste("PCoA 1 (",PCOA.VARIANCE[1],"%)")) +
+           ylab(paste("PCoA 2 (",PCOA.VARIANCE[2],"%)")) +
+           guides(
+                  shape = guide_legend(
+                                       order = 2,
+                                       override.aes = list(size = 3),
+                                       ),
+                  fill = guide_legend(
+                                      order = 1,
+                                      override.aes = list(
+                                                          size = 3,
+                                                          color = c(
+                                                                    "forestgreen",
+                                                                    "yellowgreen"
+                                                                    )
+                                                          )
+                                      )
+                  )
+   ggsave(
+          sprintf(
+                  "%s",
+                  OUTPUT
+                  ),
+          PCOA,
+          units = "in",
+          width = 8,
+          height = 5
+          )
+}
+
+META.TABLE <- read_my_table("ducitaplates4_5-working_metadata.tsv")
+META.FILTERED <- filter(
+                        META.TABLE,
+                        time != "0" & type == "treated_tissue"
+                        )
+UUNIFRAC <- convert_q2distance("d4_5-beta_diversity-unweighted_unifrac_distance_matrix-tissue.tsv")
+adonis2(
+        UUNIFRAC~tissue+time+treatment,
+        data = META.FILTERED,
+        )
+GUNIFRAC <- convert_q2distance("d4_5-beta_diversity-generalized_unifrac_distance_matrix-tissue.tsv")
+adonis2(
+        GUNIFRAC~tissue+time+treatment,
+        data = META.FILTERED,
+        )
+
+###############################################################################
+# Taxonomic Analysis: Phylum
+###############################################################################
+
+# create RA table
+PHYLUM.FILE <- read.csv(
+                        "d4_5-taxonomic_analysis-phylum.csv",
+                        sep=",",
+                        header = T
+                        )
+PHYLUM.MATRIX <- PHYLUM.FILE[,2:29] 
+PHYLUM.RA <- apply(
+                   PHYLUM.MATRIX,
+                   1,
+                   (function(x) x / sum(x)*100)
+                   )
+PHYLUM.RA <- t(PHYLUM.RA)
+
+# add meta data
+# melt data
+PHYLUM.META <- cbind(
+                     PHYLUM.FILE[,30:37], 
+                     PHYLUM.RA
+                     )
+sample_id <- PHYLUM.FILE[,1]
+PHYLUM.DATA <- cbind(
+                     sample_id,
+                     PHYLUM.META
+                     )
+PHYLUM.DATA$time <- as.factor(PHYLUM.DATA$time)
+PHYLUM.MELT <- melt(
+                    PHYLUM.DATA,
+                    value.name ="RA",
+                    variable.name = "tax"
+                    )
+
+# format factors and levels
+PHYLUM.MELT$tax <- gsub(
+                        "k__Bacteria.p__",
+                        "",
+                        paste(PHYLUM.MELT$tax)
+                        )
+LEVELS <- c(
+            unique(PHYLUM.MELT$tax),
+            "low abundance (< 1% RA)"
+            )
+
+LOW_ABUNDANCE <- PHYLUM.MELT$RA < 1 
+PHYLUM.MELT$tax[LOW_ABUNDANCE] <- "low abundance (< 1% RA)"
+
+PHYLUM.MELT$type <- factor(
+                           PHYLUM.MELT$type,
+                           levels = c(
+                                      "ambient_water",
+                                      "treated_tissue")
+                                      )
+
+PHYLUM.MELT$treatment <- gsub(
+                              "water_treated",
+                              "W",
+                              paste(PHYLUM.MELT$treatment)
+                              )
+PHYLUM.MELT$treatment <- gsub(
+                              "SD_treated",
+                              "SD",
+                              paste(PHYLUM.MELT$treatment)
+                              )
+PHYLUM.MELT$treatment <- factor(
+                                PHYLUM.MELT$treatment,
+                                levels = c(
+                                           "W",
+                                           "SD"
+                                           )
+                                )
+
+# plot code
+TISSUE.LABELS <- c(
+                   "L_minor370_DWC112" = "LmDAB",
+                   "S_polyrhiza432_9509" = "SpDAB"
+                   )      
+FILL <- c(
+          "Proteobacteria" = "darkolivegreen1",
+          "Actinobacteria" = "khaki1",
+          "Bacteroidetes" = "steelblue1",
+          "Firmicutes" = "firebrick1",
+          "Acidobacteria" = "orchid",
+          "Chlamydiae" = "lightcoral",
+          "Chloroflexi" = "darkorange",
+          "Cyanobacteria" = "limegreen",
+          "low abundance (< 1% RA)" = "black",
+          "Nitrospirae" = "lightblue",
+          "Planctomycetes" = "sandybrown",
+          "TM6" = "lightgoldenrod",
+          "Verrucomicrobia" = "plum",
+          "Fusobacteria" = "salmon", # not in rarefied
+          "AD3" = "royalblue", # not in rarefied
+          "GN02" = "gray" # not in rarefied
+          )
+SAMPLE_ORDER <- c(
+                  "432(-)_W_t0A",
+                  "432(-)_W_t0B",
+                  "432(-)_W_t2A",
+                  "432(-)_W_t2B",
+                  "432(-)_SD_t2A",
+                  "432(-)_SD_t2B",
+                  "432(-)_SD_t2C",
+                  "432(-)_W_t7C",
+                  "432(-)_W_t7D",
+                  "432(-)_SD_t7C",
+                  "432(-)_SD_t7D",
+                  "432(1A)_W_t0A",
+                  "432(1A)_W_t0B",
+                  "432(1A)_W_t0C",
+                  "432(1A)_W_t2A",
+                  "432(1A)_W_t2B",
+                  "432(1A)_W_t2C",
+                  "432(1A)_W_t2D",
+                  "432(1A)_W_t7A",
+                  "432(1A)_W_t7B",
+                  "432(1A)_W_t7C",
+                  "432(1A)_W_t7D",
+                  "432(1A)_SD_t7A",
+                  "432(1A)_SD_t7B",
+                  "432(1A)_SD_t7C",
+                  "432(1A)_SD_t7D",
+                  "432(3D)_t0A",
+                  "432(3D)_t0B",
+                  "432(3D)_W_t2A",
+                  "432(3D)_W_t2B",
+                  "432(3D)_W_t2C",
+                  "432(3D)_SD_t2A",
+                  "432(3D)_SD_t2B",
+                  "432(3D)_SD_t2C",
+                  "432(5A)_SD_t2A",
+                  "432(5A)_SD_t2B",
+                  "432(5A)_SD_t2C",
+                  "432(5A)_W_t7A",
+                  "432(5A)_W_t7B",
+                  "432(5A)_W_t7C",
+                  "432(5A)_SD_t7A",
+                  "432(5A)_SD_t7B",
+                  "432(5A)_SD_t7C",
+                  "370(-)_W_t0A",
+                  "370(-)_W_t0B",
+                  "370(-)_W_t2A",
+                  "370(-)_W_t2B",
+                  "370(-)_SD_t2A",
+                  "370(-)_SD_t2B",
+                  "370(-)_W_t7C",
+                  "370(-)_SD_t7C",
+                  "370(1A)_W_t0A",
+                  "370(1A)_W_t0B",
+                  "370(1A)_W_t0C",
+                  "370(1A)_W_t2A",
+                  "370(1A)_W_t2B",
+                  "370(1A)_W_t2C",
+                  "370(1A)_SD_t2A",
+                  "370(1A)_SD_t2B",
+                  "370(1A)_SD_t2C",
+                  "370(1A)_W_t7A",
+                  "370(1A)_W_t7B",
+                  "370(1A)_W_t7C",
+                  "370(1A)_SD_t7A",
+                  "370(1A)_SD_t7B",
+                  "370(1A)_SD_t7C",
+                  "370(3D)_W_t0A",
+                  "370(3D)_W_t0B",
+                  "370(3D)_W_t0C",
+                  "370(3D)_W_t2A",
+                  "370(3D)_W_t2C",
+                  "370(3D)_SD_t2A",
+                  "370(3D)_SD_t2B",
+                  "370(3D)_W_t7A_1",
+                  "370(3D)_W_t7B_1",
+                  "370(3D)_W_t7C_1",
+                  "370(3D)_W_t7A_2",
+                  "370(3D)_W_t7B_2",
+                  "370(3D)_W_t7C_2",
+                  "370(5A)_W_t0B",
+                  "370(5A)_W_t2B",
+                  "370(5A)_SD_t2A_1",
+                  "370(5A)_SD_t2B_1",
+                  "370(5A)_SD_t2C_1",
+                  "370(5A)_SD_t2D_1",
+                  "370(5A)_SD_t2A_2",
+                  "370(5A)_SD_t2B_2",
+                  "370(5A)_SD_t2C_2",
+                  "370(5A)_SD_t2D_2",
+                  "370(5A)_W_t7B",
+                  "432(3D)_t2A",
+                  "432(3D)_t2B",
+                  "432(1A)_t2A",
+                  "432(1A)_t2B",
+                  "432(1A)_t2D",
+                  "432(1A)_t7C",
+                  "432(1A)_t7D",
+                  "432(-)_t2B",
+                  "432(-)_t2C",
+                  "370(3D)_t2A",
+                  "370(3D)_t2B",
+                  "370(3D)_t2C",
+                  "370(1A)_t2A",
+                  "370(1A)_t2B",
+                  "370(1A)_t2C",
+                  "370(1A)_t7A",
+                  "370(-)_t2A",
+                  "370(5A)_t2C",
+                  "370(5A)_t2D"
+                  )
+PHYLUM.MELT$sample_id <- factor(
+                                PHYLUM.MELT$sample_id,
+                                levels = SAMPLE_ORDER
+                                )           
+PHYLUM.MELT <- filter(
+                      PHYLUM.MELT,
+                      type == "treated_tissue"
+                      )
+PHYLUM.MELT <- ddply(
+                     PHYLUM.MELT,
+                     ~sample_id+tissue+bacteria+type+treatment+time+tax,
+                     summarise,
+                     RA = sum(RA)
+                     )
+PHYLUM.MELT$tax <- factor(
+                          PHYLUM.MELT$tax,
+                          levels = LEVELS
+                          )
+
+write.table(
+            PHYLUM.MELT,
+            "d4_5-taxonomic_analysis-phylum_ra.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+# d4_5-taxonomic_analysis-phylum plot code
+PHYLUM.PLOT <- ggplot(
+                      PHYLUM.MELT,
+	              aes(
+                          sample_id,
+                          RA,
+                          fill=tax
+                          )
+                      )
+PHYLUM.FIG <- PHYLUM.PLOT + 
+              geom_bar(
+                       stat = "identity",
+                       color = "black",
+                       width = 1
+                       ) +
+              theme(
+                    axis.title = element_text(
+                                              size = 20,
+                                              face = "bold"
+                                              ),
+                    axis.text.x = element_blank(),
+                    axis.line.x = element_blank(),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               size = 16,
+                                               color = "black"
+                                               ),
+                    legend.position = "none",
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    color = "black"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 20
+                                              ),
+                    panel.background = element_blank()
+                    ) +
+              scale_y_continuous(
+                                 name = "Relative Abundance",
+                                 expand=c(0,0)
+                                 ) +
+              scale_fill_manual(
+                                name = "Phylum",
+                                values = FILL
+                                ) +
+              facet_grid(
+                         .~tissue,
+                         labeller = labeller(tissue = TISSUE.LABELS),
+                         space = "free_x",
+                         scale = "free_x"
+                         ) +
+              xlab(label = "\n\nSample") +
+              coord_cartesian(clip = "off") +
+              geom_text(
+                        aes(label = time),
+                        fontface = "bold",
+                        angle = 90,
+                        color = "black",
+                        size = 5,
+                        y = -3
+                        ) +
+              geom_text(
+                        aes(label = treatment),
+                        fontface = "bold",
+                        angle = 90,
+                        color = "black",
+                        size = 5,
+                        y = -8
+                        ) 
+PHYLUM.FIG
+ggsave(
+       "d4_5-taxonomic_analysis-phylum.pdf",
+       PHYLUM.FIG,
+       device = "pdf",
+       dpi = 300,
+       units = "in",
+       width = 9.5,
+       height = 7
+       )
+              
+# create legend for figure
+LEG.PLOT <- PHYLUM.PLOT +
+            geom_point() +
+            theme(
+                  legend.key = element_blank(),
+                  legend.title = element_text(
+                                              face = "bold",
+                                              size = 20
+                                              ),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 10
+                                             ),
+                  ) +
+            scale_fill_manual(
+                              name = "Phylum",
+                              values = FILL
+                              ) + 
+            guides(
+                   fill = guide_legend(
+                                       ncol = 1,
+                                       override.aes = list(
+                                                           shape = 22,
+                                                           color = "black",
+                                                           size = 5
+                                                           )
+                                       )
+                   ) 
+PHYLUM.LEG <- get_legend(LEG.PLOT) 
+
+# statistics
+PHYLUM.MEAN <- ddply(
+                     PHYLUM.MELT,
+                     ~type+tax,
+                     summarise,
+                     mean_RA = mean(RA)
+                     )
+PHYLUM.MEAN[order(-PHYLUM.MEAN$mean_RA),]
+
+###############################################################################
+# Taxonomic Analysis: Family
+###############################################################################
+
+# load count file
+# format table into matrix 
+# calculate RA
+FAMILY.COUNT <- read.csv(
+                         "d4_5-taxonomic_analysis-family.csv", # not rarefied
+                         sep=",",
+			 header = T
+                         )
+FAMILY.MATRIX <- FAMILY.COUNT[,2:224]			
+FAMILY.RA <- apply(
+                   FAMILY.MATRIX,
+                   1,
+                   (function(x) x / sum(x)*100)
+                   )
+FAMILY.RA <- t(FAMILY.RA)
+
+# add sample ids 
+# add metadata 
+# melt table
+# split tax
+sample_id <- FAMILY.COUNT[,1]
+FAMILY.META <- cbind(
+                     FAMILY.COUNT[,225:232],
+                     FAMILY.RA
+                     )
+FAMILY.META <- cbind(
+                     sample_id,
+                     FAMILY.META
+                     )
+FAMILY.META$time <- as.factor(FAMILY.META$time)
+FAMILY.MELT <- melt(
+                    FAMILY.META,
+                    value.name ="RA",
+                    variable.name = "tax"
+                    )
+FAMILY.MELT <- separate(
+                        FAMILY.MELT,
+                        tax,
+		        c("Kingdom",
+		          "Phylum",
+		          "Class",
+                          "Order",
+			  "Family",
+			  "Genus",
+			  "Species"),
+     		        sep=".[k,p,c,o,f,g,s]__",
+                        remove=TRUE
+                        )
+
+# format table for graphing
+# create low abundance category
+# group low abundance families into low abundance category
+FAMILY.MELT$type <- factor(
+                           FAMILY.MELT$type,
+                           levels = c(
+                                      "ambient_water",
+                                      "treated_tissue"
+                                      )
+                           )
+FAMILY.MELT$Family <- gsub(
+                           "\\.",
+                           "",
+                           paste(FAMILY.MELT$Family)
+                           )
+LEVELS <- c(
+            sort(unique(FAMILY.MELT$Family)),
+	    "low abundance (< 1% RA)",
+	    "unclassified"
+            )
+MASK1 <- FAMILY.MELT$RA < 1 
+MASK2 <- is.na(FAMILY.MELT$Family)
+MASK3 <- FAMILY.MELT$Family == ""
+MASK4 <- FAMILY.MELT$Family == "NA"
+FAMILY.MELT$Family[MASK1] <- "low abundance (< 1% RA)"
+FAMILY.MELT$Family[MASK2] <- "unclassified"
+FAMILY.MELT$Family[MASK3] <- "unclassified"
+FAMILY.MELT$Family[MASK4] <- "unclassified"
+
+FAMILY.MELT$treatment <- gsub(
+                              "water_treated",
+                              "W",
+                              paste(FAMILY.MELT$treatment)
+                              )
+FAMILY.MELT$treatment <- gsub(
+                              "SD_treated",
+                              "SD",
+                              paste(FAMILY.MELT$treatment)
+                              )
+FAMILY.MELT$treatment <- factor(
+                                FAMILY.MELT$treatment,
+                                levels = c(
+                                           "W",
+                                           "SD"
+                                           )
+                                )
+SAMPLE_ORDER <- c(
+                  "432(-)_W_t0A",
+                  "432(-)_W_t0B",
+                  "432(-)_W_t2A",
+                  "432(-)_W_t2B",
+                  "432(-)_SD_t2A",
+                  "432(-)_SD_t2B",
+                  "432(-)_SD_t2C",
+                  "432(-)_W_t7C",
+                  "432(-)_W_t7D",
+                  "432(-)_SD_t7C",
+                  "432(-)_SD_t7D",
+                  "432(1A)_W_t0A",
+                  "432(1A)_W_t0B",
+                  "432(1A)_W_t0C",
+                  "432(1A)_W_t2A",
+                  "432(1A)_W_t2B",
+                  "432(1A)_W_t2C",
+                  "432(1A)_W_t2D",
+                  "432(1A)_W_t7A",
+                  "432(1A)_W_t7B",
+                  "432(1A)_W_t7C",
+                  "432(1A)_W_t7D",
+                  "432(1A)_SD_t7A",
+                  "432(1A)_SD_t7B",
+                  "432(1A)_SD_t7C",
+                  "432(1A)_SD_t7D",
+                  "432(3D)_t0A",
+                  "432(3D)_t0B",
+                  "432(3D)_W_t2A",
+                  "432(3D)_W_t2B",
+                  "432(3D)_W_t2C",
+                  "432(3D)_SD_t2A",
+                  "432(3D)_SD_t2B",
+                  "432(3D)_SD_t2C",
+                  "432(5A)_SD_t2A",
+                  "432(5A)_SD_t2B",
+                  "432(5A)_SD_t2C",
+                  "432(5A)_W_t7A",
+                  "432(5A)_W_t7B",
+                  "432(5A)_W_t7C",
+                  "432(5A)_SD_t7A",
+                  "432(5A)_SD_t7B",
+                  "432(5A)_SD_t7C",
+                  "370(-)_W_t0A",
+                  "370(-)_W_t0B",
+                  "370(-)_W_t2A",
+                  "370(-)_W_t2B",
+                  "370(-)_SD_t2A",
+                  "370(-)_SD_t2B",
+                  "370(-)_W_t7C",
+                  "370(-)_SD_t7C",
+                  "370(1A)_W_t0A",
+                  "370(1A)_W_t0B",
+                  "370(1A)_W_t0C",
+                  "370(1A)_W_t2A",
+                  "370(1A)_W_t2B",
+                  "370(1A)_W_t2C",
+                  "370(1A)_SD_t2A",
+                  "370(1A)_SD_t2B",
+                  "370(1A)_SD_t2C",
+                  "370(1A)_W_t7A",
+                  "370(1A)_W_t7B",
+                  "370(1A)_W_t7C",
+                  "370(1A)_SD_t7A",
+                  "370(1A)_SD_t7B",
+                  "370(1A)_SD_t7C",
+                  "370(3D)_W_t0A",
+                  "370(3D)_W_t0B",
+                  "370(3D)_W_t0C",
+                  "370(3D)_W_t2A",
+                  "370(3D)_W_t2C",
+                  "370(3D)_SD_t2A",
+                  "370(3D)_SD_t2B",
+                  "370(3D)_W_t7A_1",
+                  "370(3D)_W_t7B_1",
+                  "370(3D)_W_t7C_1",
+                  "370(3D)_W_t7A_2",
+                  "370(3D)_W_t7B_2",
+                  "370(3D)_W_t7C_2",
+                  "370(5A)_W_t0B",
+                  "370(5A)_W_t2B",
+                  "370(5A)_SD_t2A_1",
+                  "370(5A)_SD_t2B_1",
+                  "370(5A)_SD_t2C_1",
+                  "370(5A)_SD_t2D_1",
+                  "370(5A)_SD_t2A_2",
+                  "370(5A)_SD_t2B_2",
+                  "370(5A)_SD_t2C_2",
+                  "370(5A)_SD_t2D_2",
+                  "370(5A)_W_t7B",
+                  "432(3D)_t2A",
+                  "432(3D)_t2B",
+                  "432(1A)_t2A",
+                  "432(1A)_t2B",
+                  "432(1A)_t2D",
+                  "432(1A)_t7C",
+                  "432(1A)_t7D",
+                  "432(-)_t2B",
+                  "432(-)_t2C",
+                  "370(3D)_t2A",
+                  "370(3D)_t2B",
+                  "370(3D)_t2C",
+                  "370(1A)_t2A",
+                  "370(1A)_t2B",
+                  "370(1A)_t2C",
+                  "370(1A)_t7A",
+                  "370(-)_t2A",
+                  "370(5A)_t2C",
+                  "370(5A)_t2D"
+                  )
+FAMILY.MELT$sample_id <- factor(
+                                FAMILY.MELT$sample_id,
+	    	                levels = SAMPLE_ORDER
+                                )
+FAMILY.MELT <- filter(
+                      FAMILY.MELT,
+                      type == "treated_tissue"
+                      )
+FAMILY.MELT <- ddply(
+                     FAMILY.MELT,
+                     ~sample_id+tissue+bacteria+type+treatment+time+Family,
+                     summarise,
+                     RA = sum(RA)
+                     )
+FAMILY.MELT$Family <- factor(
+                             FAMILY.MELT$Family,
+                             levels = LEVELS
+                             )
+write.table(
+            FAMILY.MELT,
+            "d4_5-taxonomic_analysis-family_ra.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+# plot code
+TISSUE.LABELS <- c(
+                   "L_minor370_DWC112" = "LmDAB",
+                   "S_polyrhiza432_9509" = "SpDAB"
+                   )      
+
+COLSET1 <- brewer.pal(
+                      9,
+                      "Pastel1"
+                      )
+COLSET2 <- brewer.pal(
+                      9,
+                      "Set1"
+                      )
+COLSET3 <- brewer.pal(
+                      12,
+                      "Set3"
+                      )
+COLSET4 <- brewer.pal(
+                      8,
+                      "Dark2"
+                      )
+COLSET5 <- brewer.pal(
+                      3,
+                      "Set2"
+                      )
+COLSET6 <- wes_palette(
+                       "Moonrise2",
+                       4,
+                       type = "discrete"
+                       )
+COLSET7 <- wes_palette(
+                       "Cavalcanti1",
+                       5,
+                       type = "discrete"
+                       )
+COLSET8 <- wes_palette(
+                       "Moonrise3",
+                       5,
+                       type = "discrete"
+                       )
+COLSET9 <- wes_palette(
+                       "GrandBudapest2",
+                       4,
+                       type = "discrete"
+                       )
+COLORS <- c(
+            COLSET1,
+            COLSET2,
+            COLSET3,
+            COLSET4,
+            COLSET5,
+            COLSET6,
+            COLSET7,
+            COLSET8,
+            COLSET9
+            )
+
+FAMILY.PLOT <- ggplot(
+                      FAMILY.MELT,
+                      aes(
+                          sample_id,
+		          RA,
+                          fill = Family
+                          )
+                      )
+FAMILY.FIG <- FAMILY.PLOT + 
+              geom_bar(
+                       stat = "identity",
+                       color = "black",
+                       width = 1
+                       ) +
+              theme(
+                    axis.title = element_text(
+                                              size = 20,
+                                              face = "bold"
+                                              ),
+                    axis.text.x = element_blank(),
+                    axis.line.x = element_blank(),
+                    axis.text.y = element_text(
+                                               face = "bold",
+                                               size = 16,
+                                               color = "black"
+                                               ),
+                    legend.position = "none",
+                    strip.background = element_rect(
+                                                    fill = NA,
+                                                    color = "black"
+                                                    ),
+                    strip.text = element_text(
+                                              face = "bold",
+                                              color = "black",
+                                              size = 20
+                                              ),
+                    panel.background = element_blank()
+                    ) +
+              scale_y_continuous(
+                                 name = "Relative Abundance",
+                                 expand=c(0,0)
+                                 ) +
+              scale_fill_manual(
+                                name = "Family",
+                                values = COLORS
+                                ) +
+              facet_grid(
+                         .~tissue,
+                         labeller = labeller(tissue = TISSUE.LABELS),
+                         space = "free_x",
+                         scale = "free_x"
+                         ) +
+              xlab(label = "\n\nSample") +
+              coord_cartesian(clip = "off") +
+              geom_text(
+                        aes(label = time),
+                        angle = 90,
+                        color = "black",
+                        size = 5,
+                        y = -3
+                        ) +
+              geom_text(
+                        aes(label = treatment),
+                        angle = 90,
+                        color = "black",
+                        size = 5,
+                        y = -8
+                        ) +
+              guides(fill = guide_legend(
+                                         nrow = 25
+                                         )
+       )
+FAMILY.FIG
+ggsave(
+       "d4_5-taxonomic_analysis-family.pdf",
+       FAMILY.FIG,
+       device = "pdf",
+       dpi = 300,
+       units = "in",
+       width = 9.5,
+       height = 7
+       )
+
+# create legend for figure
+LEG.PLOT <- FAMILY.PLOT +
+            geom_point() +
+            theme(
+                  legend.key = element_blank(),
+                  legend.title = element_text(
+                                              face = "bold",
+                                              size = 20
+                                              ),
+                  legend.text = element_text(
+                                             face = "bold",
+                                             size = 16
+                                             ),
+                  ) +
+            scale_fill_manual(
+                              name = "Family",
+                              values = COLORS
+            ) +
+            guides(
+                   fill = guide_legend(
+                                       nrow = 25,
+                                       override.aes = list(
+                                                           shape = 22,
+                                                           size = 5,
+                                                           color = "black"
+                                                           )
+                                       )
+                   )
+FAMILY.LEG <- get_legend(LEG.PLOT)
+
+###############################################################################
+# Taxonomic Analysis: Genus 
+###############################################################################
+
+# get relative abundance table with metadata and taxonomy
+TABLE.RA <- calculateRA_4_q2table("ducitaplates4_5-working_table.tsv")
+TABLE.META <- addtax_addmeta(
+                             TABLE.RA,
+                             "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                             "ducitaplates4_5-working_metadata.tsv",
+                             value = "RA",
+                             sep = TRUE
+                             )
+TABLE.META$time <- as.factor(TABLE.META$time)
+# filtered tables
+TABLE.FILTERED <- filter(
+                         TABLE.META,
+                         RA > 0
+                         )
+TABLE.FILTERED <- remove_unknown_genus(TABLE.FILTERED)
+TT.TABLE <- filter(
+                   TABLE.FILTERED,
+                   type == "treated_tissue"
+                   )
+# get taxonomy
+TAX <- distinct(
+                select(
+                       TABLE.FILTERED,
+                       Phylum,
+                       Family,
+                       Genus
+                       )
+                )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# host species 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+DUCKWEED <- c(
+              "L_minor370_DWC112",
+              "S_polyrhiza432_9509"
+              )
+TYPES <- c(
+           "treated_tissue"
+           )
+GENERA <- list()
+INDEX <- 1
+for (SPECIES in DUCKWEED){
+   print(SPECIES)
+   SPECIES.TABLE <- filter(
+                           TABLE.FILTERED,
+                           tissue == SPECIES
+                           )
+   for (TYPE in TYPES){
+      print(TYPE)
+      TYPE.SPECIES.TABLE <- filter(
+                                   SPECIES.TABLE,
+                                   type == TYPE
+                                   )
+      TYPE.SPECIES.GENERA <- unique(TYPE.SPECIES.TABLE$Genus)
+      GENERA[[INDEX]] <- c(TYPE.SPECIES.GENERA)
+      INDEX <- INDEX + 1
+      }
+}
+
+venn.diagram(
+             x = list(
+                      unlist(GENERA[1]),
+                      unlist(GENERA[2])
+                      ),
+             filename = "d4_5-taxonomic_analysis-genus-species.tiff",
+             category = c(
+                          "LmDAB",
+                          "SpDAB"
+                          ),
+             fill = c(
+                      "seagreen3",
+                      "seagreen4"
+                      ),
+             margin = 0.15,
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             main = "Species",
+             main.cex = 4,
+             main.fontface = "bold",
+             main.fontfamily = "sans",
+             main.pos = c(0.5,1),
+             cat.cex = 1.5,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.04,0.05),
+             cat.pos = c(-20,20)
+             )
+
+# species specific otus
+for (TYPE in TYPES){
+   print(TYPE)
+   TYPE.TABLE <- filter(
+                        TABLE.FILTERED,
+                        type == TYPE
+                        )
+
+   # generate lm specific stats
+   TYPE.TABLE.LM <- filter(
+                           TYPE.TABLE,
+                           tissue == "L_minor370_DWC112"
+                           )
+   TYPE.TABLE.SP <- filter(
+                           TYPE.TABLE,
+                           tissue == "S_polyrhiza432_9509"
+                           )
+   TYPE.GENERA.LM <- unique(TYPE.TABLE.LM$Genus)
+   TYPE.GENERA.SP <- unique(TYPE.TABLE.SP$Genus)
+
+   TYPE.GENERA.LM.SPECIFIC <- setdiff(
+                                      TYPE.GENERA.LM,
+                                      TYPE.GENERA.SP
+                                      )
+   LM.GENERA.INFO <- get_genus_info.v2(TYPE.TABLE.LM)
+   LM.SPECIFIC.INFO <- filter(
+                              LM.GENERA.INFO,
+                              Genus %in% TYPE.GENERA.LM.SPECIFIC
+                              )
+   LM.SPECIFIC.TAX <- merge(
+                            TAX,
+                            LM.SPECIFIC.INFO,
+                            by = "Genus"
+                            )
+   write.table(
+               LM.SPECIFIC.TAX,
+               sprintf(
+                       "d4_5-taxonomic_analysis-genus-species-lm5576_%s.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+
+   # generate sp specific stats
+   TYPE.GENERA.SP.SPECIFIC <- setdiff(
+                                      TYPE.GENERA.SP,
+                                      TYPE.GENERA.LM
+                                      )
+   SP.GENERA.INFO <- get_genus_info.v2(TYPE.TABLE.SP)
+   SP.SPECIFIC.INFO <- filter(
+                              SP.GENERA.INFO,
+                              Genus %in% TYPE.GENERA.SP.SPECIFIC
+                              )
+   SP.SPECIFIC.TAX <- merge(
+                            TAX,
+                            SP.SPECIFIC.INFO,
+                            by = "Genus"
+                            )
+   write.table(
+               SP.SPECIFIC.TAX,
+               sprintf(
+                       "d4_5-taxonomic_analysis-genus-species-sp9509_%s.tsv",
+                       TYPE
+                       ),
+               sep = "\t",
+               row.names = FALSE
+               )
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# time 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+   
+# time specific venn diagram
+TIMES <- c(
+           "2",
+           "7"
+           )
+GENERA <- list()
+INDEX <- 1
+for (TIME in TIMES){
+   print(TIME)
+   TIME.TABLE <- filter(
+                        TT.TABLE,
+                        time == TIME
+                        )
+   TIME.GENERA <- unique(TIME.TABLE$Genus)
+   GENERA[[INDEX]] <- c(TIME.GENERA)
+   INDEX <- INDEX + 1
+}
+venn.diagram(
+             x = list(
+                      unlist(GENERA[1]),
+                      unlist(GENERA[2])
+                      ),
+             filename = "d4_5-taxonomic_analysis-genus-time.tiff",
+             category = c(
+                          "2 days",
+                          "7 days"
+                          ),
+             fill = c(
+                      "darkolivegreen4",
+                      "palegreen4"
+                      ),
+             margin = 0.15,
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             main = "Time",
+             main.cex = 4,
+             main.fontface = "bold",
+             main.fontfamily = "sans",
+             main.pos = c(0.5,1),
+             cat.cex = 2,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.05,0.05),
+             cat.pos = c(-20,20),
+             scaled = FALSE
+             )
+
+# time specific otus
+TISSUE.T2 <- filter(
+                    TT.TABLE,
+                    time == "2"
+                    )
+TISSUE.T7 <- filter(
+                    TT.TABLE,
+                    time == "7"
+                    )
+TISSUE.GENERA.T2 <- unique(TISSUE.T2$Genus)
+TISSUE.GENERA.T7 <- unique(TISSUE.T7$Genus)
+
+TISSUE.T2.SPECIFIC <- setdiff(
+                              TISSUE.GENERA.T2,
+                              TISSUE.GENERA.T7
+                              )
+TISSUE.T2.INFO <- get_genus_info.v2(TISSUE.T2)
+TISSUE.T2.SPECIFIC.INFO <- filter(
+                                  TISSUE.T2.INFO,
+                                  Genus %in% TISSUE.T2.SPECIFIC
+                                  )
+TISSUE.T2.TAX <- merge(
+                       TAX,
+                       TISSUE.T2.SPECIFIC.INFO,
+                       by = "Genus"
+                       )
+write.table(
+            TISSUE.T2.TAX,
+            "d4_5-taxonomic_analysis-genus-time-tissue_t2.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+TISSUE.T7.SPECIFIC <- setdiff(
+                              TISSUE.GENERA.T7,
+                              TISSUE.GENERA.T2
+                              )
+TISSUE.T7.INFO <- get_genus_info.v2(TISSUE.T7)
+TISSUE.T7.SPECIFIC.INFO <- filter(
+                                  TISSUE.T7.INFO,
+                                  Genus %in% TISSUE.T7.SPECIFIC
+                                  )
+TISSUE.T7.TAX <- merge(
+                       TAX,
+                       TISSUE.T7.SPECIFIC.INFO,
+                       by = "Genus"
+                       )
+write.table(
+            TISSUE.T7.TAX,
+            "d4_5-taxonomic_analysis-genus-time-tissue_t7.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# treatment 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+   
+# treatment specific venn diagram
+TREAT <- c(
+           "water_treated",
+           "SD_treated"
+           )
+
+GENERA <- list()
+INDEX <- 1
+for (TREATMENT in TREAT){
+   print(TREATMENT)
+   TREATMENT.TABLE <- filter(
+                             TT.TABLE,
+                             treatment == TREATMENT
+                             )
+   TREATMENT.GENERA <- unique(TREATMENT.TABLE$Genus)
+   GENERA[[INDEX]] <- c(TREATMENT.GENERA)
+   INDEX <- INDEX + 1
+}
+venn.diagram(
+             x = list(
+                      unlist(GENERA[1]),
+                      unlist(GENERA[2])
+                      ),
+             filename = "d4_5-taxonomic_analysis-genus-treatment.tiff",
+             category = c(
+                          "Water",
+                          "SD"
+                          ),
+             fill = c(
+                      "darkolivegreen4",
+                      "palegreen4"
+                      ),
+             margin = 0.15,
+             lwd = 3,
+             cex = 3,
+             fontface = "bold",
+             main = "Treatment",
+             main.cex = 4,
+             main.fontface = "bold",
+             main.fontfamily = "sans",
+             main.pos = c(0.5,1),
+             cat.cex = 2,
+             cat.fontface = "bold", 
+             cat.fontfamily = "sans", 
+             cat.col = "black",
+             cat.dis = c(0.05,0.05),
+             cat.pos = c(-20,20),
+             scaled = FALSE
+             )
+
+# treatment specific otus
+TISSUE.W <- filter(
+                   TT.TABLE,
+                   treatment == "water_treated"
+                   )
+TISSUE.SD <- filter(
+                    TT.TABLE,
+                    treatment == "SD_treated"
+                    )
+TISSUE.GENERA.W <- unique(TISSUE.W$Genus)
+TISSUE.GENERA.SD <- unique(TISSUE.SD$Genus)
+
+TISSUE.W.SPECIFIC <- setdiff(
+                             TISSUE.GENERA.W,
+                             TISSUE.GENERA.SD
+                             )
+TISSUE.W.INFO <- get_genus_info.v2(TISSUE.W)
+TISSUE.W.SPECIFIC.INFO <- filter(
+                                 TISSUE.W.INFO,
+                                 Genus %in% TISSUE.W.SPECIFIC
+                                 )
+TISSUE.W.TAX <- merge(
+                      TAX,
+                      TISSUE.W.SPECIFIC.INFO,
+                      by = "Genus"
+                      )
+write.table(
+            TISSUE.W.TAX,
+            "d4_5-taxonomic_analysis-genus-treatment-water.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+TISSUE.SD.SPECIFIC <- setdiff(
+                              TISSUE.GENERA.SD,
+                              TISSUE.GENERA.W
+                              )
+TISSUE.SD.INFO <- get_genus_info.v2(TISSUE.SD)
+TISSUE.SD.SPECIFIC.INFO <- filter(
+                                  TISSUE.SD.INFO,
+                                  Genus %in% TISSUE.SD.SPECIFIC
+                                  )
+TISSUE.SD.TAX <- merge(
+                       TAX,
+                       TISSUE.SD.SPECIFIC.INFO,
+                       by = "Genus"
+                       )
+write.table(
+            TISSUE.SD.TAX,
+            "d4_5-taxonomic_analysis-genus-treatment-SD.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+###############################################################################
+# Differential Abundance Testing
+###############################################################################
+
+# read tables and filter
+library(ALDEx2)
+COUNT.TABLE <- read_my_table("ducitaplates4_5-working_table.tsv")
+
+META.TABLE <- read_my_table("ducitaplates4_5-working_metadata.tsv")
+META.TABLE$time <- as.factor(META.TABLE$time)
+META.FILTERED <- filter(
+                        META.TABLE,
+                        type == "treated_tissue" & time != "0"
+                        )
+
+TAX <- read_my_table("ducitaplates4_5-ggBLAST_taxonomy.tsv")
+TAX <- separate(
+                TAX,
+                Taxon,
+                c("Kingdom",
+                  "Phylum",
+      	          "Class",
+                  "Order",
+                  "Family",
+                  "Genus",
+	          "Species"),
+                  sep=".[k,p,c,o,f,g,s]__",
+                  remove=TRUE
+                  ) 
+TAX <- distinct(
+                select(
+                       TAX,
+                       Phylum,
+                       Family,
+                       Genus
+                       )
+                 )
+TAX$Phylum <- gsub(
+                   ";",
+                   "",
+                   TAX$Phylum
+                   )
+TAX$Family <- gsub(
+                   ";",
+                   "",
+                   TAX$Family
+                   )
+TAX$Genus <- gsub(
+                  ";",
+                  "",
+                  TAX$Genus
+                  )
+
+# create looping vectors
+DUCKWEED <- c(
+              "S_polyrhiza432_9509",
+              "L_minor370_DWC112"
+              )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# GLM - type,time,species,bacteria,treatment
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# create aldex group vectors and model matrix
+TIME <- as.factor(
+                  META.FILTERED$time
+                  )
+TIME <- relevel(
+                TIME,
+                "2"
+                )
+
+SPECIES <- as.factor(
+                     META.FILTERED$tissue
+                     )
+SPECIES <- relevel(
+                   SPECIES,
+                   "L_minor370_DWC112"
+                   )
+
+TREATMENT <- as.factor(
+                       META.FILTERED$treatment
+                       )
+TREATMENT <- relevel(
+                     TREATMENT,
+                     "water_treated"
+                     )
+MM <- model.matrix(
+                   ~TIME+SPECIES+TREATMENT
+                   )
+
+# create genus table
+SORTED.TABLE <- sort_table_samples(
+                                   META.FILTERED,
+                                   COUNT.TABLE
+                                   )
+GENUS.TABLE <- create_genus_count_table(
+                                        SORTED.TABLE,
+                                        "ducitaplates4_5-ggBLAST_taxonomy.tsv"
+                                        )
+
+# run aldex
+CLR <- aldex.clr(
+                 GENUS.TABLE,
+                 MM,
+                 mc.samples = 128,
+                 denom = "all",
+                 verbose = T,
+                 )
+GLM <- aldex.glm(
+                 CLR,
+                 MM
+                 )
+write.table(
+            GLM,
+            "d4_5-aldex-tissue-glm.tsv",
+            sep = "\t",
+            row.names = TRUE
+            )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# Pairwise - species
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+SPECIES <- as.vector(
+                     META.FILTERED$tissue
+                     )
+
+SORTED.TABLE <- sort_table_samples(
+                                   META.FILTERED,
+                                   COUNT.TABLE
+                                   )
+GENUS.TABLE <- create_genus_count_table(
+                                        SORTED.TABLE,
+                                        "ducitaplates4_5-ggBLAST_taxonomy.tsv"
+                                        )
+CLR <- aldex.clr(
+                 GENUS.TABLE,
+                 SPECIES,
+                 mc.samples = 128,
+                 denom = "all",
+                 verbose = T,
+                 )
+TEST <- aldex.ttest(
+                    CLR,
+                    verbose = T
+                    )
+EFFECT <- aldex.effect(
+                       CLR,
+                       SPECIES,
+                       verbose = T 
+                       )
+OUT <- combine_aldex_output(
+                            TEST,
+                            EFFECT
+                            )
+write.table(
+            OUT,
+            "d4_5-aldex-tissue-species.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# Pairwise - time
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+TIME <- as.vector(
+                  META.FILTERED$time
+                  )
+
+SORTED.TABLE <- sort_table_samples(
+                                   META.FILTERED,
+                                   COUNT.TABLE
+                                   )
+GENUS.TABLE <- create_genus_count_table(
+                                        SORTED.TABLE,
+                                        "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                                        )
+
+CLR <- aldex.clr(
+                 GENUS.TABLE,
+                 TIME,
+                 mc.samples = 128,
+                 denom = "all",
+                 verbose = T,
+                 )
+TEST <- aldex.ttest(
+                    CLR,
+                    verbose = T
+                    )
+EFFECT <- aldex.effect(
+                       CLR,
+                       TIME,
+                       verbose = T 
+                       )
+OUT <- combine_aldex_output(
+                            TEST,
+                            EFFECT
+                            )
+write.table(
+            OUT,
+            "d4_5-aldex-tissue-time.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+# Pairwise - treatment
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+# create vector
+TREATMENT <- as.vector(
+                       META.FILTERED$treatment
+                       )
+
+# create genus table
+SORTED.TABLE <- sort_table_samples(
+                                   META.FILTERED,
+                                   COUNT.TABLE
+                                   )
+GENUS.TABLE <- create_genus_count_table(
+                                        SORTED.TABLE,
+                                        "ducitaplates4_5-ggBLAST_taxonomy.tsv",
+                                        )
+
+CLR <- aldex.clr(
+                 GENUS.TABLE,
+                 TREATMENT,
+                 mc.samples = 128,
+                 denom = "all",
+                 verbose = T,
+                 )
+TEST <- aldex.ttest(
+                    CLR,
+                    verbose = T
+                    )
+EFFECT <- aldex.effect(
+                       CLR,
+                       TREATMENT,
+                       verbose = T 
+                       )
+OUT <- combine_aldex_output(
+                            TEST,
+                            EFFECT
+                            )
+write.table(
+            OUT,
+            "d4_5-aldex-tissue-treatment.tsv",
+            sep = "\t",
+            row.names = FALSE
+            )
+
+###############################################################################
+# Species Correlation
+###############################################################################
+
+# http://www.sthda.com/english/wiki/correlation-test-between-two-variables-in-r#what-is-correlation-test
+SPECIES.CLR <- read_my_table("d4_5-aldex-species-tissue.tsv")
+
+TAX <- read_my_table("ducitaplates4_5-ggBLAST_taxonomy.tsv")
+TAX <- separate(
+                TAX,
+                Taxon,
+                c(
+                  "Kingdom",
+                  "Phylum",
+      	          "Class",
+                  "Order",
+                  "Family",
+                  "Genus",
+	          "Species"),
+                  sep=".[k,p,c,o,f,g,s]__",
+                  remove=TRUE
+                  ) 
+TAX <- distinct(
+                select(
+                       TAX,
+                       Phylum,
+                       Genus
+                       )
+                 )
+TAX$Phylum <- gsub(
+                   ";",
+                   "",
+                   TAX$Phylum
+                   )
+TAX$Genus <- gsub(
+                  ";",
+                  "",
+                  TAX$Genus
+                  )
+
+SPECIES.CLR.TAX <- merge(
+                         SPECIES.CLR,
+                         TAX,
+                         by = "Genus"
+                         )
+
+COL.SET1 <- wes_palette(
+                        "IsleofDogs1",
+                        5,
+                        type = "discrete"
+                        )
+COL.SET2 <- wes_palette(
+                        "GrandBudapest1",
+                        4,
+                        type = "discrete"
+                        )
+COL.SET3 <- wes_palette(
+                        "Moonrise3",
+                        5,
+                        type = "discrete"
+                        )
+COL.SET4 <- wes_palette(
+                        "Zissou1",
+                        5,
+                        type = "discrete"
+                        )
+COLORS <- c(
+            COL.SET1,
+            COL.SET2,
+            COL.SET3,
+            COL.SET4
+            )
+SCATTER.FIG <- ggscatter(
+                         SPECIES.CLR.TAX,
+                         x = "rab.win.L_minor370_DWC112",
+                         y = "rab.win.S_polyrhiza432_9509",
+                         cor.coef = TRUE,
+                         cor.coef.size = 8,
+                         cor.method = "spearman",
+                         xlab = "LmDAB Taxa CLR",
+                         ylab = "SpDAB Taxa CLR",
+                         font.label = c(5,"bold")
+                         ) + 
+               geom_point(
+                          shape = 21,
+                          size = 5,
+                          stroke = 1,
+                          aes(fill = Phylum)
+                          ) +
+               theme(
+                     axis.text = element_text(
+                                              size = 20
+                                              ),
+                     legend.position = "right",
+                     legend.title = element_text(
+                                                 face = "bold",
+                                                 size = 24
+                                                 ),
+                     legend.text = element_text(
+                                                face = "bold",
+                                                size = 20
+                                                ),
+                     axis.title = element_text(
+                                               face = "bold",
+                                               size = 24
+                                               ),
+                     ) +
+               scale_fill_manual(values = COLORS) +
+               guides(
+                      fill = guide_legend(
+                                          override.aes = list(
+                                                              color = "black",
+                                                              size = 5
+                                                              )
+                                           )
+                      )
+SCATTER.FIG 
+ggsave(
+       "d4_5-aldex-tissue-species_scatterplot.pdf",
+       SCATTER.FIG,
+       device = "pdf",
+       dpi = 300,
+       units = "in",
+       width = 11,
+       height = 8.5
+       )

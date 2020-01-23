@@ -1,0 +1,45 @@
+###############################################################################
+# retrieved fastq files
+###############################################################################
+
+wget -i Duran_et_al-libraries.tsv
+
+###############################################################################
+# activated environment
+###############################################################################
+
+source activate qiime2-2018.6
+
+###############################################################################
+# imported fastq files into q2
+###############################################################################
+
+nohup \
+qiime tools import \
+--type 'SampleData[PairedEndSequencesWithQuality]' \
+--input-path duran_et_al-manifest.csv \
+--source-format PairedEndFastqManifestPhred33 \
+--output-path duran_et_al-paired_end_demux.qza \
+&
+
+qiime demux summarize \
+--i-data duran_et_al-paired_end_demux.qza \
+--o-visualization duran_et_al-paired_end_demux.qzv 
+
+###############################################################################
+#			feature table construction 
+###############################################################################
+
+# constructed table
+nohup \
+qiime dada2 denoise-paired \
+--i-demultiplexed-seqs duran_et_al-paired_end_demux.qza \
+--p-trim-left-f 25 \
+--p-trunc-len-f 220 \
+--p-trim-left-r 25 \
+--p-trunc-len-r 240 \
+--o-denoising-stats duran_et_al-stats.qza \
+--o-representative-sequences duran_et_al-rep_seqs.qza \
+--o-table duran_et_al-table.qza \
+& 
+

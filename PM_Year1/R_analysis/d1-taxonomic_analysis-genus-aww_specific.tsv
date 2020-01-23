@@ -1,0 +1,7 @@
+"Genus"	"Phylum"	"Family"	"Mean_RA"	"Median_RA"	"Sample_Percent"	"OTU_Count"	"Mean_RA_Rank"
+"Acidiphilium"	"Proteobacteria"	"Acetobacteraceae"	0.0155940132039525	0.0155940132039525	25	2	79
+"Leptospira"	"Spirochaetes"	"Leptospiraceae"	0.0397016845575524	0.0397016845575524	12.5	1	57
+"Megasphaera"	"Firmicutes"	"Veillonellaceae"	0.00231637745039643	0.00231637745039643	12.5	1	129
+"Microbacterium"	"Actinobacteria"	"Microbacteriaceae"	0.217605435612914	0.0693523097334459	12.5	3	28
+"Pseudonocardia"	"Actinobacteria"	"Pseudonocardiaceae"	0.00933427920695964	0.00933427920695964	12.5	1	90
+"Roseburia"	"Firmicutes"	"Lachnospiraceae"	0.00977226708778623	0.00977226708778623	12.5	1	89

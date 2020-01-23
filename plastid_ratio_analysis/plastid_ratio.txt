@@ -1,0 +1,251 @@
+# required packages and scripts for analysis of data
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(plyr)
+library(reshape)
+library(vegan)
+library(ape)
+library(GUniFrac)
+library(gridExtra)
+library(cowplot)
+library(RColorBrewer)
+library(wesanderson)
+library(VennDiagram)
+setwd("~/data/duckweed_microbiome/plastid_ratio_analysis/")
+source("~/data/duckweed_microbiome/q2_analysis_using_R.R")
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# d1 plasitd ratios
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+D1.PLASTID.TABLE <- read_my_table("ducitaplate1-plastid_reads.tsv")
+D1.PLASTID.TABLE <- filter(
+                           D1.PLASTID.TABLE,
+                           bacteria == "none" 
+                           )
+D1.PLASTID.TABLE <- filter(
+                           D1.PLASTID.TABLE,
+                           type == "treated_tissue" 
+                           )
+D1.PLASTID.TABLE$total_reads <- D1.PLASTID.TABLE$chloroplast_reads + 
+                                D1.PLASTID.TABLE$mitochondria_reads +
+                                D1.PLASTID.TABLE$bacteria_reads
+D1.PLASTID.TABLE$bacteria <- D1.PLASTID.TABLE$bacteria_reads / D1.PLASTID.TABLE$total_reads
+D1.PLASTID.TABLE$chloroplast <- D1.PLASTID.TABLE$chloroplast_reads / D1.PLASTID.TABLE$total_reads
+D1.PLASTID.TABLE$mitochondria <- D1.PLASTID.TABLE$mitochondria_reads / D1.PLASTID.TABLE$total_reads
+D1.PLASTID.TABLE$experiment <- rep(
+                                   "pm_year1",
+                                   nrow(D1.PLASTID.TABLE)
+                                   )
+D1.PLASTID.TABLE$type <- sapply(
+                                D1.PLASTID.TABLE$time,
+                                function(x) if (x == 0){
+                                            "DAB_t0"
+                                            } else {
+                                            "WWDAB"
+                                            }
+                                )
+
+D1.PLASTID.DF <- select(
+                        D1.PLASTID.TABLE,
+                        sample_id,
+                        time,
+                        bacteria,
+                        chloroplast,
+                        mitochondria,
+                        experiment,
+                        type
+                        )
+D1.PLASTID.DF <- melt(
+                      D1.PLASTID.DF,
+                      id = c(
+                             "sample_id",
+                             "time",
+                             "experiment",
+                             "type"
+                             ),
+                      variable.name = "plastid",
+                      value.name = "ratio"
+                      )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# d45 plastid ratios
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+D45.PLASTID.READS <- read_my_table("d4_5-plastid_reads.tsv")
+D45.PLASTID.READS <- filter(
+                            D45.PLASTID.READS,
+                            bacteria == "none" 
+                            )
+D45.PLASTID.READS <- filter(
+                            D45.PLASTID.READS,
+                            type == "treated_tissue" 
+                            )
+D45.PLASTID.READS$bacteria <- D45.PLASTID.READS$bacteria_reads / D45.PLASTID.READS$total_reads
+D45.PLASTID.READS$chloroplast <- D45.PLASTID.READS$chloroplast_reads / D45.PLASTID.READS$total_reads
+D45.PLASTID.READS$mitochondria <- D45.PLASTID.READS$mitochondria / D45.PLASTID.READS$total_reads
+D45.PLASTID.READS$experiment <- rep(
+                                    "pm_year2",
+                                    nrow(D45.PLASTID.READS)
+                                    )
+D45.PLASTID.READS$type <- sapply(
+                                 D45.PLASTID.READS$time,
+                                 function(x) if (x == 0){
+                                             "DAB_t0"
+                                             } else {
+                                             "WWDAB"
+                                             }
+                                 )
+
+D45.PLASTID.DF <- select(
+                         D45.PLASTID.READS,
+                         sample_id,
+                         time,
+                         bacteria,
+                         chloroplast,
+                         mitochondria,
+                         experiment,
+                         type
+                         )
+D45.PLASTID.DF <- melt(
+                       D45.PLASTID.DF,
+                       id = c(
+                              "sample_id",
+                              "time",
+                              "experiment",
+                              "type"
+                              ),
+                       variable.name = "plastid",
+                       value.name = "ratio"
+                       )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# combined plastid ratios
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+ALL.PLASTID.DF <- rbind(
+                        D1.PLASTID.DF,
+                        D45.PLASTID.DF
+                        )
+ALL.PLASTID.DF$time <- as.factor(ALL.PLASTID.DF$time)
+ALL.PLASTID.DF$ratio <- as.numeric(ALL.PLASTID.DF$ratio)
+
+ALL.PLASTID.PLOT <- ggplot(
+                           ALL.PLASTID.DF,
+                           aes(
+                               type,
+                               ratio,
+                               fill = experiment,
+                               shape = time,
+                               )
+                           )
+SHAPES <- c(
+            "0" = 21,
+            "2" = 22,
+            "5" = 23,
+            "7" = 24,
+            "10" = 25
+            )
+
+PLASTID.RATIO.FIG <- ALL.PLASTID.PLOT +
+                     geom_jitter(
+                                 width = 0.15,
+                                 color = "black",
+                                 size = 5
+                                 ) +
+                     labs(
+                          x = "Type",
+                          y = "Ratio To Total Reads"
+                          ) +
+                     theme(
+                           axis.title.y = element_text(
+                                                       face = "bold",
+                                                       size = 20
+                                                       ),
+                           axis.title.x = element_blank(),
+                           axis.text.y = element_text(
+                                                      color = "black",
+                                                      size = 16
+                                                      ),
+                           axis.text.x = element_text(
+                                                      angle = 45,
+                                                      vjust = 1,
+                                                      hjust = 1,
+                                                      size = 16
+                                                      ),
+                           axis.line = element_line(
+                                                    color = "black"
+                                                    ),
+                           axis.ticks.y = element_blank(),
+                           axis.line.y = element_line(color = "black"),
+                           strip.background = element_rect(
+                                                           fill = NA,
+                                                           colour = "black",
+                                                           size = 0.5,
+                                                           linetype = "solid"
+                                                           ),
+                           strip.text = element_text(
+                                                     face = "bold",
+                                                     color = "black",
+                                                     size = 20
+                                                     ),
+                           legend.title = element_text(
+                                                       face = "bold",
+                                                       size = 20
+                                                       ),
+                           legend.text = element_text(
+                                                      size = 16
+                                                      ),
+                           panel.background = element_blank()
+                           ) +
+                     facet_grid(
+                                .~plastid
+                                ) +
+                     scale_fill_manual(
+                                       name = "Experiment",
+                                       labels = c(
+                                                  "PM Year 1",
+                                                  "PM Year 2"
+                                                  ),
+                                       values = c(
+                                                  "lightsalmon",
+                                                  "thistle" 
+                                                  )
+                                       ) +
+                     stat_compare_means(
+                                        aes(
+                                            label = ..p.signif..,
+                                            ),
+                                        comparisons = list(
+                                                           c(
+                                                             "DAB_t0",
+                                                             "WWDAB"
+                                                             )
+                                                           ),
+                                        size = 8,
+                                        fontface = "bold"
+                                        ) +
+                     scale_shape_manual(
+                                        name = "Time",
+                                        values = SHAPES
+                                        ) +
+                     guides(
+                            fill = guide_legend(
+                                                override.aes = list(
+                                                                    shape = 21,
+                                                                    color = "black",
+                                                                    fill = c(
+                                                                             "lightsalmon",
+                                                                             "thistle"
+                                                                             )
+                                                                    )
+                                                )
+                            )
+PLASTID.RATIO.FIG
+ggsave(
+       "plastid_ratio-plot.pdf",
+       PLASTID.RATIO.FIG,
+       device = "pdf",
+       dpi = 300
+       )

@@ -1,0 +1,150 @@
+"sample_id"	"tissue"	"bacteria"	"type"	"treatment"	"time"	"tax"	"RA"
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Acidobacteria"	1.40274673578752
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Actinobacteria"	12.6559588844965
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Bacteroidetes"	16.2464996411319
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Chloroflexi"	1.75045834712403
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Firmicutes"	1.03569715248363
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"low abundance (< 1% RA)"	2.68872187161818
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Nitrospirae"	8.88393869862886
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Planctomycetes"	2.28076503992176
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Proteobacteria"	44.5457621950086
+"T0_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Verrucomicrobia"	8.50945143379906
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Acidobacteria"	1.53460128174452
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Actinobacteria"	13.4405333919668
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Bacteroidetes"	12.5833424948103
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Chlamydiae"	1.58407325732541
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Chloroflexi"	1.84501367754619
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Firmicutes"	1.00916363260106
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"low abundance (< 1% RA)"	2.15219261089159
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Nitrospirae"	9.99657252979636
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Planctomycetes"	1.94460432119923
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Proteobacteria"	49.4755323895934
+"T0_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"0"	"Verrucomicrobia"	4.43437041252514
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Acidobacteria"	1.08354846489857
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Actinobacteria"	3.24483907563401
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Bacteroidetes"	13.0963759636256
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Chloroflexi"	1.05183703002314
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Cyanobacteria"	21.9813840478083
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"low abundance (< 1% RA)"	2.90539273048853
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Planctomycetes"	1.20503452526642
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Proteobacteria"	51.9317176878344
+"T5_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Verrucomicrobia"	3.49987047442093
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Acidobacteria"	1.42742926229988
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Actinobacteria"	6.0533140929389
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Bacteroidetes"	13.3031727150407
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Chloroflexi"	1.45901990990815
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Cyanobacteria"	16.9123067022874
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"low abundance (< 1% RA)"	2.70977555039878
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Nitrospirae"	1.75737602620854
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Planctomycetes"	1.03313117918917
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Proteobacteria"	51.4354244262007
+"T5_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"5"	"Verrucomicrobia"	3.90905013552778
+"T10_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Acidobacteria"	1.90525808383525
+"T10_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Bacteroidetes"	15.3019539485536
+"T10_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Cyanobacteria"	46.7443117358639
+"T10_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"low abundance (< 1% RA)"	3.06555197951105
+"T10_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Proteobacteria"	31.6989565632319
+"T10_W_D_E_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Verrucomicrobia"	1.28396768900423
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Acidobacteria"	1.41557128412538
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Actinobacteria"	1.39286158438005
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Bacteroidetes"	19.7368919072363
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Cyanobacteria"	32.9241982664929
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"low abundance (< 1% RA)"	2.05576853408888
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Nitrospirae"	1.12683367307765
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Planctomycetes"	1.16900882974754
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Proteobacteria"	37.6067220711246
+"T10_W_A_C_2"	"wastewater"	"wastewater"	"wastewater"	"none"	"10"	"Verrucomicrobia"	2.57214384972667
+"5A_C_432_9509_DAM_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Actinobacteria"	3.99881169232213
+"5A_C_432_9509_DAM_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Bacteroidetes"	12.565571912159
+"5A_C_432_9509_DAM_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Cyanobacteria"	1.51626496134091
+"5A_C_432_9509_DAM_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"low abundance (< 1% RA)"	3.43162931054701
+"5A_C_432_9509_DAM_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Nitrospirae"	2.26951130846747
+"5A_C_432_9509_DAM_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Proteobacteria"	74.3126187330451
+"5A_C_432_9509_DAM_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Verrucomicrobia"	1.90559208211831
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Actinobacteria"	7.89036640862519
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Bacteroidetes"	13.5639394418135
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Chloroflexi"	1.45769673896709
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Cyanobacteria"	3.36314489497879
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"low abundance (< 1% RA)"	3.05950624039088
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Nitrospirae"	2.68689383050952
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Planctomycetes"	1.14750750426751
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Proteobacteria"	64.6877492592065
+"T5_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Verrucomicrobia"	2.14319568124107
+"T5_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Actinobacteria"	3.28340006737366
+"T5_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Bacteroidetes"	10.0066947248127
+"T5_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"low abundance (< 1% RA)"	4.23089551538721
+"T5_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Nitrospirae"	1.34875252118219
+"T5_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Proteobacteria"	81.1302571712442
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Actinobacteria"	6.49743874836199
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Bacteroidetes"	10.2201882222134
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Chloroflexi"	1.2799639968762
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Cyanobacteria"	1.7683887278455
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"low abundance (< 1% RA)"	3.09865120650174
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Nitrospirae"	2.52121139922434
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Proteobacteria"	72.9023547631339
+"T5_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"5"	"Verrucomicrobia"	1.71180293584296
+"T10_432_DAM_W_A_C_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Actinobacteria"	15.9046783407385
+"T10_432_DAM_W_A_C_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Bacteroidetes"	11.2758092820072
+"T10_432_DAM_W_A_C_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"low abundance (< 1% RA)"	3.71130941268715
+"T10_432_DAM_W_A_C_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Proteobacteria"	69.1082029645671
+"T10_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Actinobacteria"	12.7690128848877
+"T10_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Bacteroidetes"	5.88535322023155
+"T10_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"low abundance (< 1% RA)"	3.70106268136396
+"T10_432_DAM_W_D_F_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Proteobacteria"	77.6445712135168
+"T10_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Actinobacteria"	4.80118306664082
+"T10_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Bacteroidetes"	6.0768562588389
+"T10_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"low abundance (< 1% RA)"	2.68128270841858
+"T10_432_DAM_W_G_I_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Proteobacteria"	86.4406779661017
+"T10_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Actinobacteria"	9.77666546053954
+"T10_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Bacteroidetes"	21.0640051461424
+"T10_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"low abundance (< 1% RA)"	2.52532866964178
+"T10_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"Proteobacteria"	64.7896313271419
+"T10_432_DAM_W_J_L_2"	"S_polyrhiza432_9509"	"none"	"ambient_water"	"none"	"10"	"TM6"	1.84436939653439
+"T0_432_B_3_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"none"	"0"	"Actinobacteria"	18.4605557329927
+"T0_432_B_3_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"none"	"0"	"Firmicutes"	20.8399872245289
+"T0_432_B_3_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"none"	"0"	"low abundance (< 1% RA)"	1.19770041520281
+"T0_432_B_3_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"none"	"0"	"Proteobacteria"	59.5017566272756
+"T5_432_DAM_B_H_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"low abundance (< 1% RA)"	1.45430060160596
+"T5_432_DAM_B_H_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"Proteobacteria"	98.545699398394
+"T5_432_DAM_B_I_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"low abundance (< 1% RA)"	0.580108758286403
+"T5_432_DAM_B_I_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"Proteobacteria"	99.4198912417136
+"T5_432_DAM_B_J_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"low abundance (< 1% RA)"	0.994632921364912
+"T5_432_DAM_B_J_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"Proteobacteria"	99.0053670786351
+"T5_432_DAM_B_L_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"Actinobacteria"	1.16764062987911
+"T5_432_DAM_B_L_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"Firmicutes"	1.49272873265825
+"T5_432_DAM_B_L_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"low abundance (< 1% RA)"	0.114868180398804
+"T5_432_DAM_B_L_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"5"	"Proteobacteria"	97.2247624570638
+"T10_432_DAM_B_A_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	2.54839913957085
+"T10_432_DAM_B_A_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.871095624966667
+"T10_432_DAM_B_A_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	96.5805052354625
+"T10_432_DAM_B_B_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	1.06467373510968
+"T10_432_DAM_B_B_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	1.06278489938802
+"T10_432_DAM_B_B_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	97.8725413655023
+"T10_432_DAM_B_C_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	1.15180962711561
+"T10_432_DAM_B_C_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.253286291788045
+"T10_432_DAM_B_C_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	98.5949040810963
+"T10_432_DAM_B_D_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	7.22734159992579
+"T10_432_DAM_B_D_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.679520084108971
+"T10_432_DAM_B_D_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	92.0931383159652
+"T10_432_DAM_B_E_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	2.47424541316933
+"T10_432_DAM_B_E_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.705914207248675
+"T10_432_DAM_B_E_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	96.819840379582
+"T10_432_DAM_B_F_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	1.55004305675158
+"T10_432_DAM_B_F_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.492374788188561
+"T10_432_DAM_B_F_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	97.9575821550599
+"T10_432_DAM_B_G_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.838075140370049
+"T10_432_DAM_B_G_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	99.1619248596299
+"T10_432_DAM_B_H_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.775164932010153
+"T10_432_DAM_B_H_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	99.2248350679898
+"T10_432_DAM_B_I_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.439578377874166
+"T10_432_DAM_B_I_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	99.5604216221258
+"T10_432_DAM_BJ_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	1.08983876429371
+"T10_432_DAM_BJ_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Firmicutes"	1.0648329035451
+"T10_432_DAM_BJ_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.273501601937954
+"T10_432_DAM_BJ_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	97.5718267302232
+"T10_432_DAM_B_K_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	4.90894647880594
+"T10_432_DAM_B_K_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.655203101015953
+"T10_432_DAM_B_K_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	94.4358504201781
+"T10_432_DAM_B_L_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Actinobacteria"	2.61683974240228
+"T10_432_DAM_B_L_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"low abundance (< 1% RA)"	0.337797343387345
+"T10_432_DAM_B_L_2"	"S_polyrhiza432_9509"	"none"	"treated_tissue"	"SD_treated"	"10"	"Proteobacteria"	97.0453629142104

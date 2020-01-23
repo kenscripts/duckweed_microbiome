@@ -1,0 +1,8 @@
+"PM_year1"	"Caldwell_House"	"Passion_Puddle"	"PM_year2"	"s1.china.guizhou_province.leishan_county"	"s2.china.guizhou_province.congjiang_county"	"s3.china.guizhou_province.liping_county"
+"PM_year1"	0	101	110	87	112	121	122
+"Caldwell_House"	101	0	31	106	117	104	99
+"Passion_Puddle"	110	31	0	109	108	103	94
+"PM_year2"	87	106	109	0	105	98	99
+"s1.china.guizhou_province.leishan_county"	112	117	108	105	0	59	52
+"s2.china.guizhou_province.congjiang_county"	121	104	103	98	59	0	37
+"s3.china.guizhou_province.liping_county"	122	99	94	99	52	37	0

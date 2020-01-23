@@ -1,0 +1,123 @@
+###############################################################################
+# activated environment
+###############################################################################
+
+source activate qiime2-2018.6
+
+###############################################################################
+# imported sequences and QC analysis
+###############################################################################
+
+# imported sequences from ducitaplate1 into q2
+nohup \
+qiime tools import \
+--type 'SampleData[SequencesWithQuality]' \
+--input-path ducitaplate2-pm_year2-manifest.txt \
+--source-format SingleEndFastqManifestPhred33 \
+--output-path ducitaplate2-pm_year2-single_end_demux.qza \
+&
+
+# created q2 visualization to examine sequence quality
+# chose to trim at 200 bps where 25th percentile had score higher than 25
+nohup \
+qiime demux summarize \
+--i-data ducitaplate2-pm_year2-single_end_demux.qza \
+--o-visualization ducitaplate2-pm_year2-single_end_demux.qzv
+&
+
+###############################################################################
+# feature table construction 
+###############################################################################
+
+# constructed table
+nohup \
+qiime dada2 denoise-single \
+--i-demultiplexed-seqs ducitaplate2-pm_year2-single_end_demux.qza \
+--p-trim-left 5 \
+--p-trunc-len 200 \
+--o-representative-sequences ducitaplate2-pm_year2-rep_seqs.qza \
+--o-table ducitaplate2-pm_year2-table.qza \
+--o-denoising-stats ducitaplate2-pm_year2-stats.qza \
+& 
+
+###############################################################################
+#			feature table merging
+###############################################################################
+
+# merged ducitaplate 4 and 5 tables along with ducitaplate2 PM Year 2 table
+qiime feature-table merge \
+--i-tables ducitaplate4-dada2-table.qza \
+--i-tables ducitaplate5-dada2-table.qza \
+--i-tables ducitaplate2-pm_year2-table.qza \
+--o-merged-table pm_year2-table.qza 
+
+# merged ducitaplates 4 and 5 rep seqs along with ducitaplate2 PM Year 2 seqs
+qiime feature-table merge-seqs \
+--i-data ducitaplate4-dada2-rep_seqs.qza \
+--i-data ducitaplate5-dada2-rep_seqs.qza \
+--i-data ducitaplate2-pm_year2-rep_seqs.qza \
+--o-merged-data pm_year2-rep_seqs.qza 
+
+###############################################################################
+#			created classifier
+###############################################################################
+
+# used gg-ref-taxonomy.qza and gg-ref-seqs.qza artifact created from ducitaplate2 workflow
+# copied taxonomy_files directory into working directory
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+qiime tools import \
+--type 'FeatureData[Sequence]' \
+--input-path gg-99_otus.fasta \
+--output-path gg-99_otus.qza \
+&
+
+# created taxnomy artifact 
+qiime tools import \
+--type 'FeatureData[Taxonomy] ' \
+--source-format HeaderlessTSVTaxonomyFormat \
+--input-path gg-99_otu_taxonomy.txt \
+--output-path gg-ref-taxonomy.qza \
+&
+# created reference read artifact
+nohup \
+qiime feature-classifier extract-reads \
+--i-sequences gg-99_otus.qza \
+--p-f-primer GTGYCAGCMGCCGCGGTAA \
+--p-r-primer CCGYCAATTYMTTTRAGTTT \
+--o-reads gg-ref-seqs.qza \
+&
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# created pm_year2 classifier
+nohup
+qiime feature-classifier classify-consensus-blast \
+--i-query pm_year2-rep_seqs.qza \
+--i-reference-reads taxonomy_files/gg-ref-seqs.qza \
+--i-reference-taxonomy taxonomy_files/gg-ref-taxonomy.qza \
+--o-classification pm_year2-ggBLAST-classifier.qza \
+&
+
+###############################################################################
+#			feature table filtering
+###############################################################################
+
+# created visualization of table
+# viewed in q2 and downloaded sample frequency per sample csv
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table pm_year2-table.qza \
+--i-taxonomy pm_year2-ggBLAST-classifier.qza \
+--p-include p_ \
+--o-filtered-table pm_year2-table-classified.qza 
+
+# filtered out chloroplast and mitochondria sequences
+qiime taxa filter-table \
+--i-table pm_year2-table-classified.qza \
+--i-taxonomy pm_year2-ggBLAST-classifier.qza \
+--p-exclude mitchondria,chloroplast \
+--o-filtered-table pm_year2-table-classified-no_chloroplast.qza
+
+# after filtering for chloroplast sequences \
+# a majority of reads were lost from PM Year 2 libraries from ducitaplate2 \
+# therefore only PM Year 2 libraries were used from ducitaplate4 and ducitplate5 for analysis

@@ -1,0 +1,11 @@
+"Genus"	"Phylum"	"Family"	"Mean_RA"	"Median_RA"	"Sample_Percent"	"OTU_Count"	"Mean_RA_Rank"
+"Azohydromonas"	"Proteobacteria"	"Comamonadaceae"	0.693088948654478	0.693088948654478	66.6666666666667	1	17
+"Blastomonas"	"Proteobacteria"	"Sphingomonadaceae"	0.635667272715782	0.627729257641921	100	2	18
+"Cellvibrio"	"Proteobacteria"	"Alteromonadaceae"	1.91081263680541	0.992952305998533	66.6666666666667	2	7
+"Corynebacterium"	"Actinobacteria"	"Corynebacteriaceae"	0.300134407979736	0.300134407979736	66.6666666666667	2	25
+"Fluviicola"	"Bacteroidetes"	"Cryomorphaceae"	0.602450164130326	0.324010914051842	66.6666666666667	2	19
+"Geobacter"	"Proteobacteria"	"Geobacteraceae"	0.136425648021828	0.136425648021828	33.3333333333333	1	35
+"Leptothrix"	"Proteobacteria"	"Comamonadaceae"	0.955476845977903	0.955476845977903	66.6666666666667	1	12
+"Rheinheimera"	"Proteobacteria"	"[Chromatiaceae]"	1.71606674894605	0.61735956796559	100	4	9
+"Rhodococcus"	"Actinobacteria"	"Nocardiaceae"	0.292571788448091	0.292571788448091	66.6666666666667	2	28
+"u114"	"Fusobacteria"	"Fusobacteriaceae"	0.392223738062756	0.392223738062756	33.3333333333333	1	21

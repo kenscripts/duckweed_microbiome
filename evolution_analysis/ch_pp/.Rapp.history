@@ -1,0 +1,3849 @@
+WW_432_10 <- NOZERO$total_carbon_mg_per_liter[NOZERO$sample_name == "WW+432" & NOZERO$time == "10"]
+WW_432_5
+WW_432_5_DAM <- NOZERO$total_carbon_mg_per_liter[NOZERO$sample_name == "WW+432+DAM" & NOZERO$time == "5"]
+WW_432_10_DAM <- NOZERO$total_carbon_mg_per_liter[NOZERO$sample_name == "WW+432+DAM" & NOZERO$time == "10"]
+shapiro.test(WW_5)
+shapiro.test(WW_10)
+shapiro.test(WW_432_5)
+shapiro.test(WW_432_10)
+shapiro.test(WW_432_5_DAM)
+shapiro.test(WW_432_10_DAM)
+wilcox.test(WW_5,WW_432_5)
+wilcox.test(WW_5,WW_432_5_DAM)
+wilcox.test(WW_10,WW_432_5)
+wilcox.test(WW_10,WW_432_10)
+wilcox.test(WW_10,WW_432_10_DAM)
+colnames(TOC)
+PLOT <- ggplot(NOZERO,aes(x=time,y=total_nitrogen_mg_per_liter,color=sample_name))
+PLOT + geom_boxplot() + stat_compare_means(method="wilcox.test",comparisons=my_comparisons) + facet_grid(.~time)
+PLOT <- ggplot(NOZERO,aes(x=sample_name,y=total_nitrogen_mg_per_liter,color=time))
+PLOT + geom_boxplot() + stat_compare_means(method="wilcox.test",comparisons=my_comparisons) + facet_grid(.~sample_name)
+PLOT <- ggplot(TOC,aes(x=sample_name,y=total_nitrogen_mg_per_liter,color=time))
+PLOT + geom_boxplot() + stat_compare_means(method="wilcox.test",comparisons=my_comparisons) + facet_grid(.~sample_name)
+quit()
+install.packages("sf")
+library(sf)
+plot(world)
+install.packages("spData")
+install.packages("usmap")
+library(usmap)
+NJ <- plot_usmap(inlcude = "NJ")
+plot_usmap
+plot_usmap()
+NJ <- plot_usmap(inlcude = c("NJ"))
+NJ <- plot_usmap(inlcude = c("NJ","NY"))
+NJ <- plot_usmap(include = c("NJ"))
+NJ
+NJ <- plot_usmap(include = c("NJ"),regions="counties")
+NJ
+NJ <- plot_usmap(include = c("NJ"),regions="counties",labels=TRUE)
+quit()
+install.packages(c("maps","mapdata"))
+devtools::install_github("dkahle/ggmap")
+install.packages("devtools")
+devtools::install_github("dkahle/ggmap")
+library(ggplot2)
+library(ggmap)
+library(maps)
+library(mapdata)
+USA <- map_data("usa")
+STATES <- mad_data('state')
+STATES <- map_data('state')
+NJ <- subset(states,region == "new jersey")
+NJ <- subset(STATES,region == "new jersey")
+ggplot(data = NJ) + geom_polygon(aes(x=long,y=lat))
+ggplot(data = NJ,aes(x=long,y=lat)) + geom_polygon(fill="palegreen",color="black")
+ggplot(data = NJ,aes(x=long,y=lat,group=group)) + geom_polygon(fill="palegreen",color="black") + coord_fixed(1.3)
+COUNTY <- map_data("county")
+NJ.COUNTY <- subset(COUNTY,region == "new jersey")
+NJ.PLOT <- ggplot(data = NJ.COUNTY,aes(x=long,y=lat,group=group))
+NJ.PLOT + geom_polygon(fill="palegreen",color="black")
+NJ.PLOT + geom_polygon(fill="palegreen",color="black") + coord_fixed(1.2)
+quit(0)
+quit()
+library(ggplot2)#
+library(ggmap)#
+library(maps)#
+library(mapdata)#
+#
+STATES <- map_data('state')#
+STATES.NJ <- subset(#
+                    STATES,#
+                    region == "new jersey"#
+                    )#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = STATES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)
+NJ.PLOT
+NJ.PLOT +#
+geom_polygon(#
+             data = COUNTIES.NJ,#
+             fill = NA,#
+             color = "white"#
+             )
+NJ.PLOT +#
+geom_polygon(#
+             data = COUNTIES.NJ,#
+             fill = NA,#
+             color = "white"#
+             ) +#
+coord_fixed(1.2)
+NJ.PLOT +#
+geom_polygon(#
+             data = COUNTIES.NJ,#
+             fill = NA,#
+             color = "white"#
+             ) +#
+geom_polygon(#
+             color = "black",#
+             fill = NA#
+             ) +#
+coord_fixed(1.2)
+LOCATION <- c(#
+              "caldwell_house",#
+              "passion_puddle"#
+              )#
+LONGITUDE <- c(#
+               40.85557,#
+               40.48186#
+               )#
+LATITUDE <- c(#
+              -74.90974,#
+              -74.43618#
+              )#
+LOCATIONS <- data.frame(LOCATION,LONGITUDE,LATITUDE)
+LOCATIONS
+NJ.PLOT +#
+geom_polygon(#
+             data = COUNTIES.NJ,#
+             fill = NA,#
+             color = "white"#
+             ) +#
+geom_polygon(#
+             color = "black",#
+             fill = NA#
+             ) +#
+coord_fixed(1.2) +#
+geom_point(#
+           aes(#
+               data = LOCATIONS#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               )#
+           )
+NJ.PLOT +#
+geom_polygon(#
+             data = COUNTIES.NJ,#
+             fill = NA,#
+             color = "white"#
+             ) +#
+geom_polygon(#
+             color = "black",#
+             fill = NA#
+             ) +#
+coord_fixed(1.2) +#
+geom_point(#
+           aes(#
+               data = LOCATIONS,#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               )#
+           )
+NJ.PLOT +#
+geom_polygon(#
+             data = COUNTIES.NJ,#
+             fill = NA,#
+             color = "white"#
+             ) +#
+geom_polygon(#
+             color = "black",#
+             fill = NA#
+             ) +#
+coord_fixed(1.2) +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               )#
+           )
+NJCOUNTY.PLOT <- NJ.PLOT +#
+                 geom_polygon(#
+                              data = COUNTIES.NJ,#
+                              fill = NA,#
+                              color = "white"#
+                              ) +#
+                 geom_polygon(#
+                              color = "black",#
+                              fill = NA#
+                              ) +#
+                 coord_fixed(1.2)
+NJCOUNTY.PLOT
+LOCATIONS
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = LOCATION#
+               )#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               )#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               color = LOCATION#
+               )#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               )#
+           color = LOCATION#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               ),#
+           color = LOCATION#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = group#
+               ),#
+           color = LOCATION#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = LOCATION#
+               ),#
+           color = LOCATION#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = LOCATION,#
+               color = LOCATION#
+               )#
+           )
+NJCOUNTY.PLOT
+LOCATIONS <- data.frame(LOCATION,LONGITUDE,LATITUDE,stringsAsFactors=FALSE)
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = LOCATION,#
+               color = LOCATION#
+               )#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               color = LOCATION#
+               )#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               color = LOCATION#
+               )#
+           )
+NJCOUNTY.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               )#
+           )
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)
+NJ.PLOT
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE#
+               )#
+           )
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = 5#
+               )#
+           )
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               color = LOCATION#
+               )#
+           )
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               ),#
+           color = "black"#
+           )
+head(COUNTIES.NJ)
+unique(COUNTIES.NJ$group)
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = 1763#
+               ),#
+           color = "black"#
+           )
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = 1763#
+               ),#
+           color = "black"#
+           )#
+coord_fixed(1.2)
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = 1763#
+               ),#
+           color = "black"#
+           ) + #
+coord_fixed(1.2)
+range(COUNTIES.NJ$long)
+LOCATION <- c(#
+              "caldwell_house",#
+              "passion_puddle"#
+              )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186#
+              )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618#
+               )#
+LOCATIONS <- data.frame(LOCATION,LONGITUDE,LATITUDE,stringsAsFactors=FALSE)
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               ),#
+           color = "black"#
+           ) + #
+coord_fixed(1.2)
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = 1763#
+               ),#
+           color = "black"#
+           ) + #
+coord_fixed(1.2)
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = 1763,#
+               color = LOCATION#
+               )#
+           ) + #
+coord_fixed(1.2)
+NJ.PLOT +#
+geom_point(#
+           data = LOCATIONS,#
+           aes(#
+               x = LONGITUDE,#
+               y = LATITUDE,#
+               group = 1763,#
+               color = LOCATION#
+               )#
+           ) + #
+coord_fixed(1.2) +#
+theme(#
+      legend.position = "right"#
+      )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = LOCATIONS,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = LOCATION#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right"#
+                     )
+SAMPLE.PLOT
+quit()
+library(ggplot2)#
+library(ggmap)#
+library(maps)#
+library(mapdata)#
+#
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = LOCATIONS,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = LOCATION#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right"#
+                     )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SITE,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = LOCATION#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right"#
+                     )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right"#
+                     )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right"#
+                     legend.text = element_text(#
+                                                color = "black"#
+                                                )#
+                     )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black"#
+                                                )#
+                     )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black"#
+                                                size = 12#
+                                                )#
+                     )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_color_manual(#
+                                  names = c(#
+                                            "Caldwell House",#
+                                            "Passion Puddle"#
+                                            )#
+                                  )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_color_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             )#
+                                   )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              color = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_color_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             ),#
+                                  values = c(#
+                                             "darkorange",#
+                                             "darkorchid"#
+                                             )#
+                                   )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              fill = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_fill_manual(#
+                                 labels = c(#
+                                            "Caldwell House",#
+                                            "Passion Puddle"#
+                                            ),#
+                                 values = c(#
+                                            "darkorange",#
+                                            "darkorchid"#
+                                            )#
+                                 ) +#
+               scale_shape_manual(#
+                                  values = c(#
+                                             21,#
+                                             21,#
+                                             23#
+                                             )#
+                                  )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              fill = SITE#
+                              shape = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_fill_manual(#
+                                 labels = c(#
+                                            "Caldwell House",#
+                                            "Passion Puddle"#
+                                            ),#
+                                 values = c(#
+                                            "darkorange",#
+                                            "darkorchid"#
+                                            )#
+                                 ) +#
+               scale_shape_manual(#
+                                  values = c(#
+                                             21,#
+                                             21,#
+                                             23#
+                                             )#
+                                  )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              fill = SITE,#
+                              shape = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_fill_manual(#
+                                 labels = c(#
+                                            "Caldwell House",#
+                                            "Passion Puddle"#
+                                            ),#
+                                 values = c(#
+                                            "darkorange",#
+                                            "darkorchid"#
+                                            )#
+                                 ) +#
+               scale_shape_manual(#
+                                  values = c(#
+                                             21,#
+                                             21,#
+                                             23#
+                                             )#
+                                  )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_fill_manual(#
+                                 labels = c(#
+                                            "Caldwell House",#
+                                            "Passion Puddle"#
+                                            ),#
+                                 values = c(#
+                                            "darkorange",#
+                                            "darkorchid"#
+                                            )#
+                                 ) +#
+               scale_shape_manual(#
+                                  values = c(#
+                                             21,#
+                                             21,#
+                                             23#
+                                             )#
+                                  )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              fill = SITE,#
+                              shape = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_fill_manual(#
+                                 labels = c(#
+                                            "Caldwell House",#
+                                            "Passion Puddle"#
+                                            ),#
+                                 values = c(#
+                                            "darkorange",#
+                                            "darkorchid"#
+                                            )#
+                                 )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_fill_manual(#
+                                 labels = c(#
+                                            "Caldwell House",#
+                                            "Passion Puddle"#
+                                            ),#
+                                 values = c(#
+                                            "darkorange",#
+                                            "darkorchid"#
+                                            )#
+                                 )
+SAMLE.PLOT
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          color = "firebrick",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+SAMPLE.PLOT
+quit()
+library(ggplot2)#
+library(maps)#
+library(mapdata)#
+#
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+library(ggmap)
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+SAMPLE.PLOT
+library(ggplot2)#
+librar(ggmap)#
+library(maps)#
+library(mapdata)#
+#
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle"#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618,#
+               -74.602714#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186,#
+              40.327214#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle",#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618,#
+               -74.602714#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186,#
+              40.327214#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             21#
+                                             )#
+                                 )
+SAMPLE.PLOT
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle",#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618,#
+               -74.602714#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186,#
+              40.327214#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                 )
+SAMPLE.PLOT
+install.packages("ggsn")
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle",#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618,#
+               -74.602714#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186,#
+              40.327214#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                 ) +#
+               scalebar(#
+                        SAMPLE.DF,#
+                        dist = 5,#
+                        dist_unit = "km"#
+                        )
+library(ggsn)
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle",#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.90974,#
+               -74.43618,#
+               -74.602714#
+               )#
+LATITUDE <- c(#
+              40.85557,#
+              40.48186,#
+              40.327214#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                 ) +#
+               scalebar(#
+                        SAMPLE.DF,#
+                        dist = 5,#
+                        dist_unit = "km"#
+                        )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                 ) +#
+               scalebar(#
+                        SAMPLE.DF,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE#
+                        )
+warnings()
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           #theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                 ) +#
+               scalebar(#
+                        SAMPLE.DF,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE#
+                        )
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                 )
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                 )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTS.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE#
+                        location = "bottomright",#
+                        )
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTS.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        location = "bottomright"#
+                        )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        location = "bottomright"#
+                        )
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 1,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        )
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 0.5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        )
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 0.5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67,#
+                        )
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 0.5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67#
+                        )
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 0.5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        )
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        )
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        ) +#
+               coord_cartesian(clip = "off")
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        )
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        ) +#
+               xlim(-76,-73)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 5,#
+                        dist_unit = "mi",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "GRS67"#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "Clarke"#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        model = "International"#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 0.01#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 1#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.pLOT
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 5#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+COUNTIES.NJ
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(COUNTIES.NJ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright"#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                -73.75,#
+                                39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.75,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.75,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   -74,#
+                                   39.25#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.75,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -74,#
+                                   y = 39.25#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 12,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 8#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 12,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 8#
+                                                face = "bold"#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  name = "Site",#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 12,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 8,#
+                                                face = "bold"#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  name = "Site",#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+quit()
+library(ggplot2)#
+library(ggmap)#
+library(maps)#
+library(mapdata)#
+library(ggsn)#
+#
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle",#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.909973,#
+               -74.4370964,#
+               -74.608153#
+               )#
+LATITUDE <- c(#
+              40.855126,#
+              40.4829431,#
+              40.327140#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           #theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 16,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12,#
+                                                face = "bold"#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  name = "Site",#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+library(ggplot2)#
+library(ggmap)#
+library(maps)#
+library(mapdata)#
+library(ggsn)#
+#
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle",#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.909973,#
+               -74.4370964,#
+               -74.608153#
+               )#
+LATITUDE <- c(#
+              40.855126,#
+              40.4829431,#
+              40.327140#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           #theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 16,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12,#
+                                                face = "bold"#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  name = "Site",#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 3#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 16,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12,#
+                                                face = "bold"#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  name = "Site",#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2.5#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 16,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 12,#
+                                                face = "bold"#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  name = "Site",#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2.25#
+                        ) +#
+               xlim(-76,-73.5)
+SAMPLE.PLOT
+quit()
+library(ggplot2)#
+library(ggmap)#
+library(maps)#
+library(mapdata)#
+library(ggsn)#
+#
+# create dataframe for sampling sites#
+SITE <- c(#
+          "caldwell_house",#
+          "passion_puddle",#
+          "princeton_meadows"#
+          )#
+LONGITUDE <- c(#
+               -74.909973,#
+               -74.4370964,#
+               -74.608153#
+               )#
+LATITUDE <- c(#
+              40.855126,#
+              40.4829431,#
+              40.327140#
+              )#
+SAMPLE.DF <- data.frame(#
+                        SITE,#
+                        LONGITUDE,#
+                        LATITUDE#
+                        )#
+#
+# create NJ plot with counties#
+COUNTIES <- map_data("county")#
+COUNTIES.NJ <- subset(#
+                      COUNTIES,#
+                      region == "new jersey"#
+                      )#
+NJ.PLOT <- ggplot(#
+                  data = COUNTIES.NJ,#
+                  aes(#
+                      x = long,#
+                      y = lat,#
+                      group = group#
+                      )#
+                  ) +#
+           geom_polygon(#
+                        fill = "palegreen",#
+                        color = "black"#
+                        ) +#
+           #theme_nothing() +#
+           coord_fixed(1.2)#
+#
+# add sampling sites to NJ plot#
+SAMPLE.PLOT <- NJ.PLOT +#
+               geom_point(#
+                          data = SAMPLE.DF,#
+                          aes(#
+                              x = LONGITUDE,#
+                              y = LATITUDE,#
+                              group = 1763,#
+                              shape = SITE#
+                              ),#
+                          fill = "firebrick3",#
+                          size = 5#
+                          ) + #
+               coord_fixed(1.2) +#
+               theme_void() +#
+               theme(#
+                     legend.title = element_text(#
+                                                 color = "black",#
+                                                 size = 20,#
+                                                 face = "bold"#
+                                                 ),#
+                     legend.position = "right",#
+                     legend.text = element_text(#
+                                                color = "black",#
+                                                size = 16,#
+                                                face = "bold"#
+                                                )#
+                     ) +#
+               scale_shape_manual(#
+                                  name = "Site",#
+                                  labels = c(#
+                                             "Caldwell House",#
+                                             "Passion Puddle",#
+                                             "Princeton Meadows"#
+                                             ),#
+                                  values = c(#
+                                             21,#
+                                             22,#
+                                             23#
+                                             )#
+                                  ) +#
+               north(#
+                     data = COUNTIES.NJ,#
+                     symbol = 5,#
+                     location = "bottomright",#
+                     anchor = c(#
+                                x = -73.70,#
+                                y = 39.25#
+                                )#
+                     ) +#
+               scalebar(#
+                        COUNTIES.NJ,#
+                        dist = 10,#
+                        dist_unit = "km",#
+                        anchor = c(#
+                                   x = -73.70,#
+                                   y = 39.10#
+                                   ),#
+                        transform = TRUE,#
+                        st.size = 2.25#
+                        ) +#
+               xlim(-76,-73.5)
+NJ.PLOT
+SAMPLE.PLOT
+quit()
+library(plyr) #
+library(dplyr)#
+library(reshape2)#
+setwd("~/Downloads/duckweed_microbiome/evolution_analysis/ch_pp/")#
+source("~/Downloads/duckweed_microbiome/q2_analysis_using_R.R")#
+#
+################################################################################
+#			feature table de-compartmentalized#
+################################################################################
+#
+# load tables#
+COUNT.TABLE <- read_my_table("ch_pp-working_table.tsv")#
+COUNT.MELT <- melt(#
+                   COUNT.TABLE,#
+                   variable.name = "sample_id",#
+                   value.name = "reads"#
+                   )#
+META.TABLE <- read_my_table("ducitaplate2-metadata.tsv")#
+TAX.TABLE <- read_my_table("ducitaplate2-ggBLAST_taxonomy.tsv")#
+TAX.SEP <- separate(#
+                    TAX.TABLE,#
+                    Taxon,#
+		    c(#
+                      "Kingdom",#
+		      "Phylum",#
+		      "Class",#
+                      "Order",#
+		      "Family",#
+		      "Genus",#
+		      "Species"#
+		      ),#
+     		    sep="; [k,p,c,o,f,g,s]__",#
+                    remove=TRUE#
+                    )#
+#
+# merge tables#
+COUNT.META <- merge(#
+                    COUNT.MELT,#
+                    META.TABLE,#
+                    by = "sample_id"#
+                    )#
+COUNT.INFO <- merge(#
+                    COUNT.META,#
+                    TAX.SEP,#
+                    by = "feature_id"#
+                    )#
+#
+# create genus table#
+COUNT.CLASS <- remove_unknown_genus(COUNT.INFO)#
+GENUS.TABLE <- ddply(#
+                     COUNT.CLASS,#
+                     ~Genus+paired_id,#
+                     summarise,#
+                     total_reads = sum(reads)#
+                     )#
+GENUS.CAST <- dcast(#
+                    GENUS.TABLE,#
+                    Genus~paired_id#
+                    )
+library(plyr) #
+library(dplyr)#
+library(reshape2)#
+setwd("~/Downloads/duckweed_microbiome/evolution_analysis/ch_pp/")#
+source("~/Downloads/duckweed_microbiome/q2_analysis_using_R.R")#
+#
+################################################################################
+#			feature table de-compartmentalized#
+################################################################################
+#
+# load tables#
+COUNT.TABLE <- read_my_table("ch_pp-working_table.tsv")#
+COUNT.MELT <- melt(#
+                   COUNT.TABLE,#
+                   variable.name = "sample_id",#
+                   value.name = "reads"#
+                   )#
+META.TABLE <- read_my_table("ducitaplate2-metadata.tsv")#
+TAX.TABLE <- read_my_table("ducitaplate2-ggBLAST_taxonomy.tsv")#
+TAX.SEP <- separate(#
+                    TAX.TABLE,#
+                    Taxon,#
+		    c(#
+                      "Kingdom",#
+		      "Phylum",#
+		      "Class",#
+                      "Order",#
+		      "Family",#
+		      "Genus",#
+		      "Species"#
+		      ),#
+     		    sep="; [k,p,c,o,f,g,s]__",#
+                    remove=TRUE#
+                    )#
+#
+# merge tables#
+COUNT.META <- merge(#
+                    COUNT.MELT,#
+                    META.TABLE,#
+                    by = "sample_id"#
+                    )#
+COUNT.INFO <- merge(#
+                    COUNT.META,#
+                    TAX.SEP,#
+                    by = "feature_id"#
+                    )#
+#
+# create genus table#
+COUNT.CLASS <- remove_unknown_genus(COUNT.INFO)#
+GENUS.TABLE <- ddply(#
+                     COUNT.CLASS,#
+                     ~Genus+sample_id,#
+                     summarise,#
+                     total_reads = sum(reads)#
+                     )#
+GENUS.CAST <- dcast(#
+                    GENUS.TABLE,#
+                    Genus~sample_id#
+                    )
+str(GENUS.CAST)
+head(GENUS.CAST)
+write.table(#
+            GENUS.CAST,#
+            "ch_pp-bacteria_genus_table.tsv",#
+            sep = "\t",#
+            row.names = FALSE,#
+            quote  = FALSE#
+            )
+quit()

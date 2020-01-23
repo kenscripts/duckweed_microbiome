@@ -1,0 +1,13 @@
+Samples from each experiment were sequenced on different sequencing runs.
+
+
+For each experiment qiime2 was used to generate feature table, taxonomy files, and diversity files.
+q2 output was then exported and imported into R for data visualization. R was also used for differential abundance testing with the ALDEx2 package.
+
+For qiime 2 the general workflow was as follows:
+1) import sequences
+2) create table using dada2
+3) create taxonomy using ggBLAST # found ggBLAST and vsearch classifiers worked the best
+4) filter table using taxonomy # filter out unclassified, mitochondria, chloroplast; sampples > 2
+5) create rarefaction plot using filtered table
+6) create rarefied table and core metric artifacts

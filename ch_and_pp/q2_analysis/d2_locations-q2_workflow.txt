@@ -1,0 +1,420 @@
+###############################################################################
+# activated environment
+###############################################################################
+
+source activate qiime2-2018.6
+
+###############################################################################
+# imported sequences and QC analysis
+###############################################################################
+
+# imported sequences into q2
+nohup \
+qiime tools import \
+--type 'SampleData[SequencesWithQuality]' \
+--input-path ducitaplate2_manifest.txt \
+--source-format SingleEndFastqManifestPhred33 \
+--output-path single-end-demux.qza \
+&
+
+# created q2 visualization for demux.qza
+# 200 bps showed quality score of 25 in 25th percentile
+qiime demux summarize \
+--i-data single-end-demux.qza \
+--o-visualization single-end-demux.qzv
+&
+
+###############################################################################
+# feature table construction 
+###############################################################################
+
+nohup \
+qiime dada2 denoise-single \
+--i-demultiplexed-seqs single-end-demux.qza \
+--p-trim-left 5
+--p-trunc-len 200 \
+--o-representative-sequences rep-seqs-dada2-left_trim.qza \
+--o-table table-dada2-left_trim.qza \
+--o-denoising-stats stats-dada2-left_trim.qza \
+&  
+
+###############################################################################
+# creating and testing classifiers
+###############################################################################
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# NB classifier - greengenes
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# downloaded Greengenes 13_8 marker gene reference database
+# created otu artifact
+qiime tools import \
+--type 'FeatureData[Sequence]' \
+--input-path taxonomy/gg_13_8_otus/rep_set/gg-99_otus.fasta \
+--output-path taxonomy/gg_13_8_otus/gg-99_otus.qza \   
+&
+
+# created taxonomy artifact
+qiime tools import \
+--type 'FeatureData[Taxonomy]' \
+--source-format HeaderlessTSVTaxonomyFormat \
+--input-path taxonomy/gg_13_8_otus/taxonomy/gg-99_otu_taxonomy.txt \
+--output-path taxonomy/gg_13_9_otus/gg-ref-taxonomy.qza 
+&
+
+# extracting reference reads from respective primer set
+nohup \
+qiime feature-classifier extract-reads \
+--i-sequences taxonomy/gg_13_8_otus/gg-99_otus.qza \
+--p-f-primer GTGYCAGCMGCCGCGGTAA \
+--p-r-primer CCGYCAATTYMTTTRAGTTT \
+--o-reads taxonomy/gg_13_8_otus/gg-ref-seqs.qza \
+&
+
+# train Naive Bayes classifier using reference reads and taxonomy
+nohup \
+qiime feature-classifier fit-classifier-naive-bayes \
+--i-reference-reads taxonomy/gg_13_8_otus/gg-ref-seqs.qza \
+--i-reference-taxonomy taxonomy/gg_13_8_otus/gg-ref-taxonomy.qza \
+--o-classifier taxonomy/classifier-gg.qza \
+&
+
+# testing feature classifier
+nohup \
+qiime feature-classifier classify-sklearn \
+--i-classifier taxonomy/classifier-gg.qza \
+--i-reads rep-seqs-dada2.qza \
+--o-classification taxonomy-ggNB-dada2-left_trim.qza \
+&
+
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table table-dada2-left_trim.qza \
+--i-taxonomy taxonomy-ggNB-dada2-left_trim.qza \
+--p-include p_ \
+--o-filtered-table table-dada2-no_unclassified-ggNB.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table table-dada2-no_unclassified-ggNB.qza
+--o-visualization table-dada2-no_unclassified-ggNB.qzv
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table ducitaplate2-dada2-table-left_trim.qza \
+--i-taxonomy taxonomy-ggNB-dada2-left_trim.qza \
+--p-include g_ \
+--o-filtered-table d2-no_unclassified_genus-ggNB.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table d2-no_unclassified_genus-ggNB.qza \
+--o-visualization d2-no_unclassified_genus-ggNB.qzv
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# NB classifier - silva
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# comparing SILVA vs gg
+# downloaded SILVA database files
+# created otu artifact
+# use rep_set sequences (indicated by leader on q2 forum)
+qiime tools import \
+--type 'FeatureData[Sequence]' \
+--input-path taxonomy/SILVA_132_QIIME_release/rep_set/rep_set_16S_only/99/silva_132_99_16S.fna \
+--output-path taxonomy/SILVA_132_QIIME_release/silva-99_otus.qza 
+
+# created taxonomy artifact
+# using consensus (100 % identity)
+qiime tools import \
+--type 'FeatureData[Taxonomy]' \
+--source-format HeaderlessTSVTaxonomyFormat \
+--input-path taxonomy/SILVA_132_QIIME_release/taxonomy/16S_only/99/consensus_taxonomy_all_levels.txt \
+--output-path taxonomy/SILVA_132_QIIME_release/silva-ref-taxonomy.qza 
+
+# extracting reference reads from respective primer set
+nohup \
+qiime feature-classifier extract-reads \
+--i-sequences taxonomy/SILVA_132_QIIME_release/silva-99_otus.qza \
+--p-f-primer GTGYCAGCMGCCGCGGTAA \
+--p-r-primer CCGYCAATTYMTTTRAGTTT \
+--o-reads taxonomy/SILVA_132_QIIME_release/silva-ref-seqs.qza \
+&
+
+# train Naive Bayes classifier using reference reads and taxonomy
+nohup \
+qiime feature-classifier fit-classifier-naive-bayes \
+--i-reference-reads taxonomy/SILVA_132_QIIME_release/silva-ref-seqs.qza \
+--i-reference-taxonomy taxonomy/SILVA_132_QIIME_release/silva-ref-taxonomy.qza \
+--o-classifier taxonomy/classifier-silva.qza \
+&
+
+# testing classifier
+nohup \
+qiime feature-classifier classify-sklearn \
+--i-classifier taxonomy/classifier-silva.qza \
+--i-reads rep-seqs-dada2.qza \
+--o-classification taxonomy-silva-dada2-left_trim.qza \
+&
+
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table table-dada2-left_trim.qza \
+--i-taxonomy taxonomy--silva-dada2-left_trim.qza \
+--p-include p_ \
+--o-filtered-table table-dada2-no_unclassified-silva.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table table-dada2-no_unclassified-silva.qza \
+--o-visualization table-dada2-no_unclassified-silva.qzv
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table ducitaplate2-dada2-table-left_trim.qza \
+--i-taxonomy taxonomy-silva-dada2-left_trim.qza \
+--p-include D_5 \
+--o-filtered-table d2-no_unclassified_genus-silva.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table d2-no_unclassified_genus-silva.qza \
+--o-visualization d2-no_unclassified_genus-silva.qzv
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# vsearch classifier - greengenes
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+nohup
+qiime feature-classifier classify-consensus-vsearch \
+--i-query rep-seqs-dada2-left_trim.qza \
+--i-reference-reads taxonomy/gg_13_8_otus/gg-ref-seqs.qza \
+--i-reference-taxonomy taxonomy/gg_13_8_otus/gg-ref-taxonomy.qza \
+--o-classification taxonomy-ggvsearch-dada2-left_trim.qza
+&
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table table-dada2-left_trim.qza \
+--i-taxonomy taxonomy-ggvsearch-dada2-left_trim.qza \
+--p-include p_ \
+--o-filtered-table table-dada2-no_unclassified-ggvsearch.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table table-dada2-no_unclassified-ggvsearch.qza \
+--o-visualization table-dada2-no_unclassified-ggvsearch.qzv
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table ducitaplate2-dada2-table-left_trim.qza \
+--i-taxonomy taxonomy-ggvsearch-dada2-left_trim.qza \
+--p-include g_ \
+--o-filtered-table d2-no_unclassified_genus-ggvsearch.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table d2-no_unclassified_genus-ggvsearch.qza \
+--o-visualization d2-no_unclassified_genus-ggvsearch.qzv
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# BLAST classifier - greengenes
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+nohup
+qiime feature-classifier classify-consensus-blast \
+--i-query rep-seqs-dada2-left_trim.qza \
+--i-reference-reads taxonomy/gg_13_8_otus/gg-ref-seqs.qza \
+--i-reference-taxonomy taxonomy/gg_13_8_otus/gg-ref-taxonomy.qza \
+--o-classification taxonomy-ggblast-dada2-left_trim.qza
+&
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table table-dada2-left_trim.qza \
+--i-taxonomy taxonomy--ggblast-dada2-left_trim.qza \
+--p-include p_ \
+--o-filtered-table table-dada2-no_unclassified-ggblast.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table table-dada2-no_unclassified-ggblast.qza \
+--o-visualization table-dada2-no_unclassified-ggblast.qzv
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table ducitaplate2-dada2-table-left_trim.qza \
+--i-taxonomy taxonomy-ggblast-dada2-left_trim.qza \
+--p-include g_ \
+--o-filtered-table d2-no_unclassified_genus-ggblast.qza 
+
+# created visualization
+# used q2 view to download reads per sample
+qiime feature-table summarize \
+--i-table d2-no_unclassified_genus-ggblast.qza \
+--o-visualization d2-no_unclassified_genus-ggblast.qzv
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# classifier performance
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# combined reads per sample from each classification scheme
+# file: "classifier_performance.tsv"
+
+###############################################################################
+#			feature table filtering
+###############################################################################
+
+# filtered out unclassified sequences
+qiime taxa filter-table \
+--i-table table-dada2-left_trim.qza \
+--i-taxonomy taxonomy-ggblast-dada2-left_trim.qza \
+--p-include p_ \
+--o-filtered-table table-dada2-left_trim-no_unclassified-ggblast.qza 
+
+qiime feature-table summarize \
+--i-table table-dada2-left_trim-no_unclassified-ggblast.qza 
+--o-visualization table-dada2-no_unclassified-ggblast.qzv
+
+# filtered out chloroplast and mitochondrial sequences
+qiime taxa filter-table \
+--i-table table-dada2-left_trim-no_unclassified-ggblast.qza 
+--i-taxonomy taxonomy-ggblast-dada2-left_trim.qza \
+--p-exclude mitochondra,chloroplast \
+--o-filtered-table table-dada2-left_trim-no_unclassified_mitochondria_chloroplast-ggblast.qza 
+
+qiime feature-table summarize \
+--i-table table-dada2-left_trim-no_unclassified_mitochondria_chloroplast-ggblast.qza 
+--o-visualization table-dada2-no_unclassified_mitochondria_chloroplast-ggblast.qzv
+
+# filtered out samples that did not appear in more than one sample
+qiime feature-table filter-features \ 
+--i-table table-dada2-left_trim-no_unclassified_mitochondria_chloroplast-ggblast.qza 
+--p-min-samples 2 \
+--o-filtered-table table-dada2-left_trim-filtered_2frequency.qza 
+
+qiime feature-table summarize \
+--i-table table-dada2-left_trim-filtered_2frequency.qza 
+--o-visualization table-dada2-left_trim-filtered_2frequency.qzv
+
+# filtered table for caldwell house and passion puddle samples
+# johnson park samples were not analyzed (labeling problem)
+qiime feature-table filter-samples \
+--i-table table-dada2-left_trim-filtered_2frequency-ggblast.qza \
+--m-metadata-file ducitaplate2_metadata.tsv \
+--p-where "NOT location='Johnson_Park'" \
+--o-filtered-table ./analysis_files/ch_pp-table-dada2-left_trim-filtered-ggblast.qza
+
+# filter out archaea sequences
+qiime taxa filter-table \
+--i-table ./analysis_files/ch_pp-table-dada2-left_trim-filtered-ggblast.qza \
+--i-taxonomy d2-ggBLAST-taxonomy.qza \
+--p-include k__Bacteria \
+--o-filtered-table ./analysis_files/ch_pp-working_table.qza
+
+qiime feature-table summarize \
+--i-table ch_pp-working_table.qza \
+--o-visualization ch_pp-working_table.qzv
+
+# exported ch_pp-table-dada2-left_trim-filtered-ggblast.qza
+# changed biom file to tsv
+# changed header
+# output file: ch_pp-filtered_table.tsv
+
+# exported table visualizations
+# downloaded reads per sample
+# combined into excel sheet ducitaplate2-stats.tsv
+
+###############################################################################
+#			created phylogeny
+###############################################################################
+
+# filtered sequences for caldwell house and passion puddle samples
+qiime feature-table filter-seqs 
+--i-data rep-seqs-dada2-left_trim.qza 
+--i-table analysis_files/ch_pp-table-dada2-left_trim-filtered-ggblast.qza
+--o-filtered-data ./analysis_files/ch_pp-rep_seqs.qza 
+
+qiime alignment mafft \
+--i-sequences ch_pp-rep_seqs.qza \
+--o-alignment ch_pp-rep_seqs-aligned.qza
+
+qiime alignment mask \
+--i-alignment ch_pp-rep_seqs-aligned.qza \
+--o-masked-alignment ch_pp-rep_seqs-aligned-masked.qza \
+
+qiime phylogeny fasttree \
+--i-alignment ch_pp-rep_seqs-aligned-masked.qza \
+--o-tree ch_pp-tree_unrooted.qza
+
+qiime phylogeny midpoint-root \
+--i-tree ch_pp-tree_unrooted.qza \
+--o-rooted-tree ch_pp-tree_rooted.qza
+
+###############################################################################
+#			diversity analysis
+###############################################################################
+
+
+# created rarefied 
+nohup \
+qiime diversity core-metrics-phylogenetic \
+--i-phylogeny ch_pp-tree_rooted.qza \
+--i-table ch_pp-table-dada2-left_trim-filtered-ggblast.qza \
+--p-sampling-depth 3664 \
+--m-metadata-file ducitaplate2-metadata.tsv \
+--output-dir ch_pp-diversity_analysis \
+&
+
+# exported vectors and distance matrices
+# filtered rinse solution samples from distance matrices 
+qiime diversity filter-distance-matrix \
+--i-distance-matrix $DISTANCE \
+--m-metadata-file ch_pp-no_rs_metadata.tsv \
+--o-filtered-distance-matrix $DISTANCE-no_rs.qza
+
+fOR in $(ls *vector.qza);
+do 
+echo $VECTOR;
+NAME=${VECTOR::-4};
+echo $NAME;
+qiime tools export $VECTOR --output-dir exports/;
+mv exports/alpha-diversity.tsv exports/d2_locations-alpha_diversity-$NAME.tsv;
+ls exports/*vector.tsv;
+done
+
+for DISTANCE in $(ls *_distance_matrix.qza);
+do
+echo $DISTANCE;
+NAME=${DISTANCE::-4};
+echo $NAME;
+qiime diversity filter-distance-matrix \
+--i-distance-matrix $DISTANCE \
+--m-metadata-file ch_pp-no_rs_metadata.tsv \
+--o-filtered-distance-matrix $NAME-no_rs.qza;
+DISTANCE2=$NAME-no_rs.qza;
+echo $DISTANCE2
+NAME2=${DISTANCE2::-4}
+echo $NAME2;
+qiime tools export $DISTANCE2 --output-dir exports/;
+mv exports/distance-matrix.tsv exports/d2_locations-beta_diversity-$NAME2.tsv;
+ls exports/*distance_matrix.tsv;
+done
+
+###############################################################################
+#			taxonomic analysis
+###############################################################################
+
+qiime taxa barplot \
+--i-table ch_pp-table-dada2-left_trim-filtered-ggblast.qza \
+--i-taxonomy ../d2-ggBLAST-taxonomy.qza \
+--m-metadata-file ../ducitaplate2-metadata.tsv \
+--o-visualization d2_locations-taxabarplot.qzv

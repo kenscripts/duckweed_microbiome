@@ -1,0 +1,127 @@
+library(dplyr)
+library(ggplot2)
+library(plyr)
+library(RColorBrewer)
+library(reshape2)
+library(tidyr)
+library(wesanderson)
+setwd("~/data/duckweed_microbiome/ch_and_pp/classifier_performance/")
+source("~/data/duckweed_microbiome/q2_analysis_using_R.R")
+
+###############################################################################
+# Classifier Performance
+###############################################################################
+
+CLASS.FILE <- read_my_table("classifier_performance_genus.tsv")
+CLASS.META <- read_my_table("../ducitaplate2-metadata.tsv")
+CLASS.DF <- melt(
+                 data = CLASS.FILE,
+                 id.variable = "sample_id",
+                 variable.name = "Method",
+                 value.name = "Reads"
+                 )
+CLASS.DF <- merge(
+                  CLASS.DF,
+                  CLASS.META,
+                  by = "sample_id"
+                  )
+CLASS.DF <- filter(
+                   CLASS.DF,
+                   location != "Johnson_Park"
+                   )
+CLASS.DF <- filter(
+                   CLASS.DF,
+                   type != "rinse_solution"
+                   )
+CLASS.DF$Method <- factor(
+                          CLASS.DF$Method,
+                          levels = c(
+                                     "dada2",
+                                     "silvaNB",
+                                     "ggNB",
+                                     "ggblast",
+                                     "ggvsearch"
+                                     )
+                          )
+
+# Fig S1 plot code
+options(scipen = 999)
+FILL <- wes_palette(
+                    "Darjeeling2",
+                    5,
+                    type = "discrete"
+                    )
+CLASS.PLOT <- ggplot(
+                     CLASS.DF,
+                     aes(
+                         sample_id,
+                         Reads,
+                         fill = Method
+                         )
+                     )
+CLASS.FIG <- CLASS.PLOT +
+             geom_bar(
+                      color = "black",
+                      stat = "identity",
+                      position = "dodge",
+                      width = 0.5
+                      ) +
+             scale_y_continuous(
+                                expand = c(0,0)
+                                ) +
+             theme(
+                   axis.line = element_line(
+                                            color = "black",
+                                            size = 1
+                                            ),
+                   axis.title.y = element_text(
+                                               size = 20,
+                                               face = "bold"
+                                               ),
+                   axis.text.y = element_text(
+                                              color = "black",
+                                              size = 16
+                                              ),
+                   axis.title.x = element_text(
+                                               size = 20,
+                                               face = "bold"
+                                               ),
+                   axis.text.x = element_text(
+                                              color = "black",
+                                              size = 16,
+                                              angle = 45,
+                                              hjust = 1,
+                                              vjust = 1
+                                              ),
+                   strip.background = element_blank(),
+                   legend.key = element_blank(),
+                   legend.title = element_text(
+                                               face = "bold",
+                                               size = 20
+                                               ),
+                   legend.text = element_text(
+                                              face = "bold",
+                                              size = 16
+                                              ),
+                   panel.background = element_blank()
+                   ) +
+             scale_fill_manual(
+                               labels = c(
+                                          "dada2",
+                                          "silva-NB",
+                                          "gg-NB",
+                                          "gg-blast",
+                                          "gg-vsearch"
+                                          ),
+                               values = FILL
+                               ) +
+             xlab("Sample ID") +
+             ylab("Classified Reads") 
+
+CLASS.FIG
+# expanded graphics window to full
+ggsave(
+       "classifier_performance_genus-fig.pdf",
+       CLASS.FIG,
+       device = "pdf"
+       )

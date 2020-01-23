@@ -1,0 +1,143 @@
+# used q2 to filter tables and sequences
+# downloaded plastid genomes (2 chloroplast, 1 mitochondria)
+# found rRNA genes in plastid genomes using rnammer
+# blasted rRNA genes against plastid genomes
+
+###############################################################################
+# qiime 2
+###############################################################################
+
+source activate qiime2-2018.6
+
+qiime taxa filter-table \
+--i-table ducitaplates4_5-dada2-table.qza \
+--i-taxonomy ducitaplates4_5-ggBLAST-classifier.qza \
+--p-include chloroplast \
+--o-filtered-table ducitaplates4_5-chloroplast_only.qza
+
+qiime taxa filter-seqs \
+--i-sequences ducitaplates4_5-dada2-rep_seqs.qza \
+--i-taxonomy ducitaplates4_5-ggBLAST-classifier.qza \
+--p-include chloroplast \
+--o-filtered-sequences ducitaplates4_5-chloroplast_seqs.qza
+
+qiime feature-table summarize \
+--i-table ducitaplates4_5-chloroplast_only.qza \
+--o-visualization ducitaplates4_5-chloroplast_only.qzv
+
+qiime taxa filter-table \
+--i-table ducitaplates4_5-dada2-table.qza \
+--i-taxonomy ducitaplates4_5-ggBLAST-classifier.qza \
+--p-include mitochondria \
+--o-filtered-table ducitaplates4_5-mitochondria_only.qza
+
+qiime taxa filter-seqs \
+--i-sequences ducitaplates4_5-dada2-rep_seqs.qza \
+--i-taxonomy ducitaplates4_5-ggBLAST-classifier.qza \
+--p-include mitochondria \
+--o-filtered-sequences ducitaplates4_5-mitochondria_seqs.qza
+
+qiime feature-table summarize \
+--i-table ducitaplates4_5-mitochondria_only.qza \
+--o-visualization ducitaplates4_5-mitochondria_only.qzv
+
+qiime taxa filter-table \
+--i-table ducitaplates4_5-dada2-table.qza \
+--i-taxonomy ducitaplates4_5-ggBLAST-classifier.qza \
+--p-exclude mitochondria,chloroplast \
+--o-filtered-table ducitaplates4_5-bacteria_only.qza
+
+qiime feature-table summarize \
+--i-table ducitaplates4_5-bacteria_only.qza \
+--o-visualization ducitaplates4_5-bacteria_only.qzv
+
+# exports seqs and put in ../ducitaplates4_5-plastid_analysis
+
+###############################################################################
+# rnammer
+###############################################################################
+
+# pwd: ../duckweed_plastids/
+
+perl \
+~/Tools/rnammer-1.2/rnammer \
+-S bac \
+-m ssu \
+-f L_minor_Russia.rnammer.fna \
+-gff L_minor_Russia.rnammer.gff \
+~/data/duckweed_genomes/L_minor_Russia.chloroplast.fna
+
+perl \
+~/Tools/rnammer-1.2/rnammer \
+-S bac \
+-m ssu \
+-f S_polyrhiza_7498.rnammer.fna \
+-gff S_polyrhiza_7498.rnammer.gff \
+~/data/duckweed_genomes/S_polyrhiza_7498.chloroplast.fna
+
+cat *.fna > duckweed_chloroplast.rnammer.fna
+
+perl \
+~/Tools/rnammer-1.2/rnammer \
+-S bac \
+-m ssu \
+-f S_polyrhiza_7498.mitochondria.rnammer.fna \
+-gff S_polyrhiza_7498.mitochondria.rnammer.gff \
+~/data/duckweed_genomes/S_polyrhiza_7498.mitochondria.fna
+
+###############################################################################
+# blast and qiime2
+###############################################################################
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# dk_chloroplast
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+# wd: ../duckweed_plastids/
+makeblastdb -in duckweed_chloroplast.rnammer.fna -dbtype nucl
+makeblastdb -in S_polyrhiza_7498.mitochondria.rnammer.fna -dbtype nucl
+
+# wd: ../ducitaplates4_5-plastid_analysis
+blastn \
+-db ../duckweed_plastid/duckweed_chloroplast.rnammer.fna \
+-query ducitaplates4_5-chloroplast_seqs.fna \
+-outfmt 6 \
+-out ducitaplates4_5.chloroplast.out
+
+sort -t$'\t' -k3 -nr ducitaplates4_5.chloroplast.out > ducitaplates4_5.chloroplast.out.sorted
+# selected feature_ids with % identity > 98.800
+
+cut -f 1 ducitaplates4_5.chloroplast.out.sorted | uniq > ducitaplates4_5.dk_chloroplast.txt
+
+qiime feature-table filter-features \
+--i-table ducitaplates4_5-dada2-table.qza \
+--m-metadata-file ducitaplates4_5.dk_chloroplast.txt \
+--o-filtered-table ducitaplates4_5.dk_chloroplast.qza
+
+qiime feature-table summarize \
+--i-table ducitaplates4_5.dk_chloroplast.qza \
+--o-visualization ducitaplates4_5.dk_chloroplast.qzv
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+# dk_mitchondria
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+blastn \
+-db ../duckweed_plastid/S_polyrhiza_7498.mitochondria.rnammer.fna \
+-query ducitaplates4_5-mitochondria_seqs.fna \
+-outfmt 6 \
+-out ducitaplates4_5.mitochondria.out
+
+# chose alignments with bit score greater than 400
+sort -t$'\t' -k4 -nr ducitaplates4_5.mitochondria.out > ducitaplates4_5.mitochondria.out.sorted
+cut -f 1 ducitaplates4_5.mitochondria.out.sorted | uniq > ducitaplates4_5.dk_mitochondria.txt
+
+qiime feature-table filter-features \
+--i-table ducitaplates4_5-dada2-table.qza \
+--m-metadata-file ducitaplates4_5.dk_mitochondria.txt \
+--o-filtered-table ducitaplates4_5.dk_mitochondria.qza
+
+qiime feature-table summarize \
+--i-table ducitaplates4_5.dk_mitochondria.qza \
+--o-visualization ducitaplates4_5.dk_mitochondria.qzv

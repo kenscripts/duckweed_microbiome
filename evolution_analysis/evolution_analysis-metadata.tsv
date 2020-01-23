@@ -1,0 +1,421 @@
+sample_id	paired_type	location	study	host	tissue
+10_S1	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+10_S3	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+10_S4	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+10_S5	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+10_S6	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+10_S7	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+10_S8	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+10_S9	plant	colgne_garden	agler_et_al	arabidopsis	leaf_like
+F_ERG	plant	ERG	agler_et_al	arabidopsis	leaf_like
+F_EY	plant	EY	agler_et_al	arabidopsis	leaf_like
+F_JUG	plant	JUG	agler_et_al	arabidopsis	leaf_like
+F_PFN	plant	PFN	agler_et_al	arabidopsis	leaf_like
+F_WH	plant	WH	agler_et_al	arabidopsis	leaf_like
+S_S1	plant	WH	agler_et_al	arabidopsis	leaf_like
+S_S12	plant	EY	agler_et_al	arabidopsis	leaf_like
+S_S14	plant	EY	agler_et_al	arabidopsis	leaf_like
+S_S15	plant	EY	agler_et_al	arabidopsis	leaf_like
+S_S18	plant	PFN	agler_et_al	arabidopsis	leaf_like
+S_S2	plant	WH	agler_et_al	arabidopsis	leaf_like
+S_S3	plant	ERG	agler_et_al	arabidopsis	leaf_like
+S_S8	plant	JUG	agler_et_al	arabidopsis	leaf_like
+S_S9	plant	JUG	agler_et_al	arabidopsis	leaf_like
+1.1_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.10_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.12_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.13_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.15_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.16_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.18_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.19_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.21_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.22_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.24_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.3_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.4_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.6_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.7_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+1.9_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.1_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.10_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.12_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.13_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.15_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.16_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.18_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.19_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.21_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.22_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.24_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.3_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.4_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.6_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.7_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+2.9_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.1_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.10_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.12_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.13_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.15_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.16_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.18_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.19_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.21_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.22_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.24_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.3_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.4_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.6_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.7_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+3.9_plant	plant	jk_experimental_station	robbins_et_al	arabidopsis	root
+9-1-plant	plant	Arbuckle	edwards_et_al	rice	root
+9-10-plant	plant	Sacramento	edwards_et_al	rice	root
+9-11-plant	plant	Sacramento	edwards_et_al	rice	root
+9-12-plant	plant	Sacramento	edwards_et_al	rice	root
+9-2-plant	plant	Arbuckle	edwards_et_al	rice	root
+9-3-plant	plant	Arbuckle	edwards_et_al	rice	root
+9-4-plant	plant	Arbuckle	edwards_et_al	rice	root
+9-5-plant	plant	Davis	edwards_et_al	rice	root
+9-7-plant	plant	Davis	edwards_et_al	rice	root
+9-8-plant	plant	Davis	edwards_et_al	rice	root
+9-9-plant	plant	Sacramento	edwards_et_al	rice	root
+B-1-plant	plant	Arbuckle	edwards_et_al	rice	root
+B-10-plant	plant	Sacramento	edwards_et_al	rice	root
+B-11-plant	plant	Sacramento	edwards_et_al	rice	root
+B-12-plant	plant	Sacramento	edwards_et_al	rice	root
+B-2-plant	plant	Arbuckle	edwards_et_al	rice	root
+B-3-plant	plant	Arbuckle	edwards_et_al	rice	root
+B-4-plant	plant	Arbuckle	edwards_et_al	rice	root
+B-5-plant	plant	Davis	edwards_et_al	rice	root
+B-8-plant	plant	Davis	edwards_et_al	rice	root
+B-9-plant	plant	Sacramento	edwards_et_al	rice	root
+BB P1-6.1-plant	plant	BB P1	edwards_et_al	rice	root
+BB P1-6.2-plant	plant	BB P1	edwards_et_al	rice	root
+BB P1-6.3-plant	plant	BB P1	edwards_et_al	rice	root
+BB P1-6.4-plant	plant	BB P1	edwards_et_al	rice	root
+BB P1-6.5-plant	plant	BB P1	edwards_et_al	rice	root
+BB P1-6.6-plant	plant	BB P1	edwards_et_al	rice	root
+BB P1-6.7-plant	plant	BB P1	edwards_et_al	rice	root
+BB P1-6.8-plant	plant	BB P1	edwards_et_al	rice	root
+BB P4-7.1-plant	plant	BB P4	edwards_et_al	rice	root
+BB P4-7.2-plant	plant	BB P4	edwards_et_al	rice	root
+BB P4-7.3-plant	plant	BB P4	edwards_et_al	rice	root
+BB P4-7.4-plant	plant	BB P4	edwards_et_al	rice	root
+BB P4-7.5-plant	plant	BB P4	edwards_et_al	rice	root
+BB P4-7.6-plant	plant	BB P4	edwards_et_al	rice	root
+BB P4-7.7-plant	plant	BB P4	edwards_et_al	rice	root
+BB P4-7.8-plant	plant	BB P4	edwards_et_al	rice	root
+Ditaler 18-1.1-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 18-1.2-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 18-1.3-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 18-1.4-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 18-1.5-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 18-1.6-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 18-1.7-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 18-1.8-plant	plant	Ditaler 18	edwards_et_al	rice	root
+Ditaler 19-2.1-plant	plant	Ditaler 19	edwards_et_al	rice	root
+Ditaler 19-2.2-plant	plant	Ditaler 19	edwards_et_al	rice	root
+Ditaler 19-2.3-plant	plant	Ditaler 19	edwards_et_al	rice	root
+Ditaler 19-2.4-plant	plant	Ditaler 19	edwards_et_al	rice	root
+Ditaler 19-2.5-plant	plant	Ditaler 19	edwards_et_al	rice	root
+Ditaler 19-2.6-plant	plant	Ditaler 19	edwards_et_al	rice	root
+Ditaler 19-2.7-plant	plant	Ditaler 19	edwards_et_al	rice	root
+Ditaler 19-2.8-plant	plant	Ditaler 19	edwards_et_al	rice	root
+DS RR-5.1-plant	plant	DS RR	edwards_et_al	rice	root
+DS RR-5.2-plant	plant	DS RR	edwards_et_al	rice	root
+DS RR-5.3-plant	plant	DS RR	edwards_et_al	rice	root
+DS RR-5.4-plant	plant	DS RR	edwards_et_al	rice	root
+DS RR-5.5-plant	plant	DS RR	edwards_et_al	rice	root
+DS RR-5.6-plant	plant	DS RR	edwards_et_al	rice	root
+DS RR-5.7-plant	plant	DS RR	edwards_et_al	rice	root
+DS RR-5.8-plant	plant	DS RR	edwards_et_al	rice	root
+E-1-plant	plant	Arbuckle	edwards_et_al	rice	root
+E-11-plant	plant	Sacramento	edwards_et_al	rice	root
+E-12-plant	plant	Sacramento	edwards_et_al	rice	root
+E-2-plant	plant	Arbuckle	edwards_et_al	rice	root
+E-3-plant	plant	Arbuckle	edwards_et_al	rice	root
+E-4-plant	plant	Arbuckle	edwards_et_al	rice	root
+E-5-plant	plant	Davis	edwards_et_al	rice	root
+E-8-plant	plant	Davis	edwards_et_al	rice	root
+E-9-plant	plant	Sacramento	edwards_et_al	rice	root
+I-1-plant	plant	Arbuckle	edwards_et_al	rice	root
+I-10-plant	plant	Sacramento	edwards_et_al	rice	root
+I-12-plant	plant	Sacramento	edwards_et_al	rice	root
+I-2-plant	plant	Arbuckle	edwards_et_al	rice	root
+I-4-plant	plant	Arbuckle	edwards_et_al	rice	root
+I-5-plant	plant	Davis	edwards_et_al	rice	root
+I-6-plant	plant	Davis	edwards_et_al	rice	root
+I-7-plant	plant	Davis	edwards_et_al	rice	root
+I-8-plant	plant	Davis	edwards_et_al	rice	root
+I-9-plant	plant	Sacramento	edwards_et_al	rice	root
+M-1-plant	plant	Arbuckle	edwards_et_al	rice	root
+M-10-plant	plant	Sacramento	edwards_et_al	rice	root
+M-11-plant	plant	Sacramento	edwards_et_al	rice	root
+M-12-plant	plant	Sacramento	edwards_et_al	rice	root
+M-2-plant	plant	Arbuckle	edwards_et_al	rice	root
+M-3-plant	plant	Arbuckle	edwards_et_al	rice	root
+M-4-plant	plant	Arbuckle	edwards_et_al	rice	root
+M-5-plant	plant	Davis	edwards_et_al	rice	root
+M-7-plant	plant	Davis	edwards_et_al	rice	root
+M-8-plant	plant	Davis	edwards_et_al	rice	root
+M-9-plant	plant	Sacramento	edwards_et_al	rice	root
+N-1-plant	plant	Arbuckle	edwards_et_al	rice	root
+N-10-plant	plant	Sacramento	edwards_et_al	rice	root
+N-11-plant	plant	Sacramento	edwards_et_al	rice	root
+N-12-plant	plant	Sacramento	edwards_et_al	rice	root
+N-2-plant	plant	Arbuckle	edwards_et_al	rice	root
+N-3-plant	plant	Arbuckle	edwards_et_al	rice	root
+N-4-plant	plant	Arbuckle	edwards_et_al	rice	root
+N-5-plant	plant	Davis	edwards_et_al	rice	root
+N-7-plant	plant	Davis	edwards_et_al	rice	root
+N-8-plant	plant	Davis	edwards_et_al	rice	root
+N-9-plant	plant	Sacramento	edwards_et_al	rice	root
+Scheidec-8.1-plant	plant	Scheidec	edwards_et_al	rice	root
+Scheidec-8.2-plant	plant	Scheidec	edwards_et_al	rice	root
+Scheidec-8.3-plant	plant	Scheidec	edwards_et_al	rice	root
+Scheidec-8.4-plant	plant	Scheidec	edwards_et_al	rice	root
+Scheidec-8.5-plant	plant	Scheidec	edwards_et_al	rice	root
+Scheidec-8.7-plant	plant	Scheidec	edwards_et_al	rice	root
+Scheidec-8.8-plant	plant	Scheidec	edwards_et_al	rice	root
+SFT 20 A-4.1-plant	plant	SFT 20 A	edwards_et_al	rice	root
+SFT 20 A-4.2-plant	plant	SFT 20 A	edwards_et_al	rice	root
+SFT 20 A-4.3-plant	plant	SFT 20 A	edwards_et_al	rice	root
+SFT 20 A-4.4-plant	plant	SFT 20 A	edwards_et_al	rice	root
+SFT 20 A-4.5-plant	plant	SFT 20 A	edwards_et_al	rice	root
+SFT 20 A-4.6-plant	plant	SFT 20 A	edwards_et_al	rice	root
+SFT 20 A-4.7-plant	plant	SFT 20 A	edwards_et_al	rice	root
+SFT 20 A-4.8-plant	plant	SFT 20 A	edwards_et_al	rice	root
+Spooner Airstrip-3.1-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+Spooner Airstrip-3.2-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+Spooner Airstrip-3.3-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+Spooner Airstrip-3.4-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+Spooner Airstrip-3.5-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+Spooner Airstrip-3.6-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+Spooner Airstrip-3.7-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+Spooner Airstrip-3.8-plant	plant	Spooner Airstrip	edwards_et_al	rice	root
+9-6-plant	plant	Davis	edwards_et_al	rice	root
+B-7-plant	plant	Davis	edwards_et_al	rice	root
+BB_-7.1-plant	plant	BB_	edwards_et_al	rice	root
+E-10-plant	plant	Sacramento	edwards_et_al	rice	root
+E-7-plant	plant	Davis	edwards_et_al	rice	root
+I-11-plant	plant	Sacramento	edwards_et_al	rice	root
+M-6-plant	plant	Davis	edwards_et_al	rice	root
+N-6-plant	plant	Davis	edwards_et_al	rice	root
+B-6-plant	plant	Davis	edwards_et_al	rice	root
+E-6-plant	plant	Davis	edwards_et_al	rice	root
+I-3-plant	plant	Arbuckle	edwards_et_al	rice	root
+Scheidec-8.6-plant	plant	Scheidec	edwards_et_al	rice	root
+AS1	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	leaf_like
+AS2	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	leaf_like
+AS3	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	leaf_like
+AS4	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	leaf_like
+AS5	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	leaf_like
+AS6	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	leaf_like
+AS7	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	leaf_like
+AS8	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	leaf_like
+AS9	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	leaf_like
+AW1	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	leaf_like
+AW2	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	leaf_like
+AW3	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	leaf_like
+AW4	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	leaf_like
+AW5	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	leaf_like
+AW6	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	leaf_like
+AW7	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	leaf_like
+AW8	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	leaf_like
+AW9	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	leaf_like
+RS1	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	root
+RS2	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	root
+RS3	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	root
+RS4	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	root
+RS5	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	root
+RS6	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	root
+RS7	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	root
+RS8	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	root
+RS9	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	root
+RW1	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	root
+RW3	plant	s1.china.guizhou_province.leishan_county	huang_et_al	rice	root
+RW4	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	rice	root
+RW7	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	root
+RW9	plant	s3.china.guizhou_province.liping_county	huang_et_al	rice	root
+DS1	plant	s1.china.guizhou_province.leishan_county	huang_et_al	duckweed	leaf_like
+DS2	plant	s1.china.guizhou_province.leishan_county	huang_et_al	duckweed	leaf_like
+DS3	plant	s1.china.guizhou_province.leishan_county	huang_et_al	duckweed	leaf_like
+DS4	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	duckweed	leaf_like
+DS5	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	duckweed	leaf_like
+DS6	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	duckweed	leaf_like
+DS7	plant	s3.china.guizhou_province.liping_county	huang_et_al	duckweed	leaf_like
+DS8	plant	s3.china.guizhou_province.liping_county	huang_et_al	duckweed	leaf_like
+DS9	plant	s3.china.guizhou_province.liping_county	huang_et_al	duckweed	leaf_like
+DW1	plant	s1.china.guizhou_province.leishan_county	huang_et_al	duckweed	leaf_like
+DW2	plant	s1.china.guizhou_province.leishan_county	huang_et_al	duckweed	leaf_like
+DW3	plant	s1.china.guizhou_province.leishan_county	huang_et_al	duckweed	leaf_like
+DW4	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	duckweed	leaf_like
+DW5	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	duckweed	leaf_like
+DW6	plant	s2.china.guizhou_province.congjiang_county	huang_et_al	duckweed	leaf_like
+DW7	plant	s3.china.guizhou_province.liping_county	huang_et_al	duckweed	leaf_like
+DW8	plant	s3.china.guizhou_province.liping_county	huang_et_al	duckweed	leaf_like
+DW9	plant	s3.china.guizhou_province.liping_county	huang_et_al	duckweed	leaf_like
+CH_RS_B	plant	Caldwell_House	ch_pp	duckweed	leaf_like
+CH_DT_A	plant	Caldwell_House	ch_pp	duckweed	leaf_like
+CH_DT_B	plant	Caldwell_House	ch_pp	duckweed	leaf_like
+CH_DT_C	plant	Caldwell_House	ch_pp	duckweed	leaf_like
+PP_DT_B	plant	Passion_Puddle	ch_pp	duckweed	leaf_like
+PP_CT_D	plant	Passion_Puddle	ch_pp	duckweed	leaf_like
+T0_432_B_3_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T5_432_DAM_B_H_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T5_432_DAM_B_I_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T5_432_DAM_B_J_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T5_432_DAM_B_L_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_A_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_B_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_C_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_D_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_E_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_F_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_G_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_H_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_I_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_BJ_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_K_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+T10_432_DAM_B_L_2	plant	princeton_meadows	pm_year1	duckweed	leaf_like
+1.1_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.10_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.12_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.13_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.15_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.16_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.18_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.19_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.21_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.22_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.24_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.3_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.4_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.6_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.7_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+1.9_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.1_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.10_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.12_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.13_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.15_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.16_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.18_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.19_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.21_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.22_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.24_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.3_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.4_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.6_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.7_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+2.9_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.1_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.10_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.12_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.13_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.15_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.16_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.18_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.19_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.21_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.22_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.24_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.3_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.4_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.6_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.7_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+3.9_environment	environment	jk_experimental_station	robbins_et_al	arabidopsis	environment
+9-1-environment	environment	Arbuckle	edwards_et_al	rice	environment
+9-10-environment	environment	Sacramento	edwards_et_al	rice	environment
+9-11-environment	environment	Sacramento	edwards_et_al	rice	environment
+9-12-environment	environment	Sacramento	edwards_et_al	rice	environment
+9-3-environment	environment	Arbuckle	edwards_et_al	rice	environment
+9-4-environment	environment	Arbuckle	edwards_et_al	rice	environment
+9-9-environment	environment	Sacramento	edwards_et_al	rice	environment
+B-1-environment	environment	Arbuckle	edwards_et_al	rice	environment
+B-10-environment	environment	Sacramento	edwards_et_al	rice	environment
+B-12-environment	environment	Sacramento	edwards_et_al	rice	environment
+B-3-environment	environment	Arbuckle	edwards_et_al	rice	environment
+B-4-environment	environment	Arbuckle	edwards_et_al	rice	environment
+B-8-environment	environment	Davis	edwards_et_al	rice	environment
+B-9-environment	environment	Sacramento	edwards_et_al	rice	environment
+E-1-environment	environment	Arbuckle	edwards_et_al	rice	environment
+E-10-environment	environment	Sacramento	edwards_et_al	rice	environment
+E-3-environment	environment	Arbuckle	edwards_et_al	rice	environment
+E-4-environment	environment	Arbuckle	edwards_et_al	rice	environment
+E-6-environment	environment	Davis	edwards_et_al	rice	environment
+E-8-environment	environment	Davis	edwards_et_al	rice	environment
+I-1-environment	environment	Arbuckle	edwards_et_al	rice	environment
+I-10-environment	environment	Sacramento	edwards_et_al	rice	environment
+I-12-environment	environment	Sacramento	edwards_et_al	rice	environment
+I-4-environment	environment	Arbuckle	edwards_et_al	rice	environment
+I-5-environment	environment	Davis	edwards_et_al	rice	environment
+I-6-environment	environment	Davis	edwards_et_al	rice	environment
+I-8-environment	environment	Davis	edwards_et_al	rice	environment
+I-9-environment	environment	Sacramento	edwards_et_al	rice	environment
+M-1-environment	environment	Arbuckle	edwards_et_al	rice	environment
+M-10-environment	environment	Sacramento	edwards_et_al	rice	environment
+M-11-environment	environment	Sacramento	edwards_et_al	rice	environment
+M-12-environment	environment	Sacramento	edwards_et_al	rice	environment
+M-3-environment	environment	Arbuckle	edwards_et_al	rice	environment
+M-4-environment	environment	Arbuckle	edwards_et_al	rice	environment
+M-6-environment	environment	Davis	edwards_et_al	rice	environment
+M-8-environment	environment	Davis	edwards_et_al	rice	environment
+N-1-environment	environment	Arbuckle	edwards_et_al	rice	environment
+N-12-environment	environment	Sacramento	edwards_et_al	rice	environment
+N-3-environment	environment	Arbuckle	edwards_et_al	rice	environment
+N-8-environment	environment	Davis	edwards_et_al	rice	environment
+N-9-environment	environment	Sacramento	edwards_et_al	rice	environment
+SL1	environment	s1.china.guizhou_province.leishan_county	huang_et_al	rice_duckweed	environment
+SL2	environment	s1.china.guizhou_province.leishan_county	huang_et_al	rice_duckweed	environment
+SL3	environment	s1.china.guizhou_province.leishan_county	huang_et_al	rice_duckweed	environment
+SL4	environment	s2.china.guizhou_province.congjiang_county	huang_et_al	rice_duckweed	environment
+SL5	environment	s2.china.guizhou_province.congjiang_county	huang_et_al	rice_duckweed	environment
+SL6	environment	s2.china.guizhou_province.congjiang_county	huang_et_al	rice_duckweed	environment
+SL7	environment	s3.china.guizhou_province.liping_county	huang_et_al	rice_duckweed	environment
+CH_W_A	environment	Caldwell_House	ch_pp	duckweed	environment
+CH_W_B	environment	Caldwell_House	ch_pp	duckweed	environment
+CH_W_C	environment	Caldwell_House	ch_pp	duckweed	environment
+CH_W_D	environment	Caldwell_House	ch_pp	duckweed	environment
+PP_W_A	environment	Passion_Puddle	ch_pp	duckweed	environment
+PP_W_B	environment	Passion_Puddle	ch_pp	duckweed	environment
+PP_W_C	environment	Passion_Puddle	ch_pp	duckweed	environment
+PP_W_D	environment	Passion_Puddle	ch_pp	duckweed	environment
+5A_C_432_9509_DAM_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T5_432_DAM_W_D_F_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T5_432_DAM_W_G_I_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T5_432_DAM_W_J_L_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T10_432_DAM_W_A_C_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T10_432_DAM_W_D_F_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T10_432_DAM_W_G_I_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T10_432_DAM_W_J_L_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T0_W_D_E_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T0_W_A_C_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T5_W_D_E_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T5_W_A_C_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T10_W_D_E_2	environment	princeton_meadows	pm_year1	duckweed	environment
+T10_W_A_C_2	environment	princeton_meadows	pm_year1	duckweed	environment
+370(-)_t2A	environment	princeton_meadows	pm_year2	duckweed	environment
+432(-)_t2B	environment	princeton_meadows	pm_year2	duckweed	environment
+432(-)_t2C	environment	princeton_meadows	pm_year2	duckweed	environment
+370(-)_W_t0A	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+370(-)_W_t0B	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_W_t0A	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_W_t0B	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+370(-)_W_t2A	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+370(-)_W_t2B	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+370(-)_SD_t2A	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+370(-)_SD_t2B	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_W_t2A	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_W_t2B	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_SD_t2A	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_SD_t2B	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_SD_t2C	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+370(-)_W_t7C	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+370(-)_SD_t7C	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_W_t7C	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_W_t7D	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_SD_t7C	plant	princeton_meadows	pm_year2	duckweed	leaf_like
+432(-)_SD_t7D	plant	princeton_meadows	pm_year2	duckweed	leaf_like
