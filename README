@@ -10,7 +10,7 @@ Data Sets and Analyses:
 - q2_analysis_using_R.R (R functions used to analyze data)
 
 Workflow:
-- upload fastq files
-- process using q2 to generate feature tables, diversity metrics, taxa barplots
-- analyze q2 output and create visualizations using R
-- perform differential abundance analysis using ALDEx2 
+- upload fastq libraries
+- use q2 to process fastq libraries and generate feature tables, diversity metrics, taxa barplots
+- use R to analyze q2 output and create visualizations
+- use R to perform differential abundance analysis using ALDEx2 
