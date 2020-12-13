@@ -16,5 +16,5 @@
 - use R to perform differential abundance analysis using ALDEx2 
 
 # Citation
-If this was helpful please cite: < br/> 
-## Acosta, K., Xu, J., Gilbert, S., Denison, E., Brinkman, T., Lebeis, S. and Lam, E., 2020. Duckweed hosts a taxonomically similar bacterial assemblage as the terrestrial leaf microbiome. PloS one, 15(2), p.e0228560.
+If this was helpful please cite:
+### Acosta, K., Xu, J., Gilbert, S., Denison, E., Brinkman, T., Lebeis, S. and Lam, E., 2020. Duckweed hosts a taxonomically similar bacterial assemblage as the terrestrial leaf microbiome. PloS one, 15(2), p.e0228560.
