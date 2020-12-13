@@ -17,4 +17,4 @@
 
 # Citation
 If this was helpful please cite:
-### Acosta, K., Xu, J., Gilbert, S., Denison, E., Brinkman, T., Lebeis, S. and Lam, E., 2020. Duckweed hosts a taxonomically similar bacterial assemblage as the terrestrial leaf microbiome. PloS one, 15(2), p.e0228560.
+#### Acosta, K., Xu, J., Gilbert, S., Denison, E., Brinkman, T., Lebeis, S. and Lam, E., 2020. Duckweed hosts a taxonomically similar bacterial assemblage as the terrestrial leaf microbiome. PloS one, 15(2), p.e0228560.
