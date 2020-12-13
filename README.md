@@ -1,4 +1,4 @@
-# Data Sets and Analyses:
+# Data Sets and Analyses
 - ch_and_pp (Caldwell House and Passion Puddle)
 - PM_Year1 (Princeton Meadows Year 1)
 - PM_Year2 (Princeton Meadows Year 2)
@@ -9,7 +9,7 @@
 - data-* (figures and files used in manuscript)
 - q2_analysis_using_R.R (R functions used to analyze data)
 
-# Workflow:
+# Workflow
 - upload fastq libraries
 - use q2 to process fastq libraries and generate feature tables, diversity metrics, taxa barplots
 - use R to analyze q2 output and create visualizations
